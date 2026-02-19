@@ -42,21 +42,20 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
       if (count == 0) {
         final total =
             await localDataSource.totalCount(categories: categoryStrs);
-        final isConnected = await networkInfo.isConnected;
 
-        if (total == 0 || isConnected) {
-          // Premier lancement OU connexion dispo → fetch les nouvelles depuis l'API
-          // (mock pour l'instant, vraie API plus tard)
+        if (total == 0) {
+          // DB vide (premier lancement — ne devrait pas arriver grâce au seed)
+          // ou après un clearAll explicite : on fetch depuis l'API
           final fresh = await remoteDataSource.fetchAffirmations(
             objectiveType: objectiveType,
             mrrTarget: mrrTarget,
             name: userName,
           );
-          // Remplace tout le contenu existant par le contenu frais
-          await localDataSource.clearAll();
           await localDataSource.saveAll(fresh);
         } else {
-          // Pas de connexion → on repart sur les affirmations locales
+          // Cycle épuisé → reset isViewed sans toucher isFavorite (❤️ conservés)
+          // Quand la vraie API sera prête et retournera du contenu différent,
+          // remplacer par : clearAll() + saveAll(freshFromApi)
           await localDataSource.resetViewed(categories: categoryStrs);
         }
       }
@@ -66,6 +65,16 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
       if (model == null) return Left(CacheFailure());
 
       return Right(model.toEntity());
+    } catch (_) {
+      return Left(CacheFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Affirmation>>> getFavorites() async {
+    try {
+      final models = await localDataSource.getFavorites();
+      return Right(models.map((m) => m.toEntity()).toList());
     } catch (_) {
       return Left(CacheFailure());
     }

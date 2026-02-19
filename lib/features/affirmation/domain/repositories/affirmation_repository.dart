@@ -7,6 +7,7 @@ abstract class AffirmationRepository {
   Future<Either<Failure, Affirmation>> getNextAffirmation({
     List<AffirmationCategory>? categories,
   });
+  Future<Either<Failure, List<Affirmation>>> getFavorites();
   Future<Either<Failure, Unit>> markAsViewed(int id);
   Future<Either<Failure, Unit>> toggleFavorite(int id);
 }

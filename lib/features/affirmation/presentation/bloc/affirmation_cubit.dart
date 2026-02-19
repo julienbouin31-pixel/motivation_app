@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 import 'package:motivation_app/features/affirmation/domain/usecases/get_next_affirmation_usecase.dart';
 import 'package:motivation_app/features/affirmation/domain/usecases/mark_as_viewed_usecase.dart';
@@ -13,6 +14,10 @@ class AffirmationCubit extends Cubit<AffirmationState> {
   // Multi-sélection : [general] par défaut = toutes les catégories
   List<AffirmationCategory> _selectedCategories = [AffirmationCategory.general];
   List<AffirmationCategory> get selectedCategories => _selectedCategories;
+
+  // Historique des cartes vues (swipe haut) → permet le retour arrière (swipe bas)
+  final List<Affirmation> _history = [];
+  bool get canGoBack => _history.isNotEmpty;
 
   // Catégorie d'affichage pour le bouton (unique représentant de la sélection)
   AffirmationCategory get displayCategory {
@@ -39,7 +44,15 @@ class AffirmationCubit extends Cubit<AffirmationState> {
     );
   }
 
+  /// Swipe haut : marque comme vue, pousse dans l'historique, charge la suivante.
   Future<void> markCurrentAsViewed(int id) async {
+    // Pousse la carte actuelle dans l'historique avant de charger la suivante
+    final currentState = state;
+    if (currentState is AffirmationLoaded) {
+      _history.add(currentState.affirmation);
+      if (_history.length > 20) _history.removeAt(0);
+    }
+
     await markAsViewed(id);
     final result = await getNextAffirmation(categories: _selectedCategories);
     result.fold(
@@ -50,6 +63,16 @@ class AffirmationCubit extends Cubit<AffirmationState> {
         selectedCategory: displayCategory,
       )),
     );
+  }
+
+  /// Swipe bas : revient à l'affirmation précédente depuis l'historique.
+  void goBack() {
+    if (_history.isEmpty) return;
+    final prev = _history.removeLast();
+    emit(AffirmationState.loaded(
+      affirmation: prev,
+      selectedCategory: displayCategory,
+    ));
   }
 
   Future<void> toggleFavoriteAction(int id) async {
@@ -69,6 +92,7 @@ class AffirmationCubit extends Cubit<AffirmationState> {
   /// - Sélectionner une catégorie spécifique → retire "général"
   /// - Décocher la dernière → revient à "général"
   Future<void> toggleCategory(AffirmationCategory category) async {
+    _history.clear(); // L'historique ne fait plus sens si on change de catégorie
     if (category == AffirmationCategory.general) {
       _selectedCategories = [AffirmationCategory.general];
     } else if (_selectedCategories.contains(category)) {

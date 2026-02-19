@@ -6,10 +6,12 @@ import 'package:motivation_app/features/affirmation/data/datasources/affirmation
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_remote_data_source.dart';
 import 'package:motivation_app/features/affirmation/data/repositories/affirmation_repository_impl.dart';
 import 'package:motivation_app/features/affirmation/domain/repositories/affirmation_repository.dart';
+import 'package:motivation_app/features/affirmation/domain/usecases/get_favorites_usecase.dart';
 import 'package:motivation_app/features/affirmation/domain/usecases/get_next_affirmation_usecase.dart';
 import 'package:motivation_app/features/affirmation/domain/usecases/mark_as_viewed_usecase.dart';
 import 'package:motivation_app/features/affirmation/domain/usecases/toggle_favorite_usecase.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart';
+import 'package:motivation_app/features/affirmation/presentation/bloc/favorites_cubit.dart';
 import 'package:motivation_app/features/home/data/datasources/home_local_data_source.dart';
 import 'package:motivation_app/features/home/data/datasources/home_remote_data_source.dart';
 import 'package:motivation_app/features/home/data/repositories/home_repository_impl.dart';
@@ -43,7 +45,14 @@ Future<void> init({
         toggleFavorite: sl(),
       ));
 
+  // Cubits
+  sl.registerFactory(() => FavoritesCubit(
+        getFavorites: sl(),
+        toggleFavorite: sl(),
+      ));
+
   // Use cases
+  sl.registerLazySingleton(() => GetFavoritesUseCase(sl()));
   sl.registerLazySingleton(() => GetNextAffirmationUseCase(sl()));
   sl.registerLazySingleton(() => MarkAsViewedUseCase(sl()));
   sl.registerLazySingleton(() => ToggleFavoriteUseCase(sl()));

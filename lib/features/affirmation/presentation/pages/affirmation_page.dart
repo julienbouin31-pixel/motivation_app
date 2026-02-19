@@ -20,13 +20,13 @@ class AffirmationPage extends StatefulWidget {
 
 class _AffirmationPageState extends State<AffirmationPage>
     with TickerProviderStateMixin {
-  // Animation de sortie (swipe vers le haut)
   late final AnimationController _exitCtrl;
-  // Animation d'entrée (nouvelle card)
   late final AnimationController _enterCtrl;
 
   double _dragY = 0;
   bool _isExiting = false;
+  bool _goingBack = false;   // true = swipe bas (retour), false = swipe haut (suivant)
+  bool _enterFromTop = false; // direction de l'animation d'entrée
   int? _exitingId;
 
   @override
@@ -37,20 +37,23 @@ class _AffirmationPageState extends State<AffirmationPage>
       vsync: this,
       duration: const Duration(milliseconds: 280),
     );
-    // Démarre à 1.0 → première card visible immédiatement
     _enterCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 380),
-      value: 1.0,
+      value: 1.0, // Première carte visible immédiatement
     );
 
     _exitCtrl.addStatusListener((status) {
-      if (status == AnimationStatus.completed &&
-          _exitingId != null &&
-          mounted) {
-        final id = _exitingId!;
-        _exitingId = null;
-        context.read<AffirmationCubit>().markCurrentAsViewed(id);
+      if (status == AnimationStatus.completed && mounted) {
+        if (_goingBack) {
+          // Swipe bas → revenir à l'affirmation précédente
+          context.read<AffirmationCubit>().goBack();
+        } else if (_exitingId != null) {
+          // Swipe haut → marquer comme vue + charger la suivante
+          final id = _exitingId!;
+          _exitingId = null;
+          context.read<AffirmationCubit>().markCurrentAsViewed(id);
+        }
       }
     });
   }
@@ -64,31 +67,55 @@ class _AffirmationPageState extends State<AffirmationPage>
 
   void _onDragUpdate(DragUpdateDetails d) {
     if (_isExiting) return;
-    if (d.delta.dy < 0) {
-      setState(() => _dragY = (_dragY + d.delta.dy).clamp(-350.0, 0.0));
-    }
+    final cubit = context.read<AffirmationCubit>();
+    setState(() {
+      final newY = _dragY + d.delta.dy;
+      if (newY < 0) {
+        // Glisse vers le haut (suivant)
+        _dragY = newY.clamp(-350.0, 0.0);
+      } else if (newY > 0 && cubit.canGoBack) {
+        // Glisse vers le bas (retour) — seulement s'il y a un historique
+        _dragY = newY.clamp(0.0, 350.0);
+      } else {
+        _dragY = 0;
+      }
+    });
   }
 
   void _onDragEnd(DragEndDetails d, int id) {
     if (_isExiting) return;
     final velocity = d.primaryVelocity ?? 0;
+    final cubit = context.read<AffirmationCubit>();
+
     if (_dragY < -60 || velocity < -500) {
+      // Swipe haut : affirmation suivante
       setState(() {
         _isExiting = true;
         _exitingId = id;
+        _goingBack = false;
+      });
+      _exitCtrl.forward();
+    } else if ((_dragY > 60 || velocity > 500) && cubit.canGoBack) {
+      // Swipe bas : affirmation précédente
+      setState(() {
+        _isExiting = true;
+        _goingBack = true;
       });
       _exitCtrl.forward();
     } else {
-      // Revenir en place
+      // Seuil non atteint → revenir en place
       setState(() => _dragY = 0);
     }
   }
 
-  // Appelé quand une nouvelle affirmation arrive dans le BlocConsumer
+  // Appelé par le BlocConsumer quand une nouvelle affirmation (id différent) arrive
   void _resetForNewCard() {
+    final goingBack = _goingBack;
     setState(() {
       _dragY = 0;
       _isExiting = false;
+      _goingBack = false;
+      _enterFromTop = goingBack; // Retour = entrée par le haut
     });
     _exitCtrl.reset();
     _enterCtrl.forward(from: 0);
@@ -149,19 +176,22 @@ class _AffirmationPageState extends State<AffirmationPage>
                             final double opacity;
 
                             if (_isExiting) {
-                              // Glisse vers le haut + s'estompe
+                              // Swipe haut → sort par le haut
+                              // Swipe bas → sort par le bas
+                              final dir = _goingBack ? 1.0 : -1.0;
                               offset = Offset(
                                 0,
-                                _dragY - _exitCtrl.value * screenH,
+                                _dragY + dir * _exitCtrl.value * screenH,
                               );
-                              opacity =
-                                  (1.0 - _exitCtrl.value * 2)
-                                      .clamp(0.0, 1.0);
+                              opacity = (1.0 - _exitCtrl.value * 2)
+                                  .clamp(0.0, 1.0);
                             } else {
-                              // Arrive par le bas + s'illumine
+                              // Entrée depuis le bas (swipe haut) ou depuis le haut (retour)
+                              final enterDir = _enterFromTop ? -1.0 : 1.0;
                               offset = Offset(
                                 0,
-                                _dragY + (1 - _enterCtrl.value) * 40,
+                                _dragY +
+                                    enterDir * (1 - _enterCtrl.value) * 40,
                               );
                               opacity = _enterCtrl.value;
                             }
@@ -198,6 +228,23 @@ class _AffirmationPageState extends State<AffirmationPage>
                         isOpen: false,
                         onTap: () =>
                             context.push(AppRouter.affirmationCategories),
+                      ),
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: () =>
+                            context.push(AppRouter.affirmationFavorites),
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade50,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                            size: 20,
+                          ),
+                        ),
                       ),
                     ],
                   ),

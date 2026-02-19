@@ -17,9 +17,11 @@ class OnboardingTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       onChanged: onChanged,
+      autofocus: false,
       style: const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w500,
+        color: Colors.black87,
       ),
       decoration: InputDecoration(
         hintText: hintText,

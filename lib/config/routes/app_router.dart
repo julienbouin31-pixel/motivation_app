@@ -10,6 +10,7 @@ import 'package:motivation_app/features/onboarding/presentation/pages/onboarding
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_mrr_target_page.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/affirmation_page.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/category_page.dart';
+import 'package:motivation_app/features/affirmation/presentation/pages/favorites_page.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -24,6 +25,7 @@ class AppRouter {
   static const String onboardingMrrTarget = '/onboarding/mrr-target';
   static const String affirmation = '/affirmation';
   static const String affirmationCategories = '/affirmation/categories';
+  static const String affirmationFavorites = '/affirmation/favorites';
   static const String revenue = '/revenue';
 }
 
@@ -89,6 +91,12 @@ final GoRouter appRouter = GoRouter(
       path: AppRouter.affirmationCategories,
       pageBuilder: (context, state) => const MaterialPage(
         child: CategoryPage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.affirmationFavorites,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: FavoritesPage(),
       ),
     ),
   ],
