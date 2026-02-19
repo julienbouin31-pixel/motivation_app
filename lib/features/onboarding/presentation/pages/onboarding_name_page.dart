@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_text_field.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/continue_button.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/back_button_widget.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
+import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 
 class OnboardingNamePage extends StatefulWidget {
   const OnboardingNamePage({super.key});
@@ -63,9 +65,9 @@ class _OnboardingNamePageState extends State<OnboardingNamePage> {
                       ],
                     ),
                     const SizedBox(height: 32),
-                    const ProgressIndicatorBar(
-                      currentStep: 1,
-                      totalSteps: 3,
+                    ProgressIndicatorBar(
+                      currentStep: OnboardingFlow.stepNumber(AppRouter.onboardingName),
+                      totalSteps: OnboardingFlow.totalSteps,
                     ),
                     const SizedBox(height: 64),
                     const Text(
@@ -96,7 +98,10 @@ class _OnboardingNamePageState extends State<OnboardingNamePage> {
                       enabled: _isNameValid,
                       onPressed: _isNameValid
                           ? () {
-                              context.push(AppRouter.onboardingAge);
+                              context.read<OnboardingCubit>().saveUserNameAction(
+                                    _nameController.text.trim(),
+                                  );
+                              OnboardingFlow.next(context, AppRouter.onboardingName);
                             }
                           : null,
                     ),

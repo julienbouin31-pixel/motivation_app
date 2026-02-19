@@ -1,30 +1,12 @@
-part of 'home_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:motivation_app/features/home/domain/entities/home_entity.dart';
 
-abstract class HomeState extends Equatable {
-  const HomeState();
+part 'home_state.freezed.dart';
 
-  @override
-  List<Object?> get props => [];
-}
-
-class HomeInitial extends HomeState {}
-
-class HomeLoading extends HomeState {}
-
-class HomeLoaded extends HomeState {
-  final List<HomeEntity> data;
-
-  const HomeLoaded(this.data);
-
-  @override
-  List<Object?> get props => [data];
-}
-
-class HomeError extends HomeState {
-  final String message;
-
-  const HomeError(this.message);
-
-  @override
-  List<Object?> get props => [message];
+@freezed
+sealed class HomeState with _$HomeState {
+  const factory HomeState.initial() = HomeInitial;
+  const factory HomeState.loading() = HomeLoading;
+  const factory HomeState.loaded(List<HomeEntity> data) = HomeLoaded;
+  const factory HomeState.error(String message) = HomeError;
 }

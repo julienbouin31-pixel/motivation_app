@@ -6,38 +6,16 @@ class HomeHeroSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Construis ta liberté,',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              height: 1.2,
-              color: Colors.black,
-            ),
-          ),
-          const Text(
-            'un jour à la fois.',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              height: 1.2,
-              color: Colors.black54,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Des affirmations quotidiennes pour les makers qui veulent changer de vie.',
-            style: TextStyle(
-              fontSize: 15,
-              height: 1.4,
-              color: Colors.grey[600],
-            ),
-          ),
-        ],
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: const Text(
+        'Commence à construire\nton futur, aujourd\'hui.',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 36,
+          fontWeight: FontWeight.bold,
+          height: 1.2,
+          color: Colors.white,
+        ),
       ),
     );
   }

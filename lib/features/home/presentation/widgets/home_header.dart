@@ -29,7 +29,7 @@ class HomeHeader extends StatelessWidget {
               fontSize: 11,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.5,
-              color: Colors.black54,
+              color: Color(0xFF555555),
             ),
           ),
         ],

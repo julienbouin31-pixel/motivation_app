@@ -20,8 +20,8 @@ class HomeCtaButton extends StatelessWidget {
             child: ElevatedButton(
               onPressed: onPressed,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -31,7 +31,7 @@ class HomeCtaButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
                   Text(
-                    'Essai gratuit — 7 jours',
+                    'Commence l\'aventure',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -44,17 +44,9 @@ class HomeCtaButton extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          Text(
-            'AUCUNE CARTE REQUISE • +2,000 INDIE HACKERS',
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.5,
-              color: Colors.grey[500],
-            ),
-          ),
         ],
       ),
     );
   }
 }
+

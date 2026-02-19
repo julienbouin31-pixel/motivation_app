@@ -1,0 +1,68 @@
+import 'package:motivation_app/features/affirmation/data/models/affirmation_model.dart';
+
+abstract class AffirmationRemoteDataSource {
+  Future<List<AffirmationModel>> fetchAffirmations({
+    required String objectiveType,
+    String? mrrTarget,
+    String? name,
+    String? category,
+  });
+}
+
+/// Mock — à remplacer par un vrai appel API
+class AffirmationRemoteDataSourceImpl implements AffirmationRemoteDataSource {
+  @override
+  Future<List<AffirmationModel>> fetchAffirmations({
+    required String objectiveType,
+    String? mrrTarget,
+    String? name,
+    String? category,
+  }) async {
+    final prenom = name ?? 'toi';
+    final target = mrrTarget ?? '10K€';
+
+    final raw = [
+      // Mindset
+      {'text': '$prenom, tu es capable de construire quelque chose de grand.', 'category': 'mindset'},
+      {'text': 'Chaque échec est une leçon qui te rapproche du succès.', 'category': 'mindset'},
+      {'text': 'Ta valeur ne dépend pas de tes résultats d\'hier.', 'category': 'mindset'},
+      {'text': 'Les obstacles sont des opportunités déguisées.', 'category': 'mindset'},
+      {'text': 'Tu as tout ce qu\'il faut pour réussir, $prenom.', 'category': 'mindset'},
+      {'text': 'La confiance se construit action par action.', 'category': 'mindset'},
+      {'text': 'Tu n\'as pas besoin de permission pour réussir.', 'category': 'mindset'},
+      {'text': 'L\'inconfort est le prix de la croissance.', 'category': 'mindset'},
+
+      // Action
+      {'text': 'Un pas imparfait vaut mieux qu\'un plan parfait qui ne démarre jamais.', 'category': 'action'},
+      {'text': 'Fais une chose aujourd\'hui que ton futur toi remerciera.', 'category': 'action'},
+      {'text': 'L\'exécution bat l\'intention à chaque fois.', 'category': 'action'},
+      {'text': 'Lance, mesure, améliore. Répète.', 'category': 'action'},
+      {'text': 'La vitesse d\'exécution est ton avantage compétitif.', 'category': 'action'},
+      {'text': 'Fais le travail même quand tu n\'en as pas envie.', 'category': 'action'},
+      {'text': 'Commence petit, pense grand, agis maintenant.', 'category': 'action'},
+      {'text': 'Chaque ligne de code, chaque client, chaque itération compte.', 'category': 'action'},
+
+      // Focus
+      {'text': 'Une chose importante aujourd\'hui vaut mieux que dix choses médiocres.', 'category': 'focus'},
+      {'text': 'Protège ton temps comme tu protèges ton énergie.', 'category': 'focus'},
+      {'text': 'Le focus est un superpouvoir rare — cultive-le.', 'category': 'focus'},
+      {'text': 'Dis non à tout ce qui ne t\'amène pas vers ton objectif.', 'category': 'focus'},
+      {'text': 'La clarté de vision crée la clarté d\'action.', 'category': 'focus'},
+      {'text': 'Élimine le bruit, concentre-toi sur l\'essentiel.', 'category': 'focus'},
+      {'text': 'Fais moins, mais fais-le mieux.', 'category': 'focus'},
+      {'text': 'Ta prochaine session de travail est ton moment le plus important.', 'category': 'focus'},
+
+      // MRR
+      {'text': '$prenom, $target MRR c\'est atteignable — un client à la fois.', 'category': 'mrr'},
+      {'text': 'Chaque nouveau client te rapproche de ta liberté financière.', 'category': 'mrr'},
+      {'text': 'Le MRR récurrent, c\'est ta liberté construite mois après mois.', 'category': 'mrr'},
+      {'text': 'Tu construis quelque chose qui génère de la valeur pendant que tu dors.', 'category': 'mrr'},
+      {'text': 'Ton premier euro récurrent est le plus important — tu l\'as prouvé.', 'category': 'mrr'},
+      {'text': 'La croissance est inévitable quand tu restes consistant.', 'category': 'mrr'},
+      {'text': '$target n\'est pas un rêve, c\'est ton prochain palier.', 'category': 'mrr'},
+      {'text': 'Chaque feature livrée est un argument de plus pour tes futurs clients.', 'category': 'mrr'},
+    ];
+
+    return raw.map((map) => AffirmationModel.fromMap(map)).toList();
+  }
+}
