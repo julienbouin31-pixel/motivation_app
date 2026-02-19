@@ -27,7 +27,7 @@ void main() async {
   // 🧪 DEBUG ONLY — supprimer avant la mise en production
   await db.delete(db.affirmationItems).go();
   await storage.delete(key: 'affirmation_last_fetch_date');
-  print('❌ [DEBUG] BD vidée, last_fetch_date supprimée (onboarding conservé)');
+  print('❌ [DEBUG] BD vidée, last_fetch_date supprimée (onboarding + catégories conservés)');
   // ════════════════════════════════════════════════════════════
 
   // Peuple la DB localement avant runApp → pas de spinner au premier lancement

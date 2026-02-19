@@ -34,6 +34,8 @@ class _AffirmationPageState extends State<AffirmationPage>
   @override
   void initState() {
     super.initState();
+    // Charge le profil pour afficher le bon prénom dans le header
+    context.read<OnboardingCubit>().loadUserProfile();
 
     _exitCtrl = AnimationController(
       vsync: this,

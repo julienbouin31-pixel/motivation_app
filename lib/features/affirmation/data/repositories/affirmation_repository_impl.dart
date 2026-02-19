@@ -111,11 +111,9 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
     List<AffirmationCategory>? categories,
   }) async {
     try {
-      final hasGeneral = categories == null ||
-          categories.isEmpty ||
-          categories.contains(AffirmationCategory.general);
-      final categoryStrs =
-          hasGeneral ? null : categories.map((c) => c.name).toList();
+      final categoryStrs = (categories == null || categories.isEmpty)
+          ? null
+          : categories.map((c) => c.name).toList();
 
       final count =
           await localDataSource.countUnviewed(categories: categoryStrs);

@@ -43,6 +43,7 @@ Future<void> init({
         getNextAffirmation: sl(),
         markAsViewed: sl(),
         toggleFavorite: sl(),
+        storage: sl(),
       ));
 
   // Cubits

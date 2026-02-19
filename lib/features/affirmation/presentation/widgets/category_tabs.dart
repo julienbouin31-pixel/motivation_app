@@ -73,20 +73,12 @@ class CategoryButton extends StatelessWidget {
     required this.onTap,
   });
 
-  static const _icons = {
-    AffirmationCategory.general: Icons.auto_awesome,
-    AffirmationCategory.mindset: Icons.psychology_outlined,
-    AffirmationCategory.action: Icons.rocket_launch_outlined,
-    AffirmationCategory.focus: Icons.center_focus_strong_outlined,
-    AffirmationCategory.mrr: Icons.trending_up,
-  };
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.black,
           borderRadius: BorderRadius.circular(24),
@@ -94,16 +86,7 @@ class CategoryButton extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(_icons[category]!, size: 14, color: Colors.white),
-            const SizedBox(width: 6),
-            Text(
-              category.label,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
+            const Icon(Icons.grid_view_rounded, size: 16, color: Colors.white),
             const SizedBox(width: 4),
             AnimatedRotation(
               turns: isOpen ? 0.5 : 0,

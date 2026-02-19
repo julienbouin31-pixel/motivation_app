@@ -33,5 +33,14 @@
   {"text": "Ton premier euro récurrent est le plus important — tu l'as prouvé.", "category": "mrr"},
   {"text": "La croissance est inévitable quand tu restes consistant.", "category": "mrr"},
   {"text": "{target} n'est pas un rêve, c'est ton prochain palier.", "category": "mrr"},
-  {"text": "Chaque feature livrée est un argument de plus pour tes futurs clients.", "category": "mrr"}
+  {"text": "Chaque feature livrée est un argument de plus pour tes futurs clients.", "category": "mrr"},
+
+  {"text": "{name}, tu es exactement là où tu dois être.", "category": "general"},
+  {"text": "Chaque journée est une nouvelle opportunité de progresser.", "category": "general"},
+  {"text": "Tu as déjà surmonté plus difficile que ça.", "category": "general"},
+  {"text": "Fais confiance au processus, les résultats suivront.", "category": "general"},
+  {"text": "La persévérance distingue ceux qui réussissent des autres.", "category": "general"},
+  {"text": "Tu construis quelque chose de réel, jour après jour.", "category": "general"},
+  {"text": "Tes efforts d'aujourd'hui façonnent ton succès de demain.", "category": "general"},
+  {"text": "Continue, {name} — tu es plus proche que tu ne le crois.", "category": "general"}
 ]

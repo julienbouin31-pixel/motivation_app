@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 import 'package:motivation_app/features/affirmation/domain/usecases/get_next_affirmation_usecase.dart';
@@ -6,14 +7,18 @@ import 'package:motivation_app/features/affirmation/domain/usecases/mark_as_view
 import 'package:motivation_app/features/affirmation/domain/usecases/toggle_favorite_usecase.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_state.dart';
 
+const _kSelectedCategoriesKey = 'affirmation_selected_categories';
+
 class AffirmationCubit extends Cubit<AffirmationState> {
   final GetNextAffirmationUseCase getNextAffirmation;
   final MarkAsViewedUseCase markAsViewed;
   final ToggleFavoriteUseCase toggleFavorite;
+  final FlutterSecureStorage _storage;
 
-  // Multi-sélection : [general] par défaut = toutes les catégories
-  List<AffirmationCategory> _selectedCategories = [AffirmationCategory.general];
+  // [] = toutes les catégories (pas de filtre)
+  List<AffirmationCategory> _selectedCategories = [];
   List<AffirmationCategory> get selectedCategories => _selectedCategories;
+  bool _categoriesRestored = false;
 
   // Historique des cartes vues (swipe haut) → permet le retour arrière (swipe bas)
   final List<Affirmation> _history = [];
@@ -23,6 +28,7 @@ class AffirmationCubit extends Cubit<AffirmationState> {
   final List<Affirmation> _forward = [];
 
   // Catégorie d'affichage pour le bouton (unique représentant de la sélection)
+  // [] = pas de filtre → affiche "Général" comme label par défaut
   AffirmationCategory get displayCategory {
     if (_selectedCategories.length == 1) return _selectedCategories.first;
     return AffirmationCategory.general;
@@ -32,9 +38,26 @@ class AffirmationCubit extends Cubit<AffirmationState> {
     required this.getNextAffirmation,
     required this.markAsViewed,
     required this.toggleFavorite,
-  }) : super(const AffirmationState.initial());
+    required FlutterSecureStorage storage,
+  })  : _storage = storage,
+        super(const AffirmationState.initial());
 
   Future<void> loadNext() async {
+    if (!_categoriesRestored) {
+      _categoriesRestored = true;
+      try {
+        final saved = await _storage.read(key: _kSelectedCategoriesKey);
+        if (saved != null && saved.isNotEmpty) {
+          _selectedCategories = saved
+              .split(',')
+              .map((s) => AffirmationCategory.values
+                  .where((c) => c.name == s)
+                  .firstOrNull)
+              .whereType<AffirmationCategory>()
+              .toList();
+        }
+      } catch (_) {}
+    }
     emit(const AffirmationState.loading());
     final result = await getNextAffirmation(categories: _selectedCategories);
     result.fold(
@@ -104,25 +127,42 @@ class AffirmationCubit extends Cubit<AffirmationState> {
     ));
   }
 
+  /// Applique directement une liste de catégories (depuis la page catégories).
+  Future<void> setCategories(List<AffirmationCategory> categories) async {
+    _history.clear();
+    _forward.clear();
+    _selectedCategories = categories;
+    try {
+      await _storage.write(
+        key: _kSelectedCategoriesKey,
+        value: _selectedCategories.map((c) => c.name).join(','),
+      );
+    } catch (_) {}
+    await loadNext();
+  }
+
   /// Coche / décoche une catégorie.
-  /// - Sélectionner "général" → efface tout le reste
-  /// - Sélectionner une catégorie spécifique → retire "général"
-  /// - Décocher la dernière → revient à "général"
+  /// - [] = toutes les catégories (pas de filtre)
+  /// - Décocher la dernière → revient à [] (toutes)
   Future<void> toggleCategory(AffirmationCategory category) async {
     _history.clear();
-    _forward.clear(); // L'historique ne fait plus sens si on change de catégorie
-    if (category == AffirmationCategory.general) {
-      _selectedCategories = [AffirmationCategory.general];
-    } else if (_selectedCategories.contains(category)) {
-      final next = _selectedCategories.where((c) => c != category).toList();
+    _forward.clear();
+    if (_selectedCategories.contains(category)) {
       _selectedCategories =
-          next.isEmpty ? [AffirmationCategory.general] : next;
+          _selectedCategories.where((c) => c != category).toList();
     } else {
-      _selectedCategories = [
-        ..._selectedCategories.where((c) => c != AffirmationCategory.general),
-        category,
-      ];
+      final next = [..._selectedCategories, category];
+      // Toutes sélectionnées = équivalent à aucun filtre
+      _selectedCategories = next.length == AffirmationCategory.values.length
+          ? []
+          : next;
     }
+    try {
+      await _storage.write(
+        key: _kSelectedCategoriesKey,
+        value: _selectedCategories.map((c) => c.name).join(','),
+      );
+    } catch (_) {}
     await loadNext();
   }
 }

@@ -29,66 +29,15 @@ class _CategoryPageState extends State<CategoryPage> {
   }
 
   void _toggle(AffirmationCategory category) {
-    setState(() {
-      if (category == AffirmationCategory.general) {
-        _selected = [AffirmationCategory.general];
-      } else if (_selected.contains(category)) {
-        final next = _selected.where((c) => c != category).toList();
-        _selected = next.isEmpty ? [AffirmationCategory.general] : next;
-      } else {
-        _selected = [
-          ..._selected.where((c) => c != AffirmationCategory.general),
-          category,
-        ];
-      }
-    });
-  }
-
-  void _apply() {
-    final cubit = context.read<AffirmationCubit>();
-    // Applique chaque changement par rapport à la sélection actuelle
-    final current = List.of(cubit.selectedCategories);
-    final toAdd = _selected.where((c) => !current.contains(c)).toList();
-    final toRemove = current.where((c) => !_selected.contains(c)).toList();
-
-    if (toAdd.isEmpty && toRemove.isEmpty) {
-      context.pop();
-      return;
+    List<AffirmationCategory> next;
+    if (_selected.contains(category)) {
+      next = _selected.where((c) => c != category).toList();
+    } else {
+      final candidate = [..._selected, category];
+      next = candidate.length == AffirmationCategory.values.length ? [] : candidate;
     }
-
-    // On repart de zéro : on remplace la sélection via toggleCategory en chaîne
-    // Plus simple : on reset directement la sélection du cubit
-    _applySelection(cubit);
-  }
-
-  Future<void> _applySelection(AffirmationCubit cubit) async {
-    // Simule les toggles nécessaires pour arriver à _selected
-    // Approche directe : reset + apply
-    final current = List.of(cubit.selectedCategories);
-
-    // Si identique, juste fermer
-    if (_listsEqual(current, _selected)) {
-      if (mounted) context.pop();
-      return;
-    }
-
-    // Toggle chaque catégorie nécessaire pour atteindre _selected
-    // Strategy : réinitialiser via general puis ajouter les spécifiques
-    if (!_listsEqual(cubit.selectedCategories, [AffirmationCategory.general])) {
-      await cubit.toggleCategory(AffirmationCategory.general);
-    }
-    for (final cat in _selected) {
-      if (cat != AffirmationCategory.general) {
-        await cubit.toggleCategory(cat);
-      }
-    }
-
-    if (mounted) context.pop();
-  }
-
-  bool _listsEqual(List<AffirmationCategory> a, List<AffirmationCategory> b) {
-    if (a.length != b.length) return false;
-    return a.every((e) => b.contains(e));
+    setState(() => _selected = next);
+    context.read<AffirmationCubit>().setCategories(next);
   }
 
   @override
@@ -101,26 +50,9 @@ class _CategoryPageState extends State<CategoryPage> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(4, 8, 16, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon:
-                        const Icon(Icons.close, color: Colors.black, size: 26),
-                    onPressed: () => context.pop(),
-                  ),
-                  TextButton(
-                    onPressed: _apply,
-                    child: const Text(
-                      'Appliquer',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
-                ],
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.black, size: 26),
+                onPressed: () => context.pop(),
               ),
             ),
             const Padding(
