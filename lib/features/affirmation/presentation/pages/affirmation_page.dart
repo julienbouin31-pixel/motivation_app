@@ -28,6 +28,7 @@ class _AffirmationPageState extends State<AffirmationPage>
   bool _goingBack = false;   // true = swipe bas (retour), false = swipe haut (suivant)
   bool _enterFromTop = false; // direction de l'animation d'entrée
   int? _exitingId;
+  bool _pendingGoBack = false; // swipe bas reçu pendant l'animation de sortie
 
   @override
   void initState() {
@@ -83,8 +84,14 @@ class _AffirmationPageState extends State<AffirmationPage>
   }
 
   void _onDragEnd(DragEndDetails d, int id) {
-    if (_isExiting) return;
     final velocity = d.primaryVelocity ?? 0;
+    if (_isExiting) {
+      // Swipe bas pendant l'animation de sortie → mémoriser l'intention de retour
+      if (velocity > 400 && context.read<AffirmationCubit>().canGoBack) {
+        _pendingGoBack = true;
+      }
+      return;
+    }
     final cubit = context.read<AffirmationCubit>();
 
     if (_dragY < -60 || velocity < -500) {
@@ -111,14 +118,26 @@ class _AffirmationPageState extends State<AffirmationPage>
   // Appelé par le BlocConsumer quand une nouvelle affirmation (id différent) arrive
   void _resetForNewCard() {
     final goingBack = _goingBack;
+    final pendingBack = _pendingGoBack;
     setState(() {
       _dragY = 0;
       _isExiting = false;
       _goingBack = false;
+      _pendingGoBack = false;
       _enterFromTop = goingBack; // Retour = entrée par le haut
     });
     _exitCtrl.reset();
-    _enterCtrl.forward(from: 0);
+
+    if (pendingBack && context.read<AffirmationCubit>().canGoBack) {
+      // L'utilisateur a swipé bas pendant l'animation de sortie → exécuter le retour maintenant
+      setState(() {
+        _isExiting = true;
+        _goingBack = true;
+      });
+      _exitCtrl.forward();
+    } else {
+      _enterCtrl.forward(from: 0);
+    }
   }
 
   @override
@@ -138,7 +157,10 @@ class _AffirmationPageState extends State<AffirmationPage>
           // Pas sur un simple toggle de isFavorite
           listenWhen: (prev, next) {
             if (prev is AffirmationLoaded && next is AffirmationLoaded) {
-              return prev.affirmation.id != next.affirmation.id;
+              if (prev.affirmation.id != next.affirmation.id) return true;
+              // Même id : déclencher sauf si c'est juste un toggle favori
+              // (ex : cycle épuisé → resetViewed → RANDOM() retourne la même carte)
+              return prev.affirmation.isFavorite == next.affirmation.isFavorite;
             }
             return next is AffirmationLoaded;
           },

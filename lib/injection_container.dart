@@ -63,6 +63,7 @@ Future<void> init({
       localDataSource: sl(),
       remoteDataSource: sl(),
       networkInfo: sl(),
+      secureStorage: sl(),
       objectiveType: objectiveType,
       mrrTarget: mrrTarget,
       userName: userName,

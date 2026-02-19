@@ -1,8 +1,11 @@
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
 import 'package:motivation_app/core/database/app_database.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
-import 'package:motivation_app/features/affirmation/data/datasources/affirmation_remote_data_source.dart';
+import 'package:motivation_app/features/affirmation/data/models/affirmation_model.dart';
 
-/// Peuple la DB au premier lancement, et remet à zéro si des doublons sont détectés.
+/// Peuple la DB au premier lancement depuis le JSON local.
 /// Appelé dans main.dart avant runApp() — complètement hors ligne.
 Future<void> seedAffirmationsIfEmpty(
   AppDatabase db, {
@@ -10,23 +13,22 @@ Future<void> seedAffirmationsIfEmpty(
   String? mrrTarget,
 }) async {
   final local = AffirmationLocalDataSourceImpl(db: db);
-  final remote = AffirmationRemoteDataSourceImpl();
-
-  final affirmations = await remote.fetchAffirmations(
-    objectiveType: 'mrr',
-    name: name,
-    mrrTarget: mrrTarget,
-  );
-  final expectedCount = affirmations.length; // 32
   final total = await local.totalCount();
+  if (total > 0) return;
 
-  if (total == 0) {
-    // Premier lancement : peuple la DB
-    await local.saveAll(affirmations);
-  } else if (total > expectedCount) {
-    // Doublons détectés → remise à zéro propre
-    await local.clearAll();
-    await local.saveAll(affirmations);
-  }
-  // total == expectedCount : DB propre, rien à faire
+  final prenom = name ?? 'toi';
+  final target = mrrTarget ?? '10K€';
+
+  final jsonStr = await rootBundle.loadString('assets/data/affirmations.json');
+  final List<dynamic> raw = json.decode(jsonStr) as List<dynamic>;
+
+  final affirmations = raw.map((e) {
+    final map = e as Map<String, dynamic>;
+    final text = (map['text'] as String)
+        .replaceAll('{name}', prenom)
+        .replaceAll('{target}', target);
+    return AffirmationModel.fromMap({'text': text, 'category': map['category']});
+  }).toList();
+
+  await local.saveAll(affirmations);
 }

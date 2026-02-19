@@ -12,6 +12,7 @@ abstract class AffirmationLocalDataSource {
   Future<int> countUnviewed({List<String>? categories});
   Future<int> totalCount({List<String>? categories});
   Future<void> resetViewed({List<String>? categories});
+  Future<Set<String>> getAllContents();
 }
 
 class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
@@ -103,6 +104,12 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
     }
     final results = await query.get();
     return results.length;
+  }
+
+  @override
+  Future<Set<String>> getAllContents() async {
+    final rows = await db.select(db.affirmationItems).get();
+    return rows.map((r) => r.content).toSet();
   }
 
   @override

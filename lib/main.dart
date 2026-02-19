@@ -4,7 +4,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/database/app_database.dart';
+import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_seed.dart';
+import 'package:motivation_app/features/affirmation/domain/repositories/affirmation_repository.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart';
 import 'package:motivation_app/features/home/presentation/bloc/home_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
@@ -20,6 +22,13 @@ void main() async {
   final mrrTarget = await storage.read(key: 'onboarding_mrr_target');
   final userName = await storage.read(key: 'onboarding_user_name');
 
+  // ════════════════════════════════════════════════════════════
+  // 🧪 DEBUG ONLY — supprimer avant la mise en production
+  await db.delete(db.affirmationItems).go();
+  await storage.deleteAll();
+  print('❌ [DEBUG] BD et Secure Storage vidés');
+  // ════════════════════════════════════════════════════════════
+
   // Peuple la DB localement avant runApp → pas de spinner au premier lancement
   await seedAffirmationsIfEmpty(db, name: userName, mrrTarget: mrrTarget);
 
@@ -29,6 +38,24 @@ void main() async {
     mrrTarget: mrrTarget,
     userName: userName,
   );
+
+  // ════════════════════════════════════════════════════════════
+  // 🧪 DEBUG — état après seed
+  final local = di.sl<AffirmationLocalDataSource>();
+  final countAfterSeed = await local.totalCount();
+  final dateAfterSeed = await storage.read(key: 'affirmation_last_fetch_date');
+  print('❌ [DEBUG] Après seed    → $countAfterSeed affs en BD | last_fetch: ${dateAfterSeed ?? "aucune"}');
+  // ════════════════════════════════════════════════════════════
+
+  // Refresh hebdomadaire — awaité ici pour voir le résultat en debug
+  await di.sl<AffirmationRepository>().weeklyRefreshInBackground();
+
+  // ════════════════════════════════════════════════════════════
+  // 🧪 DEBUG — état après refresh
+  final countAfterRefresh = await local.totalCount();
+  final dateAfterRefresh = await storage.read(key: 'affirmation_last_fetch_date');
+  print('❌ [DEBUG] Après refresh → $countAfterRefresh affs en BD | last_fetch: ${dateAfterRefresh ?? "aucune"}');
+  // ════════════════════════════════════════════════════════════
 
   runApp(const MyApp());
 }

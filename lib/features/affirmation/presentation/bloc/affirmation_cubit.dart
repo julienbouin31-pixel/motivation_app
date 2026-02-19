@@ -19,6 +19,9 @@ class AffirmationCubit extends Cubit<AffirmationState> {
   final List<Affirmation> _history = [];
   bool get canGoBack => _history.isNotEmpty;
 
+  // Pile avant : cartes qu'on a quittées via goBack(), pour pouvoir les retrouver
+  final List<Affirmation> _forward = [];
+
   // Catégorie d'affichage pour le bouton (unique représentant de la sélection)
   AffirmationCategory get displayCategory {
     if (_selectedCategories.length == 1) return _selectedCategories.first;
@@ -44,13 +47,23 @@ class AffirmationCubit extends Cubit<AffirmationState> {
     );
   }
 
-  /// Swipe haut : marque comme vue, pousse dans l'historique, charge la suivante.
+  /// Swipe haut : pousse dans l'historique, restaure depuis _forward si possible,
+  /// sinon marque comme vue et charge la suivante.
   Future<void> markCurrentAsViewed(int id) async {
-    // Pousse la carte actuelle dans l'historique avant de charger la suivante
     final currentState = state;
     if (currentState is AffirmationLoaded) {
       _history.add(currentState.affirmation);
       if (_history.length > 20) _history.removeAt(0);
+    }
+
+    if (_forward.isNotEmpty) {
+      // L'utilisateur était revenu en arrière : on restitue la carte suivante
+      final next = _forward.removeLast();
+      emit(AffirmationState.loaded(
+        affirmation: next,
+        selectedCategory: displayCategory,
+      ));
+      return;
     }
 
     await markAsViewed(id);
@@ -68,6 +81,10 @@ class AffirmationCubit extends Cubit<AffirmationState> {
   /// Swipe bas : revient à l'affirmation précédente depuis l'historique.
   void goBack() {
     if (_history.isEmpty) return;
+    final currentState = state;
+    if (currentState is AffirmationLoaded) {
+      _forward.add(currentState.affirmation);
+    }
     final prev = _history.removeLast();
     emit(AffirmationState.loaded(
       affirmation: prev,
@@ -92,7 +109,8 @@ class AffirmationCubit extends Cubit<AffirmationState> {
   /// - Sélectionner une catégorie spécifique → retire "général"
   /// - Décocher la dernière → revient à "général"
   Future<void> toggleCategory(AffirmationCategory category) async {
-    _history.clear(); // L'historique ne fait plus sens si on change de catégorie
+    _history.clear();
+    _forward.clear(); // L'historique ne fait plus sens si on change de catégorie
     if (category == AffirmationCategory.general) {
       _selectedCategories = [AffirmationCategory.general];
     } else if (_selectedCategories.contains(category)) {
