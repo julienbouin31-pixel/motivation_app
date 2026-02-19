@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart';
@@ -175,6 +176,18 @@ class _AffirmationPageState extends State<AffirmationPage>
             return Column(
               children: [
                 AffirmationHeader(userName: userName),
+                // 🧪 DEBUG — supprimer avant la mise en production
+                TextButton(
+                  onPressed: () async {
+                    const storage = FlutterSecureStorage();
+                    await storage.delete(key: 'onboarding_user_name');
+                    await storage.delete(key: 'onboarding_objective_type');
+                    await storage.delete(key: 'onboarding_mrr_target');
+                    print('❌ [DEBUG] Onboarding supprimé du secure storage');
+                    if (context.mounted) context.go(AppRouter.home);
+                  },
+                  child: const Text('❌ Reset onboarding', style: TextStyle(color: Colors.red, fontSize: 12)),
+                ),
                 const SizedBox(height: 8),
                 Expanded(
                   child: switch (state) {

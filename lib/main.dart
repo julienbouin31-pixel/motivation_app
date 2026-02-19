@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/database/app_database.dart';
@@ -25,8 +26,8 @@ void main() async {
   // ════════════════════════════════════════════════════════════
   // 🧪 DEBUG ONLY — supprimer avant la mise en production
   await db.delete(db.affirmationItems).go();
-  await storage.deleteAll();
-  print('❌ [DEBUG] BD et Secure Storage vidés');
+  await storage.delete(key: 'affirmation_last_fetch_date');
+  print('❌ [DEBUG] BD vidée, last_fetch_date supprimée (onboarding conservé)');
   // ════════════════════════════════════════════════════════════
 
   // Peuple la DB localement avant runApp → pas de spinner au premier lancement
@@ -57,11 +58,16 @@ void main() async {
   print('❌ [DEBUG] Après refresh → $countAfterRefresh affs en BD | last_fetch: ${dateAfterRefresh ?? "aucune"}');
   // ════════════════════════════════════════════════════════════
 
-  runApp(const MyApp());
+  final onboardingDone = userName != null;
+  final router = createAppRouter(onboardingDone: onboardingDone);
+
+  runApp(MyApp(router: router));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final GoRouter router;
+
+  const MyApp({super.key, required this.router});
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +83,7 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.system,
-        routerConfig: appRouter,
+        routerConfig: router,
       ),
     );
   }

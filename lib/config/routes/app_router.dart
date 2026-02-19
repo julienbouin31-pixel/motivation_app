@@ -29,9 +29,9 @@ class AppRouter {
   static const String revenue = '/revenue';
 }
 
-final GoRouter appRouter = GoRouter(
+GoRouter createAppRouter({required bool onboardingDone}) => GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: AppRouter.home,
+  initialLocation: onboardingDone ? AppRouter.affirmation : AppRouter.home,
   routes: [
     GoRoute(
       path: AppRouter.home,
