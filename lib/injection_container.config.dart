@@ -36,18 +36,6 @@ import 'package:motivation_app/features/affirmation/presentation/bloc/affirmatio
     as _i1059;
 import 'package:motivation_app/features/affirmation/presentation/bloc/favorites_cubit.dart'
     as _i841;
-import 'package:motivation_app/features/home/data/datasources/home_local_data_source.dart'
-    as _i224;
-import 'package:motivation_app/features/home/data/datasources/home_remote_data_source.dart'
-    as _i924;
-import 'package:motivation_app/features/home/data/repositories/home_repository_impl.dart'
-    as _i1067;
-import 'package:motivation_app/features/home/domain/repositories/home_repository.dart'
-    as _i96;
-import 'package:motivation_app/features/home/domain/usecases/get_home_data.dart'
-    as _i500;
-import 'package:motivation_app/features/home/presentation/bloc/home_cubit.dart'
-    as _i1002;
 import 'package:motivation_app/features/onboarding/data/datasources/onboarding_local_data_source.dart'
     as _i576;
 import 'package:motivation_app/features/onboarding/data/models/user_profile_model.dart'
@@ -77,14 +65,8 @@ extension GetItInjectableX on _i174.GetIt {
       () => appModule.appDatabase,
       preResolve: true,
     );
-    gh.lazySingleton<_i224.HomeLocalDataSource>(
-      () => _i224.HomeLocalDataSourceImpl(),
-    );
     gh.lazySingleton<_i867.NetworkInfo>(
       () => _i867.NetworkInfoImpl(gh<_i895.Connectivity>()),
-    );
-    gh.lazySingleton<_i924.HomeRemoteDataSource>(
-      () => _i924.HomeRemoteDataSourceImpl(),
     );
     gh.lazySingleton<_i631.AffirmationRemoteDataSource>(
       () => _i631.AffirmationRemoteDataSourceImpl(),
@@ -105,13 +87,6 @@ extension GetItInjectableX on _i174.GetIt {
     await gh.singletonAsync<_i677.UserProfileModel>(
       () => appModule.userProfile(gh<_i576.OnboardingLocalDataSource>()),
       preResolve: true,
-    );
-    gh.lazySingleton<_i96.HomeRepository>(
-      () => _i1067.HomeRepositoryImpl(
-        remoteDataSource: gh<_i924.HomeRemoteDataSource>(),
-        localDataSource: gh<_i224.HomeLocalDataSource>(),
-        networkInfo: gh<_i867.NetworkInfo>(),
-      ),
     );
     gh.lazySingleton<_i178.GetUserProfileUseCase>(
       () => _i178.GetUserProfileUseCase(gh<_i829.OnboardingRepository>()),
@@ -146,17 +121,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i144.ToggleFavoriteUseCase>(
       () => _i144.ToggleFavoriteUseCase(gh<_i555.AffirmationRepository>()),
     );
-    gh.lazySingleton<_i500.GetHomeDataUseCase>(
-      () => _i500.GetHomeDataUseCase(gh<_i96.HomeRepository>()),
-    );
     gh.factory<_i841.FavoritesCubit>(
       () => _i841.FavoritesCubit(
         getFavorites: gh<_i541.GetFavoritesUseCase>(),
         toggleFavorite: gh<_i144.ToggleFavoriteUseCase>(),
       ),
-    );
-    gh.factory<_i1002.HomeCubit>(
-      () => _i1002.HomeCubit(getHomeData: gh<_i500.GetHomeDataUseCase>()),
     );
     gh.factory<_i1059.AffirmationCubit>(
       () => _i1059.AffirmationCubit(

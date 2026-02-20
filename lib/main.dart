@@ -9,7 +9,6 @@ import 'package:motivation_app/features/affirmation/data/datasources/affirmation
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_seed.dart';
 import 'package:motivation_app/features/affirmation/domain/repositories/affirmation_repository.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart';
-import 'package:motivation_app/features/home/presentation/bloc/home_cubit.dart';
 import 'package:motivation_app/features/onboarding/data/models/user_profile_model.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/injection_container.dart' as di;
@@ -70,7 +69,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => di.sl<HomeCubit>()),
         BlocProvider(create: (_) => di.sl<OnboardingCubit>()),
         BlocProvider(create: (_) => di.sl<AffirmationCubit>()..loadNext()),
       ],
