@@ -33,6 +33,7 @@ dependencies:
   # Code generation (runtime)
   freezed_annotation: ^3.1.0
   json_annotation: ^4.8.1
+  injectable: ^2.5.0
 
 dev_dependencies:
   flutter_test:
@@ -42,6 +43,7 @@ dev_dependencies:
   drift_dev: ^2.31.0
   freezed: ^3.2.5
   json_serializable: ^6.7.1
+  injectable_generator: ^2.7.0
 
   flutter_lints: ^6.0.0
 

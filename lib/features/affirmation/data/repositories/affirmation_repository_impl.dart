@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:injectable/injectable.dart';
 import 'package:motivation_app/core/errors/failures.dart';
 import 'package:motivation_app/core/network/network_info.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
@@ -7,26 +8,24 @@ import 'package:motivation_app/features/affirmation/data/datasources/affirmation
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 import 'package:motivation_app/features/affirmation/domain/repositories/affirmation_repository.dart';
+import 'package:motivation_app/features/onboarding/data/models/user_profile_model.dart';
 
 const _kLastFetchKey = 'affirmation_last_fetch_date';
 
+@LazySingleton(as: AffirmationRepository)
 class AffirmationRepositoryImpl implements AffirmationRepository {
   final AffirmationLocalDataSource localDataSource;
   final AffirmationRemoteDataSource remoteDataSource;
   final NetworkInfo networkInfo;
   final FlutterSecureStorage secureStorage;
-  final String objectiveType;
-  final String? mrrTarget;
-  final String? userName;
+  final UserProfileModel userProfile;
 
   AffirmationRepositoryImpl({
     required this.localDataSource,
     required this.remoteDataSource,
     required this.networkInfo,
     required this.secureStorage,
-    required this.objectiveType,
-    this.mrrTarget,
-    this.userName,
+    required this.userProfile,
   });
 
   // ─── Gestion de la date du dernier fetch ────────────────────────────────────
@@ -59,9 +58,9 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
   Future<bool> _fetchAndSaveNew() async {
     try {
       final fresh = await remoteDataSource.fetchAffirmations(
-        objectiveType: objectiveType,
-        mrrTarget: mrrTarget,
-        name: userName,
+        objectiveType: userProfile.objectiveType ?? 'mrr',
+        mrrTarget: userProfile.mrrTarget,
+        name: userProfile.name.isNotEmpty ? userProfile.name : null,
       );
       if (fresh.isEmpty) {
         print('[WeeklyRefresh] Remote retourne 0 affirmations.');

@@ -1,7 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'package:motivation_app/features/home/domain/usecases/get_home_data.dart';
 import 'package:motivation_app/features/home/presentation/bloc/home_state.dart';
 
+@injectable
 class HomeCubit extends Cubit<HomeState> {
   final GetHomeDataUseCase getHomeData;
 

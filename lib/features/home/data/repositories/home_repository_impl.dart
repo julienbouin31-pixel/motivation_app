@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import 'package:motivation_app/core/errors/exceptions.dart';
 import 'package:motivation_app/core/errors/failures.dart';
 import 'package:motivation_app/core/network/network_info.dart';
@@ -7,6 +8,7 @@ import 'package:motivation_app/features/home/data/datasources/home_remote_data_s
 import 'package:motivation_app/features/home/domain/entities/home_entity.dart';
 import 'package:motivation_app/features/home/domain/repositories/home_repository.dart';
 
+@LazySingleton(as: HomeRepository)
 class HomeRepositoryImpl implements HomeRepository {
   final HomeRemoteDataSource remoteDataSource;
   final HomeLocalDataSource localDataSource;

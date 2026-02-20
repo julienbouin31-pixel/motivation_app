@@ -1,3 +1,4 @@
+import 'package:injectable/injectable.dart';
 import 'package:motivation_app/features/affirmation/data/models/affirmation_model.dart';
 
 abstract class AffirmationRemoteDataSource {
@@ -13,6 +14,7 @@ abstract class AffirmationRemoteDataSource {
 }
 
 /// Mock — retourne 30 nouvelles affirmations fictives pour tester le refresh.
+@LazySingleton(as: AffirmationRemoteDataSource)
 class AffirmationRemoteDataSourceImpl implements AffirmationRemoteDataSource {
   @override
   Future<List<AffirmationModel>> fetchAffirmations({

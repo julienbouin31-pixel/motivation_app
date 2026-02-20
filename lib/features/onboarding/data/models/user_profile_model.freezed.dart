@@ -11,6 +11,7 @@ part of 'user_profile_model.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
+
 /// @nodoc
 mixin _$UserProfileModel {
 
@@ -21,6 +22,8 @@ mixin _$UserProfileModel {
 @pragma('vm:prefer-inline')
 $UserProfileModelCopyWith<UserProfileModel> get copyWith => _$UserProfileModelCopyWithImpl<UserProfileModel>(this as UserProfileModel, _$identity);
 
+  /// Serializes this UserProfileModel to a JSON map.
+  Map<String, dynamic> toJson();
 
 
 @override
@@ -28,7 +31,7 @@ bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is UserProfileModel&&(identical(other.name, name) || other.name == name)&&(identical(other.objectiveType, objectiveType) || other.objectiveType == objectiveType)&&(identical(other.stripeApiKey, stripeApiKey) || other.stripeApiKey == stripeApiKey)&&(identical(other.mrrTarget, mrrTarget) || other.mrrTarget == mrrTarget));
 }
 
-
+@JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode => Object.hash(runtimeType,name,objectiveType,stripeApiKey,mrrTarget);
 
@@ -206,13 +209,13 @@ return $default(_that.name,_that.objectiveType,_that.stripeApiKey,_that.mrrTarge
 }
 
 /// @nodoc
-
+@JsonSerializable()
 
 class _UserProfileModel extends UserProfileModel {
-  const _UserProfileModel({required this.name, this.objectiveType, this.stripeApiKey, this.mrrTarget}): super._();
-  
+  const _UserProfileModel({this.name = '', this.objectiveType, this.stripeApiKey, this.mrrTarget}): super._();
+  factory _UserProfileModel.fromJson(Map<String, dynamic> json) => _$UserProfileModelFromJson(json);
 
-@override final  String name;
+@override@JsonKey() final  String name;
 @override final  String? objectiveType;
 @override final  String? stripeApiKey;
 @override final  String? mrrTarget;
@@ -223,14 +226,17 @@ class _UserProfileModel extends UserProfileModel {
 @pragma('vm:prefer-inline')
 _$UserProfileModelCopyWith<_UserProfileModel> get copyWith => __$UserProfileModelCopyWithImpl<_UserProfileModel>(this, _$identity);
 
-
+@override
+Map<String, dynamic> toJson() {
+  return _$UserProfileModelToJson(this, );
+}
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserProfileModel&&(identical(other.name, name) || other.name == name)&&(identical(other.objectiveType, objectiveType) || other.objectiveType == objectiveType)&&(identical(other.stripeApiKey, stripeApiKey) || other.stripeApiKey == stripeApiKey)&&(identical(other.mrrTarget, mrrTarget) || other.mrrTarget == mrrTarget));
 }
 
-
+@JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode => Object.hash(runtimeType,name,objectiveType,stripeApiKey,mrrTarget);
 

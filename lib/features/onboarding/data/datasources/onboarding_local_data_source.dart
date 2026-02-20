@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:injectable/injectable.dart';
 import 'package:motivation_app/features/onboarding/data/models/user_profile_model.dart';
 
 abstract class OnboardingLocalDataSource {
@@ -9,47 +12,56 @@ abstract class OnboardingLocalDataSource {
   Future<void> saveMrrTarget(String target);
 }
 
+@LazySingleton(as: OnboardingLocalDataSource)
 class OnboardingLocalDataSourceImpl implements OnboardingLocalDataSource {
   final FlutterSecureStorage storage;
 
   OnboardingLocalDataSourceImpl({required this.storage});
 
-  static const _nameKey = 'onboarding_user_name';
-  static const _objectiveKey = 'onboarding_objective_type';
-  static const _stripeKey = 'onboarding_stripe_key';
-  static const _mrrTargetKey = 'onboarding_mrr_target';
+  static const _profileKey = 'onboarding_profile';
 
-  @override
-  Future<UserProfileModel> getUserProfile() async {
-    final name = await storage.read(key: _nameKey);
-    final objectiveType = await storage.read(key: _objectiveKey);
-    final stripeApiKey = await storage.read(key: _stripeKey);
-    final mrrTarget = await storage.read(key: _mrrTargetKey);
-    return UserProfileModel(
-      name: name ?? '',
-      objectiveType: objectiveType,
-      stripeApiKey: stripeApiKey,
-      mrrTarget: mrrTarget,
+  Future<UserProfileModel> _readProfile() async {
+    final raw = await storage.read(key: _profileKey);
+    if (raw == null) return const UserProfileModel();
+    try {
+      return UserProfileModel.fromJson(
+          json.decode(raw) as Map<String, dynamic>);
+    } catch (_) {
+      return const UserProfileModel();
+    }
+  }
+
+  Future<void> _writeProfile(UserProfileModel profile) async {
+    await storage.write(
+      key: _profileKey,
+      value: json.encode(profile.toJson()),
     );
   }
 
   @override
+  Future<UserProfileModel> getUserProfile() => _readProfile();
+
+  @override
   Future<void> saveUserName(String name) async {
-    await storage.write(key: _nameKey, value: name);
+    final profile = await _readProfile();
+    await _writeProfile(profile.copyWith(name: name));
   }
 
   @override
   Future<void> saveObjectiveType(String objectiveType) async {
-    await storage.write(key: _objectiveKey, value: objectiveType);
+    final profile = await _readProfile();
+    await _writeProfile(profile.copyWith(objectiveType: objectiveType));
   }
 
   @override
   Future<void> saveStripeApiKey(String key) async {
-    await storage.write(key: _stripeKey, value: key);
+    final profile = await _readProfile();
+    await _writeProfile(profile.copyWith(stripeApiKey: key));
   }
 
   @override
   Future<void> saveMrrTarget(String target) async {
-    await storage.write(key: _mrrTargetKey, value: target);
+    final profile = await _readProfile();
+    await _writeProfile(profile.copyWith(mrrTarget: target));
   }
 }

@@ -1,9 +1,11 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import 'package:motivation_app/core/errors/failures.dart';
 import 'package:motivation_app/features/onboarding/data/datasources/onboarding_local_data_source.dart';
 import 'package:motivation_app/features/onboarding/domain/entities/user_profile.dart';
 import 'package:motivation_app/features/onboarding/domain/repositories/onboarding_repository.dart';
 
+@LazySingleton(as: OnboardingRepository)
 class OnboardingRepositoryImpl implements OnboardingRepository {
   final OnboardingLocalDataSource localDataSource;
 

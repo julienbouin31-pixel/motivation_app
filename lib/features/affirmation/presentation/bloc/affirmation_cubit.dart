@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:injectable/injectable.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 import 'package:motivation_app/features/affirmation/domain/usecases/get_next_affirmation_usecase.dart';
@@ -9,6 +10,7 @@ import 'package:motivation_app/features/affirmation/presentation/bloc/affirmatio
 
 const _kSelectedCategoriesKey = 'affirmation_selected_categories';
 
+@injectable
 class AffirmationCubit extends Cubit<AffirmationState> {
   final GetNextAffirmationUseCase getNextAffirmation;
   final MarkAsViewedUseCase markAsViewed;

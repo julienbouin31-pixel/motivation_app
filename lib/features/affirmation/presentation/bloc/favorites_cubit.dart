@@ -1,8 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'package:motivation_app/features/affirmation/domain/usecases/get_favorites_usecase.dart';
 import 'package:motivation_app/features/affirmation/domain/usecases/toggle_favorite_usecase.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/favorites_state.dart';
 
+@injectable
 class FavoritesCubit extends Cubit<FavoritesState> {
   final GetFavoritesUseCase getFavorites;
   final ToggleFavoriteUseCase toggleFavorite;

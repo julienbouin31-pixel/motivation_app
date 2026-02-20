@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:injectable/injectable.dart';
 import 'package:motivation_app/core/database/app_database.dart';
 import 'package:motivation_app/features/affirmation/data/models/affirmation_model.dart';
 
@@ -15,6 +16,7 @@ abstract class AffirmationLocalDataSource {
   Future<Set<String>> getAllContents();
 }
 
+@LazySingleton(as: AffirmationLocalDataSource)
 class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
   final AppDatabase db;
 

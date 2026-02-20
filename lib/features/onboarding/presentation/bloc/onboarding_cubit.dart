@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'package:motivation_app/features/onboarding/domain/entities/user_profile.dart';
 import 'package:motivation_app/features/onboarding/domain/usecases/get_user_profile.dart';
 import 'package:motivation_app/features/onboarding/domain/usecases/save_mrr_target.dart';
@@ -7,6 +8,7 @@ import 'package:motivation_app/features/onboarding/domain/usecases/save_stripe_a
 import 'package:motivation_app/features/onboarding/domain/usecases/save_user_name.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 
+@injectable
 class OnboardingCubit extends Cubit<OnboardingState> {
   final GetUserProfileUseCase getUserProfile;
   final SaveUserNameUseCase saveUserName;

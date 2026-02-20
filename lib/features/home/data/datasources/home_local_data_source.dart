@@ -1,3 +1,4 @@
+import 'package:injectable/injectable.dart';
 import 'package:motivation_app/features/home/data/models/home_model.dart';
 
 abstract class HomeLocalDataSource {
@@ -5,6 +6,7 @@ abstract class HomeLocalDataSource {
   Future<void> cacheHomeData(List<HomeModel> data);
 }
 
+@LazySingleton(as: HomeLocalDataSource)
 class HomeLocalDataSourceImpl implements HomeLocalDataSource {
   // TODO: Inject SharedPreferences or Hive
 
