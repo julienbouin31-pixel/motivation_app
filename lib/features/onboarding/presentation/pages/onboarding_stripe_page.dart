@@ -140,7 +140,7 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
                       child: ElevatedButton(
                         onPressed: _isValid
                             ? () {
-                                context.read<OnboardingCubit>().saveStripeApiKeyAction(
+                                context.read<OnboardingCubit>().saveStripeApiKey(
                                       _apiKeyController.text.trim(),
                                     );
                                 context.push(AppRouter.onboardingStripeConnected);

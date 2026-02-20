@@ -90,7 +90,7 @@ class _OnboardingNamePageState extends State<OnboardingNamePage> {
                 enabled: _isNameValid,
                 onPressed: _isNameValid
                     ? () {
-                        context.read<OnboardingCubit>().saveUserNameAction(
+                        context.read<OnboardingCubit>().saveName(
                               _nameController.text.trim(),
                             );
                         OnboardingFlow.next(context, AppRouter.onboardingName);

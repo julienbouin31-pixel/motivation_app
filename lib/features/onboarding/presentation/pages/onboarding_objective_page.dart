@@ -81,7 +81,7 @@ class OnboardingObjectivePage extends StatelessWidget {
                   description: 'Suivi de ton revenu mensuel récurrent',
                   connectLabel: 'Connecte Stripe',
                   onTap: () {
-                    context.read<OnboardingCubit>().saveObjectiveTypeAction('mrr');
+                    context.read<OnboardingCubit>().saveObjectiveType('mrr');
                     context.push(AppRouter.onboardingStripe);
                   },
                 ),
@@ -92,7 +92,7 @@ class OnboardingObjectivePage extends StatelessWidget {
                   description: 'Suivi des visites et métriques de ton site',
                   connectLabel: 'Connecte Google Analytics',
                   onTap: () {
-                    context.read<OnboardingCubit>().saveObjectiveTypeAction('analytics');
+                    context.read<OnboardingCubit>().saveObjectiveType('analytics');
                     OnboardingFlow.next(context, AppRouter.onboardingObjective);
                   },
                 ),
@@ -103,7 +103,7 @@ class OnboardingObjectivePage extends StatelessWidget {
                   title: 'Pas d\'objectif',
                   description: 'Je veux juste les affirmations',
                   onTap: () {
-                    context.read<OnboardingCubit>().saveObjectiveTypeAction('none');
+                    context.read<OnboardingCubit>().saveObjectiveType('none');
                     OnboardingFlow.next(context, AppRouter.onboardingObjective);
                   },
                 ),

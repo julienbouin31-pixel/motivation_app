@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:motivation_app/core/errors/failures.dart';
 import 'package:motivation_app/features/onboarding/data/datasources/onboarding_local_data_source.dart';
+import 'package:motivation_app/features/onboarding/data/models/user_profile_model.dart';
 import 'package:motivation_app/features/onboarding/domain/entities/user_profile.dart';
 import 'package:motivation_app/features/onboarding/domain/repositories/onboarding_repository.dart';
 
@@ -22,39 +23,14 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> saveUserName(String name) async {
+  Future<Either<Failure, Unit>> saveUserProfile(UserProfile profile) async {
     try {
-      await localDataSource.saveUserName(name);
-      return const Right(unit);
-    } catch (_) {
-      return Left(CacheFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, Unit>> saveObjectiveType(String objectiveType) async {
-    try {
-      await localDataSource.saveObjectiveType(objectiveType);
-      return const Right(unit);
-    } catch (_) {
-      return Left(CacheFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, Unit>> saveStripeApiKey(String key) async {
-    try {
-      await localDataSource.saveStripeApiKey(key);
-      return const Right(unit);
-    } catch (_) {
-      return Left(CacheFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, Unit>> saveMrrTarget(String target) async {
-    try {
-      await localDataSource.saveMrrTarget(target);
+      await localDataSource.saveProfile(UserProfileModel(
+        name: profile.name ?? '',
+        objectiveType: profile.objectiveType,
+        stripeApiKey: profile.stripeApiKey,
+        mrrTarget: profile.mrrTarget,
+      ));
       return const Right(unit);
     } catch (_) {
       return Left(CacheFailure());

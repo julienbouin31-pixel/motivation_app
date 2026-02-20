@@ -173,7 +173,7 @@ class _OnboardingMrrTargetPageState extends State<OnboardingMrrTargetPage> {
                 enabled: _selectedTarget != null,
                 onPressed: _selectedTarget != null
                     ? () {
-                        context.read<OnboardingCubit>().saveMrrTargetAction(_selectedTarget!);
+                        context.read<OnboardingCubit>().saveMrrTarget(_selectedTarget!);
                         context.go(AppRouter.affirmation);
                       }
                     : null,

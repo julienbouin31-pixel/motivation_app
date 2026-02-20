@@ -58,14 +58,8 @@ import 'package:motivation_app/features/onboarding/domain/repositories/onboardin
     as _i829;
 import 'package:motivation_app/features/onboarding/domain/usecases/get_user_profile.dart'
     as _i178;
-import 'package:motivation_app/features/onboarding/domain/usecases/save_mrr_target.dart'
-    as _i744;
-import 'package:motivation_app/features/onboarding/domain/usecases/save_objective_type.dart'
-    as _i599;
-import 'package:motivation_app/features/onboarding/domain/usecases/save_stripe_api_key.dart'
-    as _i349;
-import 'package:motivation_app/features/onboarding/domain/usecases/save_user_name.dart'
-    as _i931;
+import 'package:motivation_app/features/onboarding/domain/usecases/save_user_profile.dart'
+    as _i140;
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart'
     as _i870;
 
@@ -122,17 +116,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i178.GetUserProfileUseCase>(
       () => _i178.GetUserProfileUseCase(gh<_i829.OnboardingRepository>()),
     );
-    gh.lazySingleton<_i744.SaveMrrTargetUseCase>(
-      () => _i744.SaveMrrTargetUseCase(gh<_i829.OnboardingRepository>()),
-    );
-    gh.lazySingleton<_i599.SaveObjectiveTypeUseCase>(
-      () => _i599.SaveObjectiveTypeUseCase(gh<_i829.OnboardingRepository>()),
-    );
-    gh.lazySingleton<_i349.SaveStripeApiKeyUseCase>(
-      () => _i349.SaveStripeApiKeyUseCase(gh<_i829.OnboardingRepository>()),
-    );
-    gh.lazySingleton<_i931.SaveUserNameUseCase>(
-      () => _i931.SaveUserNameUseCase(gh<_i829.OnboardingRepository>()),
+    gh.lazySingleton<_i140.SaveUserProfileUseCase>(
+      () => _i140.SaveUserProfileUseCase(gh<_i829.OnboardingRepository>()),
     );
     gh.lazySingleton<_i555.AffirmationRepository>(
       () => _i551.AffirmationRepositoryImpl(
@@ -146,10 +131,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i870.OnboardingCubit>(
       () => _i870.OnboardingCubit(
         getUserProfile: gh<_i178.GetUserProfileUseCase>(),
-        saveUserName: gh<_i931.SaveUserNameUseCase>(),
-        saveObjectiveType: gh<_i599.SaveObjectiveTypeUseCase>(),
-        saveStripeApiKey: gh<_i349.SaveStripeApiKeyUseCase>(),
-        saveMrrTarget: gh<_i744.SaveMrrTargetUseCase>(),
+        saveUserProfile: gh<_i140.SaveUserProfileUseCase>(),
       ),
     );
     gh.lazySingleton<_i541.GetFavoritesUseCase>(
