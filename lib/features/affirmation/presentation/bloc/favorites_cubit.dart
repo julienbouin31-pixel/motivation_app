@@ -12,14 +12,14 @@ class FavoritesCubit extends Cubit<FavoritesState> {
   FavoritesCubit({
     required this.getFavorites,
     required this.toggleFavorite,
-  }) : super(const FavoritesInitial());
+  }) : super(const FavoritesState.initial());
 
   Future<void> load() async {
-    emit(const FavoritesLoading());
+    emit(const FavoritesState.loading());
     final result = await getFavorites();
     result.fold(
-      (_) => emit(const FavoritesError()),
-      (favorites) => emit(FavoritesLoaded(favorites)),
+      (_) => emit(const FavoritesState.error()),
+      (favorites) => emit(FavoritesState.loaded(favorites)),
     );
   }
 
@@ -27,7 +27,7 @@ class FavoritesCubit extends Cubit<FavoritesState> {
     await toggleFavorite(id);
     final currentState = state;
     if (currentState is FavoritesLoaded) {
-      emit(FavoritesLoaded(
+      emit(FavoritesState.loaded(
         currentState.favorites.where((a) => a.id != id).toList(),
       ));
     }

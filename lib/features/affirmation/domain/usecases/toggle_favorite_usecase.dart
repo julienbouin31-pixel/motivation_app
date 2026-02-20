@@ -9,7 +9,7 @@ class ToggleFavoriteUseCase {
 
   ToggleFavoriteUseCase(this.repository);
 
-  Future<Either<Failure, Unit>> call(int id) {
+  Future<Either<Failure, void>> call(int id) {
     return repository.toggleFavorite(id);
   }
 }

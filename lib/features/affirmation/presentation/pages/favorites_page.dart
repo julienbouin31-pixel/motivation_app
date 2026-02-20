@@ -43,22 +43,17 @@ class _FavoritesView extends StatelessWidget {
         ),
       ),
       body: BlocBuilder<FavoritesCubit, FavoritesState>(
-        builder: (context, state) {
-          if (state is FavoritesLoading) {
-            return const Center(
+        builder: (context, state) => switch (state) {
+          FavoritesLoading() => const Center(
               child: CircularProgressIndicator(color: Colors.black),
-            );
-          }
-          if (state is FavoritesError) {
-            return const Center(child: Text('Erreur lors du chargement'));
-          }
-          if (state is FavoritesLoaded) {
-            if (state.favorites.isEmpty) {
-              return _EmptyFavorites();
-            }
-            return _FavoritesList(favorites: state.favorites);
-          }
-          return const SizedBox.shrink();
+            ),
+          FavoritesError() => const Center(
+              child: Text('Erreur lors du chargement'),
+            ),
+          FavoritesLoaded(:final favorites) => favorites.isEmpty
+              ? _EmptyFavorites()
+              : _FavoritesList(favorites: favorites),
+          _ => const SizedBox.shrink(),
         },
       ),
     );

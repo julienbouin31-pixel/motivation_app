@@ -23,7 +23,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> saveUserProfile(UserProfile profile) async {
+  Future<Either<Failure, void>> saveUserProfile(UserProfile profile) async {
     try {
       await localDataSource.saveProfile(UserProfileModel(
         name: profile.name ?? '',
@@ -31,7 +31,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
         stripeApiKey: profile.stripeApiKey,
         mrrTarget: profile.mrrTarget,
       ));
-      return const Right(unit);
+      return Right(null);
     } catch (_) {
       return Left(CacheFailure());
     }

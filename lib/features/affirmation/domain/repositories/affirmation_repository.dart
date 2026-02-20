@@ -8,7 +8,7 @@ abstract class AffirmationRepository {
     List<AffirmationCategory>? categories,
   });
   Future<Either<Failure, List<Affirmation>>> getFavorites();
-  Future<Either<Failure, Unit>> markAsViewed(int id);
-  Future<Either<Failure, Unit>> toggleFavorite(int id);
+  Future<Either<Failure, void>> markAsViewed(int id);
+  Future<Either<Failure, void>> toggleFavorite(int id);
   Future<void> weeklyRefreshInBackground();
 }

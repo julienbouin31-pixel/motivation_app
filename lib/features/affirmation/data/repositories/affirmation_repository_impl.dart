@@ -173,20 +173,20 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> markAsViewed(int id) async {
+  Future<Either<Failure, void>> markAsViewed(int id) async {
     try {
       await localDataSource.markAsViewed(id);
-      return const Right(unit);
+      return Right(null);
     } catch (_) {
       return Left(CacheFailure());
     }
   }
 
   @override
-  Future<Either<Failure, Unit>> toggleFavorite(int id) async {
+  Future<Either<Failure, void>> toggleFavorite(int id) async {
     try {
       await localDataSource.toggleFavorite(id);
-      return const Right(unit);
+      return Right(null);
     } catch (_) {
       return Left(CacheFailure());
     }

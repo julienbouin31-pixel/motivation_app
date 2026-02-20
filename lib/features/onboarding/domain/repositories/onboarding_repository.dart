@@ -4,5 +4,5 @@ import 'package:motivation_app/features/onboarding/domain/entities/user_profile.
 
 abstract class OnboardingRepository {
   Future<Either<Failure, UserProfile>> getUserProfile();
-  Future<Either<Failure, Unit>> saveUserProfile(UserProfile profile);
+  Future<Either<Failure, void>> saveUserProfile(UserProfile profile);
 }

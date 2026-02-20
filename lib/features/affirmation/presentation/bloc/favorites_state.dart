@@ -1,22 +1,12 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
 
-abstract class FavoritesState {
-  const FavoritesState();
-}
+part 'favorites_state.freezed.dart';
 
-class FavoritesInitial extends FavoritesState {
-  const FavoritesInitial();
-}
-
-class FavoritesLoading extends FavoritesState {
-  const FavoritesLoading();
-}
-
-class FavoritesLoaded extends FavoritesState {
-  final List<Affirmation> favorites;
-  const FavoritesLoaded(this.favorites);
-}
-
-class FavoritesError extends FavoritesState {
-  const FavoritesError();
+@freezed
+sealed class FavoritesState with _$FavoritesState {
+  const factory FavoritesState.initial() = FavoritesInitial;
+  const factory FavoritesState.loading() = FavoritesLoading;
+  const factory FavoritesState.loaded(List<Affirmation> favorites) = FavoritesLoaded;
+  const factory FavoritesState.error() = FavoritesError;
 }

@@ -10,7 +10,7 @@ class SaveUserProfileUseCase {
 
   SaveUserProfileUseCase(this.repository);
 
-  Future<Either<Failure, Unit>> call(UserProfile profile) {
+  Future<Either<Failure, void>> call(UserProfile profile) {
     return repository.saveUserProfile(profile);
   }
 }
