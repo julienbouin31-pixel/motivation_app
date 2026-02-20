@@ -24,19 +24,7 @@ class OnboardingTransitionPage extends StatelessWidget {
                 ],
               ),
               const Spacer(flex: 2),
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: const Icon(
-                  Icons.auto_awesome,
-                  color: Colors.white,
-                  size: 26,
-                ),
-              ),
+    
               const SizedBox(height: 28),
               const Text(
                 'On va personnaliser\nton expérience.',

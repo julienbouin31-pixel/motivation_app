@@ -9,6 +9,7 @@ import 'package:motivation_app/features/affirmation/presentation/widgets/affirma
 import 'package:motivation_app/features/affirmation/presentation/widgets/affirmation_header.dart';
 import 'package:motivation_app/features/affirmation/presentation/widgets/category_tabs.dart';
 import 'package:motivation_app/features/affirmation/presentation/widgets/revenue_bar.dart';
+import 'package:motivation_app/features/home/presentation/pages/home_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 
@@ -182,11 +183,12 @@ class _AffirmationPageState extends State<AffirmationPage>
                 TextButton(
                   onPressed: () async {
                     const storage = FlutterSecureStorage();
-                    await storage.delete(key: 'onboarding_user_name');
-                    await storage.delete(key: 'onboarding_objective_type');
-                    await storage.delete(key: 'onboarding_mrr_target');
+                    await storage.deleteAll();
                     print('❌ [DEBUG] Onboarding supprimé du secure storage');
-                    if (context.mounted) context.go(AppRouter.home);
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => const HomePage()), 
+                      (route) => false,
+                    );
                   },
                   child: const Text('❌ Reset onboarding', style: TextStyle(color: Colors.red, fontSize: 12)),
                 ),

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserProfileModel {
 
- String? get name; String? get objectiveType; String? get stripeApiKey; String? get mrrTarget;
+ String get name; String? get objectiveType; String? get stripeApiKey; String? get mrrTarget;
 /// Create a copy of UserProfileModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +45,7 @@ abstract mixin class $UserProfileModelCopyWith<$Res>  {
   factory $UserProfileModelCopyWith(UserProfileModel value, $Res Function(UserProfileModel) _then) = _$UserProfileModelCopyWithImpl;
 @useResult
 $Res call({
- String? name, String? objectiveType, String? stripeApiKey, String? mrrTarget
+ String name, String? objectiveType, String? stripeApiKey, String? mrrTarget
 });
 
 
@@ -62,10 +62,10 @@ class _$UserProfileModelCopyWithImpl<$Res>
 
 /// Create a copy of UserProfileModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? name = freezed,Object? objectiveType = freezed,Object? stripeApiKey = freezed,Object? mrrTarget = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? objectiveType = freezed,Object? stripeApiKey = freezed,Object? mrrTarget = freezed,}) {
   return _then(_self.copyWith(
-name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String?,objectiveType: freezed == objectiveType ? _self.objectiveType : objectiveType // ignore: cast_nullable_to_non_nullable
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,objectiveType: freezed == objectiveType ? _self.objectiveType : objectiveType // ignore: cast_nullable_to_non_nullable
 as String?,stripeApiKey: freezed == stripeApiKey ? _self.stripeApiKey : stripeApiKey // ignore: cast_nullable_to_non_nullable
 as String?,mrrTarget: freezed == mrrTarget ? _self.mrrTarget : mrrTarget // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -153,7 +153,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? name,  String? objectiveType,  String? stripeApiKey,  String? mrrTarget)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String? objectiveType,  String? stripeApiKey,  String? mrrTarget)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserProfileModel() when $default != null:
 return $default(_that.name,_that.objectiveType,_that.stripeApiKey,_that.mrrTarget);case _:
@@ -174,7 +174,7 @@ return $default(_that.name,_that.objectiveType,_that.stripeApiKey,_that.mrrTarge
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? name,  String? objectiveType,  String? stripeApiKey,  String? mrrTarget)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String? objectiveType,  String? stripeApiKey,  String? mrrTarget)  $default,) {final _that = this;
 switch (_that) {
 case _UserProfileModel():
 return $default(_that.name,_that.objectiveType,_that.stripeApiKey,_that.mrrTarget);case _:
@@ -194,7 +194,7 @@ return $default(_that.name,_that.objectiveType,_that.stripeApiKey,_that.mrrTarge
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? name,  String? objectiveType,  String? stripeApiKey,  String? mrrTarget)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String? objectiveType,  String? stripeApiKey,  String? mrrTarget)?  $default,) {final _that = this;
 switch (_that) {
 case _UserProfileModel() when $default != null:
 return $default(_that.name,_that.objectiveType,_that.stripeApiKey,_that.mrrTarget);case _:
@@ -209,10 +209,10 @@ return $default(_that.name,_that.objectiveType,_that.stripeApiKey,_that.mrrTarge
 
 
 class _UserProfileModel extends UserProfileModel {
-  const _UserProfileModel({this.name, this.objectiveType, this.stripeApiKey, this.mrrTarget}): super._();
+  const _UserProfileModel({required this.name, this.objectiveType, this.stripeApiKey, this.mrrTarget}): super._();
   
 
-@override final  String? name;
+@override final  String name;
 @override final  String? objectiveType;
 @override final  String? stripeApiKey;
 @override final  String? mrrTarget;
@@ -247,7 +247,7 @@ abstract mixin class _$UserProfileModelCopyWith<$Res> implements $UserProfileMod
   factory _$UserProfileModelCopyWith(_UserProfileModel value, $Res Function(_UserProfileModel) _then) = __$UserProfileModelCopyWithImpl;
 @override @useResult
 $Res call({
- String? name, String? objectiveType, String? stripeApiKey, String? mrrTarget
+ String name, String? objectiveType, String? stripeApiKey, String? mrrTarget
 });
 
 
@@ -264,10 +264,10 @@ class __$UserProfileModelCopyWithImpl<$Res>
 
 /// Create a copy of UserProfileModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? name = freezed,Object? objectiveType = freezed,Object? stripeApiKey = freezed,Object? mrrTarget = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? objectiveType = freezed,Object? stripeApiKey = freezed,Object? mrrTarget = freezed,}) {
   return _then(_UserProfileModel(
-name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String?,objectiveType: freezed == objectiveType ? _self.objectiveType : objectiveType // ignore: cast_nullable_to_non_nullable
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,objectiveType: freezed == objectiveType ? _self.objectiveType : objectiveType // ignore: cast_nullable_to_non_nullable
 as String?,stripeApiKey: freezed == stripeApiKey ? _self.stripeApiKey : stripeApiKey // ignore: cast_nullable_to_non_nullable
 as String?,mrrTarget: freezed == mrrTarget ? _self.mrrTarget : mrrTarget // ignore: cast_nullable_to_non_nullable
 as String?,

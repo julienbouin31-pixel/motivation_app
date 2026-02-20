@@ -26,7 +26,7 @@ class OnboardingLocalDataSourceImpl implements OnboardingLocalDataSource {
     final stripeApiKey = await storage.read(key: _stripeKey);
     final mrrTarget = await storage.read(key: _mrrTargetKey);
     return UserProfileModel(
-      name: name,
+      name: name ?? '',
       objectiveType: objectiveType,
       stripeApiKey: stripeApiKey,
       mrrTarget: mrrTarget,

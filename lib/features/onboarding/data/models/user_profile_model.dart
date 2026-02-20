@@ -8,7 +8,7 @@ abstract class UserProfileModel with _$UserProfileModel {
   const UserProfileModel._();
 
   const factory UserProfileModel({
-    String? name,
+    required String name,
     String? objectiveType,
     String? stripeApiKey,
     String? mrrTarget,

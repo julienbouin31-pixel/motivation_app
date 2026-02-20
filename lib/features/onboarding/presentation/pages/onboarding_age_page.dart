@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
+import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/age_option_card.dart';
@@ -52,10 +53,10 @@ class _OnboardingAgePageState extends State<OnboardingAgePage> {
                       ],
                     ),
                     const SizedBox(height: 32),
-                    const ProgressIndicatorBar(
-                      currentStep: 2,
-                      totalSteps: 3,
-                    ),
+                     ProgressIndicatorBar(
+                  currentStep: OnboardingFlow.stepNumber(AppRouter.onboardingObjective),
+                  totalSteps: OnboardingFlow.totalSteps,
+                ),
                     const SizedBox(height: 48),
                     const Text(
                       'Quel âge as-tu ?',
