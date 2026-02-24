@@ -159,7 +159,6 @@ class _AffirmationPageState extends State<AffirmationPage>
             if (prev is AffirmationLoaded && next is AffirmationLoaded) {
               if (prev.affirmation.id != next.affirmation.id) return true;
               // Même id : déclencher sauf si c'est juste un toggle favori
-              // (ex : cycle épuisé → resetViewed → RANDOM() retourne la même carte)
               return prev.affirmation.isFavorite == next.affirmation.isFavorite;
             }
             return next is AffirmationLoaded;

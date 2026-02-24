@@ -9,9 +9,9 @@ part 'app_database.g.dart';
 
 class AffirmationItems extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get content => text()();
+  TextColumn get content => text().customConstraint('UNIQUE NOT NULL')();
   TextColumn get category => text()();
-  BoolColumn get isViewed => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get lastViewedAt => dateTime().nullable()();
   BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
 }
 
@@ -20,7 +20,18 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onUpgrade: (m, from, to) async {
+          if (from < 2) {
+            // v2 : isViewed → lastViewedAt (nullable), UNIQUE sur content
+            await m.drop(affirmationItems);
+            await m.createTable(affirmationItems);
+          }
+        },
+      );
 }
 
 Future<AppDatabase> openAppDatabase() async {

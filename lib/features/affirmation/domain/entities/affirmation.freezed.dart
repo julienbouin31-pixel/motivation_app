@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Affirmation {
 
- int get id; String get text; AffirmationCategory get category; bool get isViewed; bool get isFavorite;
+ int get id; String get text; AffirmationCategory get category; DateTime? get lastViewedAt; bool get isFavorite;
 /// Create a copy of Affirmation
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $AffirmationCopyWith<Affirmation> get copyWith => _$AffirmationCopyWithImpl<Affi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Affirmation&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.category, category) || other.category == category)&&(identical(other.isViewed, isViewed) || other.isViewed == isViewed)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Affirmation&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.category, category) || other.category == category)&&(identical(other.lastViewedAt, lastViewedAt) || other.lastViewedAt == lastViewedAt)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,text,category,isViewed,isFavorite);
+int get hashCode => Object.hash(runtimeType,id,text,category,lastViewedAt,isFavorite);
 
 @override
 String toString() {
-  return 'Affirmation(id: $id, text: $text, category: $category, isViewed: $isViewed, isFavorite: $isFavorite)';
+  return 'Affirmation(id: $id, text: $text, category: $category, lastViewedAt: $lastViewedAt, isFavorite: $isFavorite)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $AffirmationCopyWith<$Res>  {
   factory $AffirmationCopyWith(Affirmation value, $Res Function(Affirmation) _then) = _$AffirmationCopyWithImpl;
 @useResult
 $Res call({
- int id, String text, AffirmationCategory category, bool isViewed, bool isFavorite
+ int id, String text, AffirmationCategory category, DateTime? lastViewedAt, bool isFavorite
 });
 
 
@@ -62,13 +62,13 @@ class _$AffirmationCopyWithImpl<$Res>
 
 /// Create a copy of Affirmation
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? text = null,Object? category = null,Object? isViewed = null,Object? isFavorite = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? text = null,Object? category = null,Object? lastViewedAt = freezed,Object? isFavorite = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
-as AffirmationCategory,isViewed: null == isViewed ? _self.isViewed : isViewed // ignore: cast_nullable_to_non_nullable
-as bool,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
+as AffirmationCategory,lastViewedAt: freezed == lastViewedAt ? _self.lastViewedAt : lastViewedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -154,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String text,  AffirmationCategory category,  bool isViewed,  bool isFavorite)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String text,  AffirmationCategory category,  DateTime? lastViewedAt,  bool isFavorite)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Affirmation() when $default != null:
-return $default(_that.id,_that.text,_that.category,_that.isViewed,_that.isFavorite);case _:
+return $default(_that.id,_that.text,_that.category,_that.lastViewedAt,_that.isFavorite);case _:
   return orElse();
 
 }
@@ -175,10 +175,10 @@ return $default(_that.id,_that.text,_that.category,_that.isViewed,_that.isFavori
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String text,  AffirmationCategory category,  bool isViewed,  bool isFavorite)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String text,  AffirmationCategory category,  DateTime? lastViewedAt,  bool isFavorite)  $default,) {final _that = this;
 switch (_that) {
 case _Affirmation():
-return $default(_that.id,_that.text,_that.category,_that.isViewed,_that.isFavorite);case _:
+return $default(_that.id,_that.text,_that.category,_that.lastViewedAt,_that.isFavorite);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +195,10 @@ return $default(_that.id,_that.text,_that.category,_that.isViewed,_that.isFavori
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String text,  AffirmationCategory category,  bool isViewed,  bool isFavorite)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String text,  AffirmationCategory category,  DateTime? lastViewedAt,  bool isFavorite)?  $default,) {final _that = this;
 switch (_that) {
 case _Affirmation() when $default != null:
-return $default(_that.id,_that.text,_that.category,_that.isViewed,_that.isFavorite);case _:
+return $default(_that.id,_that.text,_that.category,_that.lastViewedAt,_that.isFavorite);case _:
   return null;
 
 }
@@ -210,13 +210,13 @@ return $default(_that.id,_that.text,_that.category,_that.isViewed,_that.isFavori
 
 
 class _Affirmation implements Affirmation {
-  const _Affirmation({required this.id, required this.text, required this.category, this.isViewed = false, this.isFavorite = false});
+  const _Affirmation({required this.id, required this.text, required this.category, this.lastViewedAt, this.isFavorite = false});
   
 
 @override final  int id;
 @override final  String text;
 @override final  AffirmationCategory category;
-@override@JsonKey() final  bool isViewed;
+@override final  DateTime? lastViewedAt;
 @override@JsonKey() final  bool isFavorite;
 
 /// Create a copy of Affirmation
@@ -229,16 +229,16 @@ _$AffirmationCopyWith<_Affirmation> get copyWith => __$AffirmationCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Affirmation&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.category, category) || other.category == category)&&(identical(other.isViewed, isViewed) || other.isViewed == isViewed)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Affirmation&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.category, category) || other.category == category)&&(identical(other.lastViewedAt, lastViewedAt) || other.lastViewedAt == lastViewedAt)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,text,category,isViewed,isFavorite);
+int get hashCode => Object.hash(runtimeType,id,text,category,lastViewedAt,isFavorite);
 
 @override
 String toString() {
-  return 'Affirmation(id: $id, text: $text, category: $category, isViewed: $isViewed, isFavorite: $isFavorite)';
+  return 'Affirmation(id: $id, text: $text, category: $category, lastViewedAt: $lastViewedAt, isFavorite: $isFavorite)';
 }
 
 
@@ -249,7 +249,7 @@ abstract mixin class _$AffirmationCopyWith<$Res> implements $AffirmationCopyWith
   factory _$AffirmationCopyWith(_Affirmation value, $Res Function(_Affirmation) _then) = __$AffirmationCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String text, AffirmationCategory category, bool isViewed, bool isFavorite
+ int id, String text, AffirmationCategory category, DateTime? lastViewedAt, bool isFavorite
 });
 
 
@@ -266,13 +266,13 @@ class __$AffirmationCopyWithImpl<$Res>
 
 /// Create a copy of Affirmation
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? text = null,Object? category = null,Object? isViewed = null,Object? isFavorite = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? text = null,Object? category = null,Object? lastViewedAt = freezed,Object? isFavorite = null,}) {
   return _then(_Affirmation(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
-as AffirmationCategory,isViewed: null == isViewed ? _self.isViewed : isViewed // ignore: cast_nullable_to_non_nullable
-as bool,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
+as AffirmationCategory,lastViewedAt: freezed == lastViewedAt ? _self.lastViewedAt : lastViewedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

@@ -29,11 +29,11 @@ import 'package:motivation_app/features/affirmation/domain/usecases/get_favorite
 import 'package:motivation_app/features/affirmation/domain/usecases/get_next_affirmation_usecase.dart'
     as _i269;
 import 'package:motivation_app/features/affirmation/domain/usecases/get_saved_categories_usecase.dart'
-    as _i720;
+    as _i756;
 import 'package:motivation_app/features/affirmation/domain/usecases/mark_as_viewed_usecase.dart'
     as _i661;
 import 'package:motivation_app/features/affirmation/domain/usecases/save_categories_usecase.dart'
-    as _i335;
+    as _i192;
 import 'package:motivation_app/features/affirmation/domain/usecases/toggle_favorite_usecase.dart'
     as _i144;
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart'
@@ -95,6 +95,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i140.SaveUserProfileUseCase>(
       () => _i140.SaveUserProfileUseCase(gh<_i829.OnboardingRepository>()),
     );
+    gh.factory<_i870.OnboardingCubit>(
+      () => _i870.OnboardingCubit(
+        getUserProfile: gh<_i178.GetUserProfileUseCase>(),
+        saveUserProfile: gh<_i140.SaveUserProfileUseCase>(),
+      ),
+    );
     gh.lazySingleton<_i555.AffirmationRepository>(
       () => _i551.AffirmationRepositoryImpl(
         localDataSource: gh<_i987.AffirmationLocalDataSource>(),
@@ -103,43 +109,37 @@ extension GetItInjectableX on _i174.GetIt {
         getUserProfile: gh<_i178.GetUserProfileUseCase>(),
       ),
     );
-    gh.factory<_i870.OnboardingCubit>(
-      () => _i870.OnboardingCubit(
-        getUserProfile: gh<_i178.GetUserProfileUseCase>(),
-        saveUserProfile: gh<_i140.SaveUserProfileUseCase>(),
-      ),
-    );
     gh.lazySingleton<_i541.GetFavoritesUseCase>(
       () => _i541.GetFavoritesUseCase(gh<_i555.AffirmationRepository>()),
     );
     gh.lazySingleton<_i269.GetNextAffirmationUseCase>(
       () => _i269.GetNextAffirmationUseCase(gh<_i555.AffirmationRepository>()),
     );
+    gh.lazySingleton<_i756.GetSavedCategoriesUseCase>(
+      () => _i756.GetSavedCategoriesUseCase(gh<_i555.AffirmationRepository>()),
+    );
     gh.lazySingleton<_i661.MarkAsViewedUseCase>(
       () => _i661.MarkAsViewedUseCase(gh<_i555.AffirmationRepository>()),
     );
+    gh.lazySingleton<_i192.SaveCategoriesUseCase>(
+      () => _i192.SaveCategoriesUseCase(gh<_i555.AffirmationRepository>()),
+    );
     gh.lazySingleton<_i144.ToggleFavoriteUseCase>(
       () => _i144.ToggleFavoriteUseCase(gh<_i555.AffirmationRepository>()),
-    );
-    gh.lazySingleton<_i720.GetSavedCategoriesUseCase>(
-      () => _i720.GetSavedCategoriesUseCase(gh<_i555.AffirmationRepository>()),
-    );
-    gh.lazySingleton<_i335.SaveCategoriesUseCase>(
-      () => _i335.SaveCategoriesUseCase(gh<_i555.AffirmationRepository>()),
-    );
-    gh.factory<_i841.FavoritesCubit>(
-      () => _i841.FavoritesCubit(
-        getFavorites: gh<_i541.GetFavoritesUseCase>(),
-        toggleFavorite: gh<_i144.ToggleFavoriteUseCase>(),
-      ),
     );
     gh.factory<_i1059.AffirmationCubit>(
       () => _i1059.AffirmationCubit(
         getNextAffirmation: gh<_i269.GetNextAffirmationUseCase>(),
         markAsViewed: gh<_i661.MarkAsViewedUseCase>(),
         toggleFavorite: gh<_i144.ToggleFavoriteUseCase>(),
-        getSavedCategories: gh<_i720.GetSavedCategoriesUseCase>(),
-        saveCategories: gh<_i335.SaveCategoriesUseCase>(),
+        getSavedCategories: gh<_i756.GetSavedCategoriesUseCase>(),
+        saveCategories: gh<_i192.SaveCategoriesUseCase>(),
+      ),
+    );
+    gh.factory<_i841.FavoritesCubit>(
+      () => _i841.FavoritesCubit(
+        getFavorites: gh<_i541.GetFavoritesUseCase>(),
+        toggleFavorite: gh<_i144.ToggleFavoriteUseCase>(),
       ),
     );
     return this;

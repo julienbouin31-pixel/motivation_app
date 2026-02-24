@@ -1,18 +1,16 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:motivation_app/core/database/app_database.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
 import 'package:motivation_app/features/affirmation/data/models/affirmation_model.dart';
 
 /// Peuple la DB au premier lancement depuis le JSON local.
 /// Appelé dans main.dart avant runApp() — complètement hors ligne.
 Future<void> seedAffirmationsIfEmpty(
-  AppDatabase db, {
+  AffirmationLocalDataSource local, {
   String? name,
   String? mrrTarget,
 }) async {
-  final local = AffirmationLocalDataSourceImpl(db: db);
   final total = await local.totalCount();
   if (total > 0) return;
 

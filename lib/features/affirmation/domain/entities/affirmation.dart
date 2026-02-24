@@ -9,7 +9,7 @@ abstract class Affirmation with _$Affirmation {
     required int id,
     required String text,
     required AffirmationCategory category,
-    @Default(false) bool isViewed,
+    DateTime? lastViewedAt,
     @Default(false) bool isFavorite,
   }) = _Affirmation;
 }

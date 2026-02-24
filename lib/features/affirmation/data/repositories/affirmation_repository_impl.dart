@@ -36,11 +36,11 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
     await localDataSource.setLastFetchDate(DateTime.now());
   }
 
-  // ─── Fetch + déduplication ──────────────────────────────────────────────────
+  // ─── Fetch depuis le remote + déduplication via UNIQUE constraint ────────────
 
-  /// Récupère les nouvelles affirmations depuis le remote, filtre les doublons,
-  /// et les insère en DB. Retourne true si du nouveau contenu a été ajouté.
-  Future<bool> _fetchAndSaveNew() async {
+  /// Télécharge de nouvelles affirmations et les insère en DB.
+  /// Les doublons sont ignorés automatiquement grâce à la contrainte UNIQUE sur content.
+  Future<void> _fetchAndSaveNew() async {
     try {
       final profileEither = await getUserProfile();
       final profile = profileEither.fold((_) => null, (p) => p);
@@ -51,39 +51,28 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
         name: profile?.name?.isNotEmpty == true ? profile!.name : null,
       );
       if (fresh.isEmpty) {
-        print('[WeeklyRefresh] Remote retourne 0 affirmations.');
-        return false;
+        debugPrint('[WeeklyRefresh] Remote retourne 0 affirmations.');
+        return;
       }
 
-      final existing = await localDataSource.getAllContents();
-      final newOnes = fresh.where((a) => !existing.contains(a.text)).toList();
-      if (newOnes.isEmpty) {
-        print('[WeeklyRefresh] Aucun nouveau contenu (tout déjà en DB).');
-        return false;
-      }
-
-      await localDataSource.saveAll(newOnes);
-      print('[WeeklyRefresh] ${newOnes.length} nouvelles affirmations ajoutées en DB.');
-      return true;
+      await localDataSource.saveAll(fresh);
+      debugPrint('[WeeklyRefresh] ${fresh.length} affirmations insérées (doublons ignorés).');
     } catch (e) {
-      print('[WeeklyRefresh] Erreur fetch: $e');
-      return false;
+      debugPrint('[WeeklyRefresh] Erreur fetch: $e');
     }
   }
 
   // ─── Refresh hebdomadaire en arrière-plan (appelé depuis main.dart) ─────────
 
-  /// Fire-and-forget : récupère de nouvelles affirmations si 7+ jours écoulés.
-  /// N'affecte pas la navigation en cours.
   @override
   Future<void> weeklyRefreshInBackground() async {
     try {
       if (!await _shouldWeeklyRefresh()) {
-        print('[WeeklyRefresh] Pas encore 7 jours depuis le dernier fetch.');
+        debugPrint('[WeeklyRefresh] Pas encore 7 jours depuis le dernier fetch.');
         return;
       }
       if (!await networkInfo.isConnected) {
-        print('[WeeklyRefresh] Pas de réseau.');
+        debugPrint('[WeeklyRefresh] Pas de réseau.');
         return;
       }
       await _fetchAndSaveNew();
@@ -95,6 +84,8 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
 
   // ─── getNextAffirmation ──────────────────────────────────────────────────────
 
+  /// Retourne toujours la carte la moins récemment vue (lastViewedAt ASC NULLS FIRST).
+  /// Plus de logique de "cycle épuisé" — l'algorithme temporal gère tout.
   @override
   Future<Either<Failure, Affirmation>> getNextAffirmation({
     List<AffirmationCategory>? categories,
@@ -104,44 +95,7 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
           ? null
           : categories.map((c) => c.name).toList();
 
-      final count =
-          await localDataSource.countUnviewed(categories: categoryStrs);
-
-      if (count == 0) {
-        final total =
-            await localDataSource.totalCount(categories: categoryStrs);
-
-        if (total == 0) {
-          // DB vide (ne devrait pas arriver grâce au seed)
-          return Left(CacheFailure());
-        }
-
-        // Cycle épuisé → essayer de récupérer du nouveau contenu si réseau dispo
-        // Le check réseau est isolé pour ne jamais bloquer le reset du cycle
-        bool addedNew = false;
-        try {
-          final connected = await networkInfo.isConnected;
-          print('[CycleEpuisé] isConnected=$connected');
-          if (connected) {
-            addedNew = await _fetchAndSaveNew();
-            print('[CycleEpuisé] addedNew=$addedNew');
-            if (addedNew) await _markRefreshed();
-          }
-        } catch (e) {
-          print('[CycleEpuisé] Erreur check réseau: $e');
-          // Pas de réseau ou erreur → on passe au reset du cycle
-        }
-
-        if (!addedNew) {
-          // Pas de nouveau contenu (ou pas de réseau) → reset du cycle
-          await localDataSource.resetViewed(categories: categoryStrs);
-        }
-        // Si addedNew == true : les nouvelles cartes sont déjà isViewed=false,
-        // on les pioche directement sans reset.
-      }
-
-      final model =
-          await localDataSource.getNextUnviewed(categories: categoryStrs);
+      final model = await localDataSource.getNextUnviewed(categories: categoryStrs);
       if (model == null) return Left(CacheFailure());
 
       return Right(model.toEntity());

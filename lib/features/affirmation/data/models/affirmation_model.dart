@@ -5,14 +5,14 @@ class AffirmationModel {
   final int? id;
   final String text;
   final String category;
-  final bool isViewed;
+  final DateTime? lastViewedAt;
   final bool isFavorite;
 
   const AffirmationModel({
     this.id,
     required this.text,
     required this.category,
-    this.isViewed = false,
+    this.lastViewedAt,
     this.isFavorite = false,
   });
 
@@ -27,7 +27,7 @@ class AffirmationModel {
         id: id ?? 0,
         text: text,
         category: AffirmationCategory.values.byName(category),
-        isViewed: isViewed,
+        lastViewedAt: lastViewedAt,
         isFavorite: isFavorite,
       );
 }

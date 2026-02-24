@@ -16,10 +16,7 @@ abstract class AffirmationLocalDataSource {
   Future<void> clearAll();
   Future<void> markAsViewed(int id);
   Future<void> toggleFavorite(int id);
-  Future<int> countUnviewed({List<String>? categories});
   Future<int> totalCount({List<String>? categories});
-  Future<void> resetViewed({List<String>? categories});
-  Future<Set<String>> getAllContents();
   Future<List<AffirmationCategory>> getSavedCategories();
   Future<void> saveCategories(List<AffirmationCategory> categories);
   Future<DateTime?> getLastFetchDate();
@@ -38,16 +35,16 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
 
   @override
   Future<AffirmationModel?> getNextUnviewed({List<String>? categories}) async {
-    final query = db.select(db.affirmationItems)
-      ..where((t) => t.isViewed.equals(false));
+    final query = db.select(db.affirmationItems);
     if (categories != null && categories.isNotEmpty) {
       query.where((t) => t.category.isIn(categories));
     }
-    // Ordre aléatoire
+    // Carte la moins récemment vue en premier (NULL = jamais vue → priorité maximale)
     query
       ..orderBy([
         (t) => OrderingTerm(
-              expression: const CustomExpression<int>('RANDOM()'),
+              expression: t.lastViewedAt,
+              nulls: NullsOrder.first,
             ),
       ])
       ..limit(1);
@@ -75,6 +72,7 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
             category: a.category,
           ),
         ),
+        mode: InsertMode.insertOrIgnore,
       );
     });
   }
@@ -87,7 +85,7 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
   @override
   Future<void> markAsViewed(int id) async {
     await (db.update(db.affirmationItems)..where((t) => t.id.equals(id)))
-        .write(const AffirmationItemsCompanion(isViewed: Value(true)));
+        .write(AffirmationItemsCompanion(lastViewedAt: Value(DateTime.now())));
   }
 
   @override
@@ -102,17 +100,6 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
   }
 
   @override
-  Future<int> countUnviewed({List<String>? categories}) async {
-    final query = db.select(db.affirmationItems)
-      ..where((t) => t.isViewed.equals(false));
-    if (categories != null && categories.isNotEmpty) {
-      query.where((t) => t.category.isIn(categories));
-    }
-    final results = await query.get();
-    return results.length;
-  }
-
-  @override
   Future<int> totalCount({List<String>? categories}) async {
     final query = db.select(db.affirmationItems);
     if (categories != null && categories.isNotEmpty) {
@@ -120,22 +107,6 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
     }
     final results = await query.get();
     return results.length;
-  }
-
-  @override
-  Future<Set<String>> getAllContents() async {
-    final rows = await db.select(db.affirmationItems).get();
-    return rows.map((r) => r.content).toSet();
-  }
-
-  @override
-  Future<void> resetViewed({List<String>? categories}) async {
-    final q = db.update(db.affirmationItems)
-      ..where((t) => t.isViewed.equals(true));
-    if (categories != null && categories.isNotEmpty) {
-      q.where((t) => t.category.isIn(categories));
-    }
-    await q.write(const AffirmationItemsCompanion(isViewed: Value(false)));
   }
 
   @override
@@ -194,7 +165,7 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
         id: row.id,
         text: row.content,
         category: row.category,
-        isViewed: row.isViewed,
+        lastViewedAt: row.lastViewedAt,
         isFavorite: row.isFavorite,
       );
 }

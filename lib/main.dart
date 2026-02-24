@@ -19,6 +19,7 @@ void main() async {
   await di.init();
 
   final db = di.sl<AppDatabase>();
+  final local = di.sl<AffirmationLocalDataSource>();
   final profile = await di.sl<OnboardingLocalDataSource>().getUserProfile();
 
   // ════════════════════════════════════════════════════════════
@@ -31,14 +32,13 @@ void main() async {
 
   // Peuple la DB localement avant runApp → pas de spinner au premier lancement
   await seedAffirmationsIfEmpty(
-    db,
+    local,
     name: profile.name.isNotEmpty ? profile.name : null,
     mrrTarget: profile.mrrTarget,
   );
 
   // ════════════════════════════════════════════════════════════
   // 🧪 DEBUG — état après seed
-  final local = di.sl<AffirmationLocalDataSource>();
   final countAfterSeed = await local.totalCount();
   final dateAfterSeed = await storage.read(key: 'affirmation_last_fetch_date');
   print('❌ [DEBUG] Après seed    → $countAfterSeed affs en BD | last_fetch: ${dateAfterSeed ?? "aucune"}');
