@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
+import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
@@ -71,7 +72,10 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
                       ],
                     ),
                     const SizedBox(height: 24),
-                    const ProgressIndicatorBar(currentStep: 2, totalSteps: 3),
+                    ProgressIndicatorBar(
+                      currentStep: OnboardingFlow.stepNumber(AppRouter.onboardingStripe),
+                      totalSteps: OnboardingFlow.totalSteps,
+                    ),
                     const SizedBox(height: 20),
                     _backLink('Retour', () => context.pop()),
                     const SizedBox(height: 8),
@@ -143,7 +147,7 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
                                 context.read<OnboardingCubit>().saveStripeApiKey(
                                       _apiKeyController.text.trim(),
                                     );
-                                context.push(AppRouter.onboardingStripeConnected);
+                                OnboardingFlow.next(context, AppRouter.onboardingStripe);
                               }
                             : null,
                         style: ElevatedButton.styleFrom(

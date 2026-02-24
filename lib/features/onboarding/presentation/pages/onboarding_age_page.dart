@@ -53,10 +53,10 @@ class _OnboardingAgePageState extends State<OnboardingAgePage> {
                       ],
                     ),
                     const SizedBox(height: 32),
-                     ProgressIndicatorBar(
-                  currentStep: OnboardingFlow.stepNumber(AppRouter.onboardingObjective),
-                  totalSteps: OnboardingFlow.totalSteps,
-                ),
+                    ProgressIndicatorBar(
+                      currentStep: OnboardingFlow.stepNumber(AppRouter.onboardingAge),
+                      totalSteps: OnboardingFlow.totalSteps,
+                    ),
                     const SizedBox(height: 48),
                     const Text(
                       'Quel âge as-tu ?',

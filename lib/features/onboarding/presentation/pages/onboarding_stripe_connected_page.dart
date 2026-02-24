@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
+import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 
@@ -38,7 +39,10 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 24),
-              const ProgressIndicatorBar(currentStep: 2, totalSteps: 3),
+              ProgressIndicatorBar(
+                currentStep: OnboardingFlow.stepNumber(AppRouter.onboardingStripeConnected),
+                totalSteps: OnboardingFlow.totalSteps,
+              ),
               const SizedBox(height: 20),
               _backLink('Retour', () => context.pop()),
               const SizedBox(height: 8),
@@ -143,7 +147,7 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () => context.push(AppRouter.onboardingMrrTarget),
+                  onPressed: () => OnboardingFlow.next(context, AppRouter.onboardingStripeConnected),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
