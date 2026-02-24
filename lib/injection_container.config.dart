@@ -28,8 +28,12 @@ import 'package:motivation_app/features/affirmation/domain/usecases/get_favorite
     as _i541;
 import 'package:motivation_app/features/affirmation/domain/usecases/get_next_affirmation_usecase.dart'
     as _i269;
+import 'package:motivation_app/features/affirmation/domain/usecases/get_saved_categories_usecase.dart'
+    as _i720;
 import 'package:motivation_app/features/affirmation/domain/usecases/mark_as_viewed_usecase.dart'
     as _i661;
+import 'package:motivation_app/features/affirmation/domain/usecases/save_categories_usecase.dart'
+    as _i335;
 import 'package:motivation_app/features/affirmation/domain/usecases/toggle_favorite_usecase.dart'
     as _i144;
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart'
@@ -38,8 +42,6 @@ import 'package:motivation_app/features/affirmation/presentation/bloc/favorites_
     as _i841;
 import 'package:motivation_app/features/onboarding/data/datasources/onboarding_local_data_source.dart'
     as _i576;
-import 'package:motivation_app/features/onboarding/data/models/user_profile_model.dart'
-    as _i677;
 import 'package:motivation_app/features/onboarding/data/repositories/onboarding_repository_impl.dart'
     as _i10;
 import 'package:motivation_app/features/onboarding/domain/repositories/onboarding_repository.dart'
@@ -82,11 +84,10 @@ extension GetItInjectableX on _i174.GetIt {
       ),
     );
     gh.lazySingleton<_i987.AffirmationLocalDataSource>(
-      () => _i987.AffirmationLocalDataSourceImpl(db: gh<_i55.AppDatabase>()),
-    );
-    await gh.singletonAsync<_i677.UserProfileModel>(
-      () => appModule.userProfile(gh<_i576.OnboardingLocalDataSource>()),
-      preResolve: true,
+      () => _i987.AffirmationLocalDataSourceImpl(
+        db: gh<_i55.AppDatabase>(),
+        storage: gh<_i558.FlutterSecureStorage>(),
+      ),
     );
     gh.lazySingleton<_i178.GetUserProfileUseCase>(
       () => _i178.GetUserProfileUseCase(gh<_i829.OnboardingRepository>()),
@@ -99,8 +100,7 @@ extension GetItInjectableX on _i174.GetIt {
         localDataSource: gh<_i987.AffirmationLocalDataSource>(),
         remoteDataSource: gh<_i631.AffirmationRemoteDataSource>(),
         networkInfo: gh<_i867.NetworkInfo>(),
-        secureStorage: gh<_i558.FlutterSecureStorage>(),
-        userProfile: gh<_i677.UserProfileModel>(),
+        getUserProfile: gh<_i178.GetUserProfileUseCase>(),
       ),
     );
     gh.factory<_i870.OnboardingCubit>(
@@ -121,6 +121,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i144.ToggleFavoriteUseCase>(
       () => _i144.ToggleFavoriteUseCase(gh<_i555.AffirmationRepository>()),
     );
+    gh.lazySingleton<_i720.GetSavedCategoriesUseCase>(
+      () => _i720.GetSavedCategoriesUseCase(gh<_i555.AffirmationRepository>()),
+    );
+    gh.lazySingleton<_i335.SaveCategoriesUseCase>(
+      () => _i335.SaveCategoriesUseCase(gh<_i555.AffirmationRepository>()),
+    );
     gh.factory<_i841.FavoritesCubit>(
       () => _i841.FavoritesCubit(
         getFavorites: gh<_i541.GetFavoritesUseCase>(),
@@ -132,7 +138,8 @@ extension GetItInjectableX on _i174.GetIt {
         getNextAffirmation: gh<_i269.GetNextAffirmationUseCase>(),
         markAsViewed: gh<_i661.MarkAsViewedUseCase>(),
         toggleFavorite: gh<_i144.ToggleFavoriteUseCase>(),
-        storage: gh<_i558.FlutterSecureStorage>(),
+        getSavedCategories: gh<_i720.GetSavedCategoriesUseCase>(),
+        saveCategories: gh<_i335.SaveCategoriesUseCase>(),
       ),
     );
     return this;

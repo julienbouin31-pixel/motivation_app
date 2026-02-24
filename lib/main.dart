@@ -9,7 +9,7 @@ import 'package:motivation_app/features/affirmation/data/datasources/affirmation
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_seed.dart';
 import 'package:motivation_app/features/affirmation/domain/repositories/affirmation_repository.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart';
-import 'package:motivation_app/features/onboarding/data/models/user_profile_model.dart';
+import 'package:motivation_app/features/onboarding/data/datasources/onboarding_local_data_source.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/injection_container.dart' as di;
 
@@ -19,7 +19,7 @@ void main() async {
   await di.init();
 
   final db = di.sl<AppDatabase>();
-  final profile = di.sl<UserProfileModel>();
+  final profile = await di.sl<OnboardingLocalDataSource>().getUserProfile();
 
   // ════════════════════════════════════════════════════════════
   // 🧪 DEBUG ONLY — supprimer avant la mise en production

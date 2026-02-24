@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:motivation_app/features/onboarding/data/models/user_profile_model.dart';
@@ -23,7 +24,8 @@ class OnboardingLocalDataSourceImpl implements OnboardingLocalDataSource {
     try {
       return UserProfileModel.fromJson(
           json.decode(raw) as Map<String, dynamic>);
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[OnboardingLocalDataSource] Erreur de parsing du profil: $e');
       return const UserProfileModel();
     }
   }

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:motivation_app/core/errors/failures.dart';
 import 'package:motivation_app/features/onboarding/data/datasources/onboarding_local_data_source.dart';
@@ -17,7 +18,8 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
     try {
       final model = await localDataSource.getUserProfile();
       return Right(model.toEntity());
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[OnboardingRepository] Erreur: $e');
       return Left(CacheFailure());
     }
   }
@@ -32,7 +34,8 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
         mrrTarget: profile.mrrTarget,
       ));
       return Right(null);
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[OnboardingRepository] Erreur: $e');
       return Left(CacheFailure());
     }
   }

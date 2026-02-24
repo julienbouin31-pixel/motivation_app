@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:motivation_app/core/errors/failures.dart';
 import 'package:motivation_app/core/network/network_info.dart';
@@ -8,47 +8,32 @@ import 'package:motivation_app/features/affirmation/data/datasources/affirmation
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 import 'package:motivation_app/features/affirmation/domain/repositories/affirmation_repository.dart';
-import 'package:motivation_app/features/onboarding/data/models/user_profile_model.dart';
-
-const _kLastFetchKey = 'affirmation_last_fetch_date';
+import 'package:motivation_app/features/onboarding/domain/usecases/get_user_profile.dart';
 
 @LazySingleton(as: AffirmationRepository)
 class AffirmationRepositoryImpl implements AffirmationRepository {
   final AffirmationLocalDataSource localDataSource;
   final AffirmationRemoteDataSource remoteDataSource;
   final NetworkInfo networkInfo;
-  final FlutterSecureStorage secureStorage;
-  final UserProfileModel userProfile;
+  final GetUserProfileUseCase getUserProfile;
 
   AffirmationRepositoryImpl({
     required this.localDataSource,
     required this.remoteDataSource,
     required this.networkInfo,
-    required this.secureStorage,
-    required this.userProfile,
+    required this.getUserProfile,
   });
 
   // ─── Gestion de la date du dernier fetch ────────────────────────────────────
 
   Future<bool> _shouldWeeklyRefresh() async {
-    try {
-      final raw = await secureStorage.read(key: _kLastFetchKey);
-      if (raw == null) return true;
-      final lastFetch = DateTime.tryParse(raw);
-      if (lastFetch == null) return true;
-      return DateTime.now().difference(lastFetch).inDays >= 7;
-    } catch (_) {
-      return true;
-    }
+    final lastFetch = await localDataSource.getLastFetchDate();
+    if (lastFetch == null) return true;
+    return DateTime.now().difference(lastFetch).inDays >= 7;
   }
 
   Future<void> _markRefreshed() async {
-    try {
-      await secureStorage.write(
-        key: _kLastFetchKey,
-        value: DateTime.now().toIso8601String(),
-      );
-    } catch (_) {}
+    await localDataSource.setLastFetchDate(DateTime.now());
   }
 
   // ─── Fetch + déduplication ──────────────────────────────────────────────────
@@ -57,10 +42,13 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
   /// et les insère en DB. Retourne true si du nouveau contenu a été ajouté.
   Future<bool> _fetchAndSaveNew() async {
     try {
+      final profileEither = await getUserProfile();
+      final profile = profileEither.fold((_) => null, (p) => p);
+
       final fresh = await remoteDataSource.fetchAffirmations(
-        objectiveType: userProfile.objectiveType ?? 'mrr',
-        mrrTarget: userProfile.mrrTarget,
-        name: userProfile.name.isNotEmpty ? userProfile.name : null,
+        objectiveType: profile?.objectiveType ?? 'mrr',
+        mrrTarget: profile?.mrrTarget,
+        name: profile?.name?.isNotEmpty == true ? profile!.name : null,
       );
       if (fresh.isEmpty) {
         print('[WeeklyRefresh] Remote retourne 0 affirmations.');
@@ -100,7 +88,9 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
       }
       await _fetchAndSaveNew();
       await _markRefreshed();
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('[WeeklyRefresh] Erreur inattendue: $e');
+    }
   }
 
   // ─── getNextAffirmation ──────────────────────────────────────────────────────
@@ -155,7 +145,8 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
       if (model == null) return Left(CacheFailure());
 
       return Right(model.toEntity());
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[getNextAffirmation] Erreur: $e');
       return Left(CacheFailure());
     }
   }
@@ -167,7 +158,8 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
     try {
       final models = await localDataSource.getFavorites();
       return Right(models.map((m) => m.toEntity()).toList());
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[getFavorites] Erreur: $e');
       return Left(CacheFailure());
     }
   }
@@ -177,7 +169,8 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
     try {
       await localDataSource.markAsViewed(id);
       return Right(null);
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[markAsViewed] Erreur: $e');
       return Left(CacheFailure());
     }
   }
@@ -187,7 +180,30 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
     try {
       await localDataSource.toggleFavorite(id);
       return Right(null);
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[toggleFavorite] Erreur: $e');
+      return Left(CacheFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<AffirmationCategory>>> getSavedCategories() async {
+    try {
+      final categories = await localDataSource.getSavedCategories();
+      return Right(categories);
+    } catch (e) {
+      debugPrint('[getSavedCategories] Erreur: $e');
+      return Left(CacheFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> saveCategories(List<AffirmationCategory> categories) async {
+    try {
+      await localDataSource.saveCategories(categories);
+      return Right(null);
+    } catch (e) {
+      debugPrint('[saveCategories] Erreur: $e');
       return Left(CacheFailure());
     }
   }

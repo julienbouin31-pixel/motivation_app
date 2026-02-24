@@ -1,7 +1,13 @@
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:motivation_app/core/database/app_database.dart';
 import 'package:motivation_app/features/affirmation/data/models/affirmation_model.dart';
+import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
+
+const _kSelectedCategoriesKey = 'affirmation_selected_categories';
+const _kLastFetchKey = 'affirmation_last_fetch_date';
 
 abstract class AffirmationLocalDataSource {
   Future<AffirmationModel?> getNextUnviewed({List<String>? categories});
@@ -14,13 +20,21 @@ abstract class AffirmationLocalDataSource {
   Future<int> totalCount({List<String>? categories});
   Future<void> resetViewed({List<String>? categories});
   Future<Set<String>> getAllContents();
+  Future<List<AffirmationCategory>> getSavedCategories();
+  Future<void> saveCategories(List<AffirmationCategory> categories);
+  Future<DateTime?> getLastFetchDate();
+  Future<void> setLastFetchDate(DateTime date);
 }
 
 @LazySingleton(as: AffirmationLocalDataSource)
 class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
   final AppDatabase db;
+  final FlutterSecureStorage _storage;
 
-  AffirmationLocalDataSourceImpl({required this.db});
+  AffirmationLocalDataSourceImpl({
+    required this.db,
+    required FlutterSecureStorage storage,
+  }) : _storage = storage;
 
   @override
   Future<AffirmationModel?> getNextUnviewed({List<String>? categories}) async {
@@ -122,6 +136,58 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
       q.where((t) => t.category.isIn(categories));
     }
     await q.write(const AffirmationItemsCompanion(isViewed: Value(false)));
+  }
+
+  @override
+  Future<List<AffirmationCategory>> getSavedCategories() async {
+    try {
+      final saved = await _storage.read(key: _kSelectedCategoriesKey);
+      if (saved == null || saved.isEmpty) return [];
+      return saved
+          .split(',')
+          .map((s) => AffirmationCategory.values.where((c) => c.name == s).firstOrNull)
+          .whereType<AffirmationCategory>()
+          .toList();
+    } catch (e) {
+      debugPrint('[getSavedCategories] Erreur: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<void> saveCategories(List<AffirmationCategory> categories) async {
+    try {
+      await _storage.write(
+        key: _kSelectedCategoriesKey,
+        value: categories.map((c) => c.name).join(','),
+      );
+    } catch (e) {
+      debugPrint('[saveCategories] Erreur: $e');
+    }
+  }
+
+  @override
+  Future<DateTime?> getLastFetchDate() async {
+    try {
+      final raw = await _storage.read(key: _kLastFetchKey);
+      if (raw == null) return null;
+      return DateTime.tryParse(raw);
+    } catch (e) {
+      debugPrint('[getLastFetchDate] Erreur: $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<void> setLastFetchDate(DateTime date) async {
+    try {
+      await _storage.write(
+        key: _kLastFetchKey,
+        value: date.toIso8601String(),
+      );
+    } catch (e) {
+      debugPrint('[setLastFetchDate] Erreur: $e');
+    }
   }
 
   AffirmationModel _fromRow(AffirmationItem row) => AffirmationModel(

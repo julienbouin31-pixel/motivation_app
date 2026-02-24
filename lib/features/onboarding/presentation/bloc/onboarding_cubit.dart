@@ -33,6 +33,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   }
 
   Future<void> _save(UserProfile profile) async {
+    emit(const OnboardingState.loading());
     final result = await saveUserProfile(profile);
     result.fold(
       (_) => emit(const OnboardingState.error('Impossible de sauvegarder')),

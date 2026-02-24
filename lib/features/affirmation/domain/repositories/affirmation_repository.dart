@@ -11,4 +11,6 @@ abstract class AffirmationRepository {
   Future<Either<Failure, void>> markAsViewed(int id);
   Future<Either<Failure, void>> toggleFavorite(int id);
   Future<void> weeklyRefreshInBackground();
+  Future<Either<Failure, List<AffirmationCategory>>> getSavedCategories();
+  Future<Either<Failure, void>> saveCategories(List<AffirmationCategory> categories);
 }

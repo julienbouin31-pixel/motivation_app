@@ -29,7 +29,6 @@ class _AffirmationPageState extends State<AffirmationPage>
   bool _isExiting = false;
   bool _goingBack = false;   // true = swipe bas (retour), false = swipe haut (suivant)
   bool _enterFromTop = false; // direction de l'animation d'entrée
-  int? _exitingId;
   bool _pendingGoBack = false; // swipe bas reçu pendant l'animation de sortie
 
   @override
@@ -53,11 +52,9 @@ class _AffirmationPageState extends State<AffirmationPage>
         if (_goingBack) {
           // Swipe bas → revenir à l'affirmation précédente
           context.read<AffirmationCubit>().goBack();
-        } else if (_exitingId != null) {
+        } else {
           // Swipe haut → marquer comme vue + charger la suivante
-          final id = _exitingId!;
-          _exitingId = null;
-          context.read<AffirmationCubit>().markCurrentAsViewed(id);
+          context.read<AffirmationCubit>().markCurrentAsViewed();
         }
       }
     });
@@ -87,7 +84,7 @@ class _AffirmationPageState extends State<AffirmationPage>
     });
   }
 
-  void _onDragEnd(DragEndDetails d, int id) {
+  void _onDragEnd(DragEndDetails d) {
     final velocity = d.primaryVelocity ?? 0;
     if (_isExiting) {
       // Swipe bas pendant l'animation de sortie → mémoriser l'intention de retour
@@ -102,7 +99,6 @@ class _AffirmationPageState extends State<AffirmationPage>
       // Swipe haut : affirmation suivante
       setState(() {
         _isExiting = true;
-        _exitingId = id;
         _goingBack = false;
       });
       _exitCtrl.forward();
@@ -203,8 +199,7 @@ class _AffirmationPageState extends State<AffirmationPage>
                     AffirmationLoaded(:final affirmation) => GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onVerticalDragUpdate: _onDragUpdate,
-                        onVerticalDragEnd: (d) =>
-                            _onDragEnd(d, affirmation.id),
+                        onVerticalDragEnd: _onDragEnd,
                         child: AnimatedBuilder(
                           animation:
                               Listenable.merge([_exitCtrl, _enterCtrl]),
