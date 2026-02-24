@@ -3,25 +3,32 @@ import 'package:motivation_app/features/affirmation/domain/entities/affirmation.
 
 class AffirmationCard extends StatelessWidget {
   final Affirmation affirmation;
+  final String userName;
+  final String mrrTarget;
   final VoidCallback onFavorite;
   final VoidCallback onShare;
 
   const AffirmationCard({
     super.key,
     required this.affirmation,
+    required this.userName,
+    required this.mrrTarget,
     required this.onFavorite,
     required this.onShare,
   });
 
   @override
   Widget build(BuildContext context) {
+    final displayText = affirmation.text
+        .replaceAll('{name}', userName)
+        .replaceAll('{target}', mrrTarget);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Text(
-            '"${affirmation.text}"',
+            '"$displayText"',
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 22,

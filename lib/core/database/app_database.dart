@@ -20,13 +20,19 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
         onUpgrade: (m, from, to) async {
           if (from < 2) {
             // v2 : isViewed → lastViewedAt (nullable), UNIQUE sur content
+            await m.drop(affirmationItems);
+            await m.createTable(affirmationItems);
+          }
+          if (from < 3) {
+            // v3 : les placeholders {name}/{target} sont désormais stockés en DB
+            //      → vider la table pour que le seed recrée les entrées correctement
             await m.drop(affirmationItems);
             await m.createTable(affirmationItems);
           }

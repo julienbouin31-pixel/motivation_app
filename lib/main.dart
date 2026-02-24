@@ -31,11 +31,7 @@ void main() async {
   // ════════════════════════════════════════════════════════════
 
   // Peuple la DB localement avant runApp → pas de spinner au premier lancement
-  await seedAffirmationsIfEmpty(
-    local,
-    name: profile.name.isNotEmpty ? profile.name : null,
-    mrrTarget: profile.mrrTarget,
-  );
+  await seedAffirmationsIfEmpty(local);
 
   // ════════════════════════════════════════════════════════════
   // 🧪 DEBUG — état après seed
@@ -57,19 +53,24 @@ void main() async {
   final onboardingDone = profile.name.isNotEmpty;
   final router = createAppRouter(onboardingDone: onboardingDone);
 
-  runApp(MyApp(router: router));
+  // Pré-charge le profil avant runApp pour que le premier render ait le bon nom
+  final onboardingCubit = di.sl<OnboardingCubit>();
+  await onboardingCubit.loadUserProfile();
+
+  runApp(MyApp(router: router, onboardingCubit: onboardingCubit));
 }
 
 class MyApp extends StatelessWidget {
   final GoRouter router;
+  final OnboardingCubit onboardingCubit;
 
-  const MyApp({super.key, required this.router});
+  const MyApp({super.key, required this.router, required this.onboardingCubit});
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => di.sl<OnboardingCubit>()),
+        BlocProvider.value(value: onboardingCubit),
         BlocProvider(create: (_) => di.sl<AffirmationCubit>()..loadNext()),
       ],
       child: MaterialApp.router(

@@ -6,26 +6,21 @@ import 'package:motivation_app/features/affirmation/data/models/affirmation_mode
 
 /// Peuple la DB au premier lancement depuis le JSON local.
 /// Appelé dans main.dart avant runApp() — complètement hors ligne.
-Future<void> seedAffirmationsIfEmpty(
-  AffirmationLocalDataSource local, {
-  String? name,
-  String? mrrTarget,
-}) async {
+/// Les placeholders {name} et {target} sont conservés en DB,
+/// le remplacement se fait à l'affichage dans AffirmationCard.
+Future<void> seedAffirmationsIfEmpty(AffirmationLocalDataSource local) async {
   final total = await local.totalCount();
   if (total > 0) return;
-
-  final prenom = name ?? 'toi';
-  final target = mrrTarget ?? '10K€';
 
   final jsonStr = await rootBundle.loadString('assets/data/affirmations.json');
   final List<dynamic> raw = json.decode(jsonStr) as List<dynamic>;
 
   final affirmations = raw.map((e) {
     final map = e as Map<String, dynamic>;
-    final text = (map['text'] as String)
-        .replaceAll('{name}', prenom)
-        .replaceAll('{target}', target);
-    return AffirmationModel.fromMap({'text': text, 'category': map['category']});
+    return AffirmationModel.fromMap({
+      'text': map['text'] as String,
+      'category': map['category'],
+    });
   }).toList();
 
   await local.saveAll(affirmations);

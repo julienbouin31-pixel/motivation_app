@@ -34,9 +34,6 @@ class _AffirmationPageState extends State<AffirmationPage>
   @override
   void initState() {
     super.initState();
-    // Charge le profil pour afficher le bon prénom dans le header
-    context.read<OnboardingCubit>().loadUserProfile();
-
     _exitCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 280),
@@ -143,11 +140,13 @@ class _AffirmationPageState extends State<AffirmationPage>
   @override
   Widget build(BuildContext context) {
     final onboardingState = context.watch<OnboardingCubit>().state;
-    final userName = switch (onboardingState) {
-      OnboardingDataSaved(:final profile) => profile.name ?? 'toi',
-      OnboardingProfileLoaded(:final profile) => profile.name ?? 'toi',
-      _ => 'toi',
+    final profile = switch (onboardingState) {
+      OnboardingDataSaved(:final profile) => profile,
+      OnboardingProfileLoaded(:final profile) => profile,
+      _ => null,
     };
+    final userName = profile?.name ?? 'toi';
+    final mrrTarget = profile?.mrrTarget ?? '10K€';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -239,6 +238,8 @@ class _AffirmationPageState extends State<AffirmationPage>
                           },
                           child: AffirmationCard(
                             affirmation: affirmation,
+                            userName: userName,
+                            mrrTarget: mrrTarget,
                             onFavorite: () =>
                                 cubit.toggleFavoriteAction(affirmation.id),
                             onShare: () {},
