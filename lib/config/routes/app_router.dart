@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart';
 import 'package:motivation_app/features/home/presentation/pages/home_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_name_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_age_page.dart';
@@ -11,6 +13,7 @@ import 'package:motivation_app/features/onboarding/presentation/pages/onboarding
 import 'package:motivation_app/features/affirmation/presentation/pages/affirmation_page.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/category_page.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/favorites_page.dart';
+import 'package:motivation_app/injection_container.dart' as di;
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -39,6 +42,7 @@ GoRouter createAppRouter({required bool onboardingDone}) => GoRouter(
         child: HomePage(),
       ),
     ),
+    // ─── Onboarding — routes plates, OnboardingCubit est global ─────────────
     GoRoute(
       path: AppRouter.onboardingName,
       pageBuilder: (context, state) => const MaterialPage(
@@ -81,23 +85,32 @@ GoRouter createAppRouter({required bool onboardingDone}) => GoRouter(
         child: OnboardingMrrTargetPage(),
       ),
     ),
-    GoRoute(
-      path: AppRouter.affirmation,
-      pageBuilder: (context, state) => const NoTransitionPage(
-        child: AffirmationPage(),
+    // ─── Affirmation — ShellRoute scopant AffirmationCubit ──────────────────
+    ShellRoute(
+      builder: (context, state, child) => BlocProvider(
+        create: (_) => di.sl<AffirmationCubit>()..init(),
+        child: child,
       ),
-    ),
-    GoRoute(
-      path: AppRouter.affirmationCategories,
-      pageBuilder: (context, state) => const MaterialPage(
-        child: CategoryPage(),
-      ),
-    ),
-    GoRoute(
-      path: AppRouter.affirmationFavorites,
-      pageBuilder: (context, state) => const MaterialPage(
-        child: FavoritesPage(),
-      ),
+      routes: [
+        GoRoute(
+          path: AppRouter.affirmation,
+          pageBuilder: (context, state) => const NoTransitionPage(
+            child: AffirmationPage(),
+          ),
+        ),
+        GoRoute(
+          path: AppRouter.affirmationCategories,
+          pageBuilder: (context, state) => const MaterialPage(
+            child: CategoryPage(),
+          ),
+        ),
+        GoRoute(
+          path: AppRouter.affirmationFavorites,
+          pageBuilder: (context, state) => const MaterialPage(
+            child: FavoritesPage(),
+          ),
+        ),
+      ],
     ),
   ],
 );

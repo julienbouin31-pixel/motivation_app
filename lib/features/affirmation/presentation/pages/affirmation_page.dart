@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart';
@@ -9,9 +8,10 @@ import 'package:motivation_app/features/affirmation/presentation/widgets/affirma
 import 'package:motivation_app/features/affirmation/presentation/widgets/affirmation_header.dart';
 import 'package:motivation_app/features/affirmation/presentation/widgets/category_tabs.dart';
 import 'package:motivation_app/features/affirmation/presentation/widgets/revenue_bar.dart';
-import 'package:motivation_app/features/home/presentation/pages/home_page.dart';
+import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
+import 'package:motivation_app/injection_container.dart' as di;
 
 class AffirmationPage extends StatefulWidget {
   const AffirmationPage({super.key});
@@ -176,17 +176,11 @@ class _AffirmationPageState extends State<AffirmationPage>
                 // 🧪 DEBUG — supprimer avant la mise en production
                 TextButton(
                   onPressed: () async {
-                    const storage = FlutterSecureStorage();
-                    await storage.deleteAll();
-                    print('❌ [DEBUG] Onboarding supprimé du secure storage');
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => const HomePage()), 
-                      (route) => false,
-                    );
+                    await di.sl<SecureStorage>().deleteAll();
+                    if (context.mounted) context.go(AppRouter.home);
                   },
                   child: const Text('❌ Reset onboarding', style: TextStyle(color: Colors.red, fontSize: 12)),
                 ),
-                const SizedBox(height: 8),
                 Expanded(
                   child: switch (state) {
                     AffirmationInitial() => const SizedBox.shrink(),

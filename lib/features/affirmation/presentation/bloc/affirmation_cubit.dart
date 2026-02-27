@@ -44,6 +44,9 @@ class AffirmationCubit extends Cubit<AffirmationState> {
     required this.saveCategories,
   }) : super(const AffirmationState.initial());
 
+  // Point d'entrée depuis le ShellRoute : restaure les catégories puis charge la première carte
+  Future<void> init() => loadNext();
+
   Future<void> loadNext() async {
     if (!_categoriesRestored) {
       _categoriesRestored = true;

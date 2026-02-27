@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
-import 'package:motivation_app/core/database/app_database.dart';
+import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_seed.dart';
 import 'package:motivation_app/features/affirmation/domain/repositories/affirmation_repository.dart';
-import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart';
-import 'package:motivation_app/features/onboarding/data/datasources/onboarding_local_data_source.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/injection_container.dart' as di;
 
@@ -18,42 +15,21 @@ void main() async {
 
   await di.init();
 
-  final db = di.sl<AppDatabase>();
-  final local = di.sl<AffirmationLocalDataSource>();
-  final profile = await di.sl<OnboardingLocalDataSource>().getUserProfile();
+  // Précharge le flag onboardingDone depuis le secure storage (lecture unique)
+  await di.sl<SecureStorage>().preloadCache();
 
-  // ════════════════════════════════════════════════════════════
-  // 🧪 DEBUG ONLY — supprimer avant la mise en production
-  const storage = FlutterSecureStorage();
-  await db.delete(db.affirmationItems).go();
-  await storage.delete(key: 'affirmation_last_fetch_date');
-  print('❌ [DEBUG] BD vidée, last_fetch_date supprimée (onboarding + catégories conservés)');
-  // ════════════════════════════════════════════════════════════
+  final local = di.sl<AffirmationLocalDataSource>();
 
   // Peuple la DB localement avant runApp → pas de spinner au premier lancement
   await seedAffirmationsIfEmpty(local);
 
-  // ════════════════════════════════════════════════════════════
-  // 🧪 DEBUG — état après seed
-  final countAfterSeed = await local.totalCount();
-  final dateAfterSeed = await storage.read(key: 'affirmation_last_fetch_date');
-  print('❌ [DEBUG] Après seed    → $countAfterSeed affs en BD | last_fetch: ${dateAfterSeed ?? "aucune"}');
-  // ════════════════════════════════════════════════════════════
+  // Refresh hebdomadaire en arrière-plan — non awaité
+  di.sl<AffirmationRepository>().weeklyRefreshInBackground();
 
-  // Refresh hebdomadaire — awaité ici pour voir le résultat en debug
-  await di.sl<AffirmationRepository>().weeklyRefreshInBackground();
-
-  // ════════════════════════════════════════════════════════════
-  // 🧪 DEBUG — état après refresh
-  final countAfterRefresh = await local.totalCount();
-  final dateAfterRefresh = await storage.read(key: 'affirmation_last_fetch_date');
-  print('❌ [DEBUG] Après refresh → $countAfterRefresh affs en BD | last_fetch: ${dateAfterRefresh ?? "aucune"}');
-  // ════════════════════════════════════════════════════════════
-
-  final onboardingDone = profile.name.isNotEmpty;
+  final onboardingDone = di.sl<SecureStorage>().cachedOnboardingDone;
   final router = createAppRouter(onboardingDone: onboardingDone);
 
-  // Pré-charge le profil avant runApp pour que le premier render ait le bon nom
+  // OnboardingCubit global — profil pré-chargé avant runApp pour un premier rendu correct
   final onboardingCubit = di.sl<OnboardingCubit>();
   await onboardingCubit.loadUserProfile();
 
@@ -68,11 +44,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider.value(value: onboardingCubit),
-        BlocProvider(create: (_) => di.sl<AffirmationCubit>()..loadNext()),
-      ],
+    return BlocProvider.value(
+      value: onboardingCubit,
       child: MaterialApp.router(
         title: 'Motivation App',
         debugShowCheckedModeBanner: false,

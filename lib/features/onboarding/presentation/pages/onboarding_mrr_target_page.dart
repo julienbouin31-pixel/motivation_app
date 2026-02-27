@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
+import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/continue_button.dart';
+import 'package:motivation_app/injection_container.dart' as di;
 
 class OnboardingMrrTargetPage extends StatefulWidget {
   const OnboardingMrrTargetPage({super.key});
@@ -176,9 +178,12 @@ class _OnboardingMrrTargetPageState extends State<OnboardingMrrTargetPage> {
               ContinueButton(
                 enabled: _selectedTarget != null,
                 onPressed: _selectedTarget != null
-                    ? () {
+                    ? () async {
                         context.read<OnboardingCubit>().saveMrrTarget(_selectedTarget!);
-                        OnboardingFlow.next(context, AppRouter.onboardingMrrTarget);
+                        await di.sl<SecureStorage>().setOnboardingDone();
+                        if (context.mounted) {
+                          OnboardingFlow.next(context, AppRouter.onboardingMrrTarget);
+                        }
                       }
                     : null,
               ),

@@ -5,7 +5,7 @@ import 'package:motivation_app/features/onboarding/domain/usecases/get_user_prof
 import 'package:motivation_app/features/onboarding/domain/usecases/save_user_profile.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 
-@injectable
+@lazySingleton
 class OnboardingCubit extends Cubit<OnboardingState> {
   final GetUserProfileUseCase getUserProfile;
   final SaveUserProfileUseCase saveUserProfile;

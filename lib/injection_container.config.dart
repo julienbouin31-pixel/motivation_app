@@ -10,12 +10,12 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:connectivity_plus/connectivity_plus.dart' as _i895;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:motivation_app/core/database/app_database.dart' as _i55;
 import 'package:motivation_app/core/di/injection_module.dart' as _i82;
 import 'package:motivation_app/core/network/network_info.dart' as _i867;
+import 'package:motivation_app/core/storage/secure_storage.dart' as _i443;
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart'
     as _i987;
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_remote_data_source.dart'
@@ -61,7 +61,7 @@ extension GetItInjectableX on _i174.GetIt {
   }) async {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final appModule = _$AppModule();
-    gh.singleton<_i558.FlutterSecureStorage>(() => appModule.secureStorage);
+    gh.singleton<_i443.SecureStorage>(() => _i443.SecureStorage());
     gh.singleton<_i895.Connectivity>(() => appModule.connectivity);
     await gh.singletonAsync<_i55.AppDatabase>(
       () => appModule.appDatabase,
@@ -75,7 +75,7 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i576.OnboardingLocalDataSource>(
       () => _i576.OnboardingLocalDataSourceImpl(
-        storage: gh<_i558.FlutterSecureStorage>(),
+        secureStorage: gh<_i443.SecureStorage>(),
       ),
     );
     gh.lazySingleton<_i829.OnboardingRepository>(
@@ -86,7 +86,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i987.AffirmationLocalDataSource>(
       () => _i987.AffirmationLocalDataSourceImpl(
         db: gh<_i55.AppDatabase>(),
-        storage: gh<_i558.FlutterSecureStorage>(),
+        secureStorage: gh<_i443.SecureStorage>(),
       ),
     );
     gh.lazySingleton<_i178.GetUserProfileUseCase>(
@@ -95,7 +95,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i140.SaveUserProfileUseCase>(
       () => _i140.SaveUserProfileUseCase(gh<_i829.OnboardingRepository>()),
     );
-    gh.factory<_i870.OnboardingCubit>(
+    gh.lazySingleton<_i870.OnboardingCubit>(
       () => _i870.OnboardingCubit(
         getUserProfile: gh<_i178.GetUserProfileUseCase>(),
         saveUserProfile: gh<_i140.SaveUserProfileUseCase>(),
