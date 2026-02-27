@@ -20,7 +20,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -32,7 +32,12 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 3) {
             // v3 : les placeholders {name}/{target} sont désormais stockés en DB
-            //      → vider la table pour que le seed recrée les entrées correctement
+            await m.drop(affirmationItems);
+            await m.createTable(affirmationItems);
+          }
+          if (from < 4) {
+            // v4 : nettoyage des entrées avec noms baked-in (anciens onboardings)
+            //      → toutes les entrées doivent utiliser {name}/{target} comme placeholders
             await m.drop(affirmationItems);
             await m.createTable(affirmationItems);
           }

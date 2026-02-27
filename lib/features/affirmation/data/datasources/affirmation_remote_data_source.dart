@@ -23,12 +23,11 @@ class AffirmationRemoteDataSourceImpl implements AffirmationRemoteDataSource {
     String? name,
     String? category,
   }) async {
-    final prenom = name ?? 'toi';
-    final target = mrrTarget ?? '10K€';
-
+    // Les placeholders {name} et {target} sont stockés tels quels en DB.
+    // La substitution se fait uniquement à l'affichage (AffirmationCard).
     final raw = [
       // Mindset — nouvelles
-      {'text': '$prenom, chaque matin est une nouvelle chance de progresser.', 'category': 'mindset'},
+      {'text': '{name}, chaque matin est une nouvelle chance de progresser.', 'category': 'mindset'},
       {'text': 'Le doute est normal. L\'action est ce qui te distingue.', 'category': 'mindset'},
       {'text': 'Tu n\'as pas besoin d\'être parfait pour avancer.', 'category': 'mindset'},
       {'text': 'Les grands bâtisseurs ont tous connu des jours difficiles.', 'category': 'mindset'},
@@ -45,7 +44,7 @@ class AffirmationRemoteDataSourceImpl implements AffirmationRemoteDataSource {
       {'text': 'Envoie cet email. Publie ce post. Lance cette feature.', 'category': 'action'},
       {'text': 'Fait imparfait > non fait parfait.', 'category': 'action'},
       {'text': 'Chaque petite victoire d\'aujourd\'hui construit la grande de demain.', 'category': 'action'},
-      {'text': '$prenom, le meilleur moment pour agir c\'est maintenant.', 'category': 'action'},
+      {'text': '{name}, le meilleur moment pour agir c\'est maintenant.', 'category': 'action'},
 
       // Focus — nouvelles
       {'text': 'Une seule priorité par jour suffit pour avancer vite.', 'category': 'focus'},
@@ -58,10 +57,10 @@ class AffirmationRemoteDataSourceImpl implements AffirmationRemoteDataSource {
 
       // MRR — nouvelles
       {'text': 'Chaque client satisfait est un ambassadeur potentiel.', 'category': 'mrr'},
-      {'text': '$prenom, le MRR est la preuve que tu crées de la valeur réelle.', 'category': 'mrr'},
+      {'text': '{name}, le MRR est la preuve que tu crées de la valeur réelle.', 'category': 'mrr'},
       {'text': 'Parle à tes clients aujourd\'hui — ils te diront où creuser.', 'category': 'mrr'},
       {'text': 'Réduis le churn et le MRR monte mécaniquement.', 'category': 'mrr'},
-      {'text': '$target est une étape, pas un plafond.', 'category': 'mrr'},
+      {'text': '{target} est une étape, pas un plafond.', 'category': 'mrr'},
       {'text': 'Un abonnement signé aujourd\'hui génère des revenus pendant des mois.', 'category': 'mrr'},
       {'text': 'La régularité de ton effort crée la régularité de ton revenu.', 'category': 'mrr'},
     ];
