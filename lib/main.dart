@@ -3,11 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
-import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_seed.dart';
 import 'package:motivation_app/features/affirmation/domain/repositories/affirmation_repository.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
+import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 import 'package:motivation_app/injection_container.dart' as di;
 
 void main() async {
@@ -15,23 +15,23 @@ void main() async {
 
   await di.init();
 
-  // Précharge le flag onboardingDone depuis le secure storage (lecture unique)
-  await di.sl<SecureStorage>().preloadCache();
-
   final local = di.sl<AffirmationLocalDataSource>();
-
-  // Peuple la DB localement avant runApp → pas de spinner au premier lancement
   await seedAffirmationsIfEmpty(local);
-
-  // Refresh hebdomadaire en arrière-plan — non awaité
   di.sl<AffirmationRepository>().weeklyRefreshInBackground();
 
-  final onboardingDone = di.sl<SecureStorage>().cachedOnboardingDone;
-  final router = createAppRouter(onboardingDone: onboardingDone);
-
-  // OnboardingCubit global — profil pré-chargé avant runApp pour un premier rendu correct
+  // Charge le profil et détermine l'écran de départ
   final onboardingCubit = di.sl<OnboardingCubit>();
   await onboardingCubit.loadUserProfile();
+
+  final profile = switch (onboardingCubit.state) {
+    OnboardingProfileLoaded(:final profile) => profile,
+    OnboardingDataSaved(:final profile) => profile,
+    _ => null,
+  };
+  final isDone = profile?.name!= null;
+  final initialLocation = isDone ? AppRouter.affirmation : AppRouter.home;
+
+  final router = createAppRouter(initialLocation: initialLocation);
 
   runApp(MyApp(router: router, onboardingCubit: onboardingCubit));
 }

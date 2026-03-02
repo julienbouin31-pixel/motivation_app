@@ -4,6 +4,8 @@ import 'package:motivation_app/features/affirmation/domain/entities/affirmation.
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/favorites_cubit.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/favorites_state.dart';
+import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
+import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 import 'package:motivation_app/injection_container.dart' as di;
 
 class FavoritesPage extends StatelessWidget {
@@ -112,6 +114,16 @@ class _FavoriteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final onboardingState = context.watch<OnboardingCubit>().state;
+    final profile = switch (onboardingState) {
+      OnboardingDataSaved(:final profile) => profile,
+      OnboardingProfileLoaded(:final profile) => profile,
+      _ => null,
+    };
+    final displayText = affirmation.text
+        .replaceAll('{name}', profile?.name ?? 'toi')
+        .replaceAll('{target}', profile?.mrrTarget ?? '10K€');
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 12, 16),
       decoration: BoxDecoration(
@@ -144,7 +156,7 @@ class _FavoriteCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  '"${affirmation.text}"',
+                  '"$displayText"',
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,

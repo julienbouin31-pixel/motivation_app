@@ -8,11 +8,8 @@ import 'package:motivation_app/features/affirmation/presentation/widgets/affirma
 import 'package:motivation_app/features/affirmation/presentation/widgets/affirmation_header.dart';
 import 'package:motivation_app/features/affirmation/presentation/widgets/category_tabs.dart';
 import 'package:motivation_app/features/affirmation/presentation/widgets/revenue_bar.dart';
-import 'package:motivation_app/core/storage/secure_storage.dart';
-import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
-import 'package:motivation_app/injection_container.dart' as di;
 
 class AffirmationPage extends StatefulWidget {
   const AffirmationPage({super.key});
@@ -174,15 +171,6 @@ class _AffirmationPageState extends State<AffirmationPage>
             return Column(
               children: [
                 AffirmationHeader(userName: userName),
-                // 🧪 DEBUG — supprimer avant la mise en production
-                TextButton(
-                  onPressed: () async {
-                    await di.sl<AffirmationLocalDataSource>().clearAll();
-                    await di.sl<SecureStorage>().deleteAll();
-                    if (context.mounted) context.go(AppRouter.home);
-                  },
-                  child: const Text('❌ Reset onboarding', style: TextStyle(color: Colors.red, fontSize: 12)),
-                ),
                 Expanded(
                   child: switch (state) {
                     AffirmationInitial() => const SizedBox.shrink(),

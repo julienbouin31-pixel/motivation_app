@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart';
-import 'package:motivation_app/features/home/presentation/pages/home_page.dart';
-import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_name_page.dart';
-import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_age_page.dart';
-import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_transition_page.dart';
-import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_objective_page.dart';
-import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_stripe_page.dart';
-import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_stripe_connected_page.dart';
-import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_mrr_target_page.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/affirmation_page.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/category_page.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/favorites_page.dart';
+import 'package:motivation_app/features/home/presentation/pages/home_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_age_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_mrr_target_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_name_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_objective_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_stripe_connected_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_stripe_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_transition_page.dart';
+import 'package:motivation_app/features/profile/presentation/pages/profile_page.dart';
 import 'package:motivation_app/injection_container.dart' as di;
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -29,12 +30,14 @@ class AppRouter {
   static const String affirmation = '/affirmation';
   static const String affirmationCategories = '/affirmation/categories';
   static const String affirmationFavorites = '/affirmation/favorites';
+  static const String profile = '/profile';
   static const String revenue = '/revenue';
 }
 
-GoRouter createAppRouter({required bool onboardingDone}) => GoRouter(
+/// [initialLocation] est calculé dans main.dart selon le profil chargé.
+GoRouter createAppRouter({required String initialLocation}) => GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: onboardingDone ? AppRouter.affirmation : AppRouter.home,
+  initialLocation: initialLocation,
   routes: [
     GoRoute(
       path: AppRouter.home,
@@ -83,6 +86,13 @@ GoRouter createAppRouter({required bool onboardingDone}) => GoRouter(
       path: AppRouter.onboardingMrrTarget,
       pageBuilder: (context, state) => const MaterialPage(
         child: OnboardingMrrTargetPage(),
+      ),
+    ),
+    // ─── Profil / Paramètres ─────────────────────────────────────────────────
+    GoRoute(
+      path: AppRouter.profile,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: ProfilePage(),
       ),
     ),
     // ─── Affirmation — ShellRoute scopant AffirmationCubit ──────────────────
