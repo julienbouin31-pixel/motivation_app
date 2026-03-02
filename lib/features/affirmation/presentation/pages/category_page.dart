@@ -12,12 +12,32 @@ class CategoryPage extends StatefulWidget {
 }
 
 class _CategoryPageState extends State<CategoryPage> {
-  static const _categories = [
-    (Icons.auto_awesome, AffirmationCategory.general),
-    (Icons.psychology_outlined, AffirmationCategory.mindset),
-    (Icons.rocket_launch_outlined, AffirmationCategory.action),
-    (Icons.center_focus_strong_outlined, AffirmationCategory.focus),
-    (Icons.trending_up, AffirmationCategory.mrr),
+  static const _items = [
+    (
+      index: '01',
+      category: AffirmationCategory.general,
+      description: 'Affirmations du quotidien',
+    ),
+    (
+      index: '02',
+      category: AffirmationCategory.mindset,
+      description: 'Reprogramme tes croyances',
+    ),
+    (
+      index: '03',
+      category: AffirmationCategory.action,
+      description: 'Passe à l\'exécution',
+    ),
+    (
+      index: '04',
+      category: AffirmationCategory.focus,
+      description: 'Reste dans le flow',
+    ),
+    (
+      index: '05',
+      category: AffirmationCategory.mrr,
+      description: 'Scale ton chiffre d\'affaires',
+    ),
   ];
 
   late List<AffirmationCategory> _selected;
@@ -42,43 +62,67 @@ class _CategoryPageState extends State<CategoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final activeCount =
+        _selected.isEmpty ? AffirmationCategory.values.length : _selected.length;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ─── Header ──────────────────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(4, 8, 16, 0),
-              child: IconButton(
-                icon: const Icon(Icons.close, color: Colors.black, size: 26),
-                onPressed: () => context.pop(),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => context.pop(),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.arrow_back, size: 20, color: Colors.black),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  const Text(
+                    'Thèmes',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    _selected.isEmpty ? 'tous actifs' : '$activeCount / ${AffirmationCategory.values.length}',
+                    style: TextStyle(fontSize: 13, color: Colors.grey[400]),
+                  ),
+                ],
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(24, 8, 24, 28),
-              child: Text(
-                'Catégories',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ),
+            const SizedBox(height: 8),
+
+            // ─── Liste ───────────────────────────────────────────────────────
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: _categories.map((tab) {
-                  final (icon, category) = tab;
-                  final isSelected = _selected.contains(category);
-                  return _CategoryItem(
-                    icon: icon,
-                    category: category,
+              child: ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: _items.length,
+                itemBuilder: (context, index) {
+                  final item = _items[index];
+                  final isSelected = _selected.contains(item.category);
+                  return _CategoryRow(
+                    index: item.index,
+                    category: item.category,
+                    description: item.description,
                     isSelected: isSelected,
-                    onTap: () => _toggle(category),
+                    onTap: () => _toggle(item.category),
                   );
-                }).toList(),
+                },
               ),
             ),
           ],
@@ -88,15 +132,17 @@ class _CategoryPageState extends State<CategoryPage> {
   }
 }
 
-class _CategoryItem extends StatelessWidget {
-  final IconData icon;
+class _CategoryRow extends StatelessWidget {
+  final String index;
   final AffirmationCategory category;
+  final String description;
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _CategoryItem({
-    required this.icon,
+  const _CategoryRow({
+    required this.index,
     required this.category,
+    required this.description,
     required this.isSelected,
     required this.onTap,
   });
@@ -106,38 +152,66 @@ class _CategoryItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        duration: const Duration(milliseconds: 120),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.black : Colors.grey[100],
-          borderRadius: BorderRadius.circular(16),
+          color: isSelected ? Colors.black : Colors.white,
+          border: Border(
+            bottom: BorderSide(color: Colors.grey.shade100),
+          ),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(icon,
-                size: 22,
-                color: isSelected ? Colors.white : Colors.black87),
-            const SizedBox(width: 16),
-            Expanded(
+            // Numéro
+            SizedBox(
+              width: 26,
               child: Text(
-                category.label,
+                index,
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: isSelected ? Colors.white : Colors.black87,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: isSelected ? Colors.grey[600] : Colors.grey[350],
+                  letterSpacing: 0.5,
                 ),
               ),
             ),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 150),
-              child: isSelected
-                  ? const Icon(Icons.check_circle,
-                      key: ValueKey(true), size: 22, color: Colors.white)
-                  : Icon(Icons.circle_outlined,
-                      key: ValueKey(false),
-                      size: 22,
-                      color: Colors.grey[400]),
+            const SizedBox(width: 16),
+            // Texte
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    category.label.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: isSelected ? Colors.white : Colors.black,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isSelected ? Colors.grey[500] : Colors.grey[500],
+                      height: 1.3,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Indicateur sélection
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 120),
+              width: 6,
+              height: 6,
+              decoration: BoxDecoration(
+                color: isSelected ? Colors.white : Colors.transparent,
+                shape: BoxShape.circle,
+              ),
             ),
           ],
         ),
