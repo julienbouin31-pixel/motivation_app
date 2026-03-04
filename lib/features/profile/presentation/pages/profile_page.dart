@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
+import 'package:motivation_app/features/affirmation/data/datasources/affirmation_seed.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 import 'package:motivation_app/injection_container.dart' as di;
@@ -183,7 +184,9 @@ class ProfilePage extends StatelessWidget {
                   // ── Debug ──────────────────────────────────────────────────
                   GestureDetector(
                     onTap: () async {
-                      await di.sl<AffirmationLocalDataSource>().clearAll();
+                      final local = di.sl<AffirmationLocalDataSource>();
+                      await local.clearAll();
+                      await seedAffirmationsIfEmpty(local);
                       await di.sl<SecureStorage>().deleteAll();
                       di.sl<OnboardingCubit>().reset();
                       if (context.mounted) context.go(AppRouter.home);

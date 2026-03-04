@@ -267,10 +267,9 @@ class _AffirmationPageState extends State<AffirmationPage>
                     ],
                   ),
                 ),
-                RevenueBar(
-                  currentRevenue: 0,
-                  targetRevenue: 1000,
-                  onTap: () => context.push(AppRouter.revenue),
+                GoalProgressBar(
+                  objectiveType: profile?.objectiveType,
+                  target: profile?.mrrTarget,
                 ),
               ],
             );
