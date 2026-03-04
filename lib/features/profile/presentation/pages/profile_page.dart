@@ -31,7 +31,7 @@ class ProfilePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ─── Header ────────────────────────────────────────────────────
+            // ─── Header ───────────────────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Row(
@@ -50,7 +50,7 @@ class ProfilePage extends StatelessWidget {
                   ),
                   const SizedBox(width: 16),
                   const Text(
-                    'Profil',
+                    'Réglages',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -61,94 +61,154 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 8),
 
-            // ─── Avatar + nom ───────────────────────────────────────────────
-            Center(
-              child: Column(
+            // ─── Contenu scrollable ───────────────────────────────────────────
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
                 children: [
+                  // ── Carte profil ──────────────────────────────────────────
                   Container(
-                    width: 72,
-                    height: 72,
-                    decoration: const BoxDecoration(
-                      color: Colors.black,
-                      shape: BoxShape.circle,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Center(
-                      child: Text(
-                        initial,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 52,
+                          height: 52,
+                          decoration: const BoxDecoration(
+                            color: Colors.black,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Text(
+                              initial,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                name,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                '$objectiveType · $mrrTarget',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey[400],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(Icons.chevron_right, size: 20, color: Colors.grey[300]),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  // ── Section Personnalisation ───────────────────────────────
+                  const _SectionLabel('PERSONNALISATION'),
+                  const SizedBox(height: 8),
+                  _SettingsGroup(
+                    items: [
+                      _SettingsItem(
+                        icon: Icons.widgets_outlined,
+                        title: 'Widgets',
+                        subtitle: 'Écran d\'accueil & verrouillage',
+                        badge: 'Bientôt',
+                      ),
+                      _SettingsItem(
+                        icon: Icons.palette_outlined,
+                        title: 'Apparence',
+                        subtitle: 'Thème & couleurs',
+                        badge: 'Bientôt',
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // ── Section Notifications ──────────────────────────────────
+                  const _SectionLabel('NOTIFICATIONS'),
+                  const SizedBox(height: 8),
+                  _SettingsGroup(
+                    items: [
+                      _SettingsItem(
+                        icon: Icons.notifications_outlined,
+                        title: 'Rappels quotidiens',
+                        subtitle: 'Heure & fréquence',
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // ── Section Compte ─────────────────────────────────────────
+                  const _SectionLabel('COMPTE'),
+                  const SizedBox(height: 8),
+                  _SettingsGroup(
+                    items: [
+                      _SettingsItem(
+                        icon: Icons.person_outline,
+                        title: 'Modifier le profil',
+                        subtitle: 'Nom, objectif, cible MRR',
+                        badge: 'Bientôt',
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 36),
+
+                  // ── Debug ──────────────────────────────────────────────────
+                  GestureDetector(
+                    onTap: () async {
+                      await di.sl<AffirmationLocalDataSource>().clearAll();
+                      await di.sl<SecureStorage>().deleteAll();
+                      di.sl<OnboardingCubit>().reset();
+                      if (context.mounted) context.go(AppRouter.home);
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.red.shade200),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          '🧪 Reset onboarding (debug)',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
                 ],
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // ─── Section Profil ─────────────────────────────────────────────
-            _SectionLabel(label: 'MON PROFIL'),
-            _InfoTile(label: 'Prénom', value: name),
-            _InfoTile(label: 'Objectif', value: objectiveType),
-            _InfoTile(label: 'Cible MRR', value: mrrTarget),
-
-            const SizedBox(height: 24),
-
-            // ─── Section Paramètres ─────────────────────────────────────────
-            _SectionLabel(label: 'PARAMÈTRES'),
-            _ActionTile(
-              icon: Icons.notifications_outlined,
-              label: 'Notifications',
-              onTap: () {},
-            ),
-
-            const Spacer(),
-
-            // ─── DEBUG ──────────────────────────────────────────────────────
-            // 🧪 Supprimer avant la mise en production
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: GestureDetector(
-                onTap: () async {
-                  await di.sl<AffirmationLocalDataSource>().clearAll();
-                  await di.sl<SecureStorage>().deleteAll();
-                  // Reset le cubit → le redirect GoRouter repasse sur home
-                  di.sl<OnboardingCubit>().reset();
-                  if (context.mounted) context.go(AppRouter.home);
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.red.shade200),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      '🧪 Reset onboarding (debug)',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ),
               ),
             ),
           ],
@@ -158,86 +218,135 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
+// ─── Composants ───────────────────────────────────────────────────────────────
+
 class _SectionLabel extends StatelessWidget {
   final String label;
-  const _SectionLabel({required this.label});
+  const _SectionLabel(this.label);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: Colors.grey[500],
-          letterSpacing: 0.8,
-        ),
+    return Text(
+      label,
+      style: TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+        color: Colors.grey[400],
+        letterSpacing: 0.8,
       ),
     );
   }
 }
 
-class _InfoTile extends StatelessWidget {
-  final String label;
-  final String value;
-  const _InfoTile({required this.label, required this.value});
+class _SettingsItem {
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final String? badge;
+  final VoidCallback? onTap;
+
+  const _SettingsItem({
+    required this.icon,
+    required this.title,
+    this.subtitle,
+    this.badge,
+    this.onTap,
+  });
+}
+
+class _SettingsGroup extends StatelessWidget {
+  final List<_SettingsItem> items;
+  const _SettingsGroup({required this.items});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 3),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 15, color: Colors.black87),
-          ),
-          Text(
-            value,
-            style: TextStyle(fontSize: 15, color: Colors.grey[500]),
-          ),
+          for (int i = 0; i < items.length; i++) ...[
+            _SettingsRow(item: items[i]),
+            if (i < items.length - 1)
+              Divider(height: 1, thickness: 1, indent: 54, color: Colors.grey[100]),
+          ],
         ],
       ),
     );
   }
 }
 
-class _ActionTile extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  const _ActionTile({required this.icon, required this.label, required this.onTap});
+class _SettingsRow extends StatelessWidget {
+  final _SettingsItem item;
+  const _SettingsRow({required this.item});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 3),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
+      onTap: item.onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
         child: Row(
           children: [
-            Icon(icon, size: 20, color: Colors.black87),
-            const SizedBox(width: 12),
+            // Icône dans un carré arrondi
+            Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(9),
+              ),
+              child: Icon(item.icon, size: 17, color: Colors.black87),
+            ),
+            const SizedBox(width: 13),
+            // Texte
             Expanded(
-              child: Text(
-                label,
-                style: const TextStyle(fontSize: 15, color: Colors.black87),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.title,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: item.onTap == null && item.badge == null
+                          ? Colors.black
+                          : Colors.black,
+                    ),
+                  ),
+                  if (item.subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      item.subtitle!,
+                      style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                    ),
+                  ],
+                ],
               ),
             ),
-            Icon(Icons.chevron_right, size: 20, color: Colors.grey[400]),
+            const SizedBox(width: 8),
+            // Badge "Bientôt" ou chevron
+            if (item.badge != null)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  item.badge!,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey[400],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              )
+            else
+              Icon(Icons.chevron_right, size: 18, color: Colors.grey[300]),
           ],
         ),
       ),
