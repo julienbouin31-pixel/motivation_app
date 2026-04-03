@@ -21,10 +21,21 @@ class ProfilePage extends StatelessWidget {
       _ => null,
     };
 
-    final name = profile?.name ?? '—';
-    final objectiveType = profile?.objectiveType ?? '—';
-    final mrrTarget = profile?.mrrTarget ?? '—';
-    final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
+    final name = (profile?.name?.isNotEmpty == true) ? profile!.name! : null;
+    final objectiveType = profile?.objectiveType;
+    final mrrTarget = profile?.mrrTarget;
+    final initial = (name != null && name.isNotEmpty) ? name[0].toUpperCase() : '?';
+
+    final objectiveLabel = switch (objectiveType) {
+      'mrr' => 'MRR',
+      'analytics' => 'Analytics',
+      _ => null,
+    };
+    final subtitle = [
+      if (objectiveLabel != null) objectiveLabel,
+      if (objectiveType == 'mrr' && mrrTarget != null && mrrTarget.isNotEmpty)
+        mrrTarget,
+    ].join(' · ');
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -102,21 +113,23 @@ class ProfilePage extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                name,
+                                name ?? '—',
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black,
                                 ),
                               ),
-                              const SizedBox(height: 3),
-                              Text(
-                                '$objectiveType · $mrrTarget',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey[400],
+                              if (subtitle.isNotEmpty) ...[
+                                const SizedBox(height: 3),
+                                Text(
+                                  subtitle,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey[400],
+                                  ),
                                 ),
-                              ),
+                              ],
                             ],
                           ),
                         ),
@@ -174,7 +187,7 @@ class ProfilePage extends StatelessWidget {
                         icon: Icons.person_outline,
                         title: 'Modifier le profil',
                         subtitle: 'Nom, objectif, cible MRR',
-                        badge: 'Bientôt',
+                        onTap: () => context.push(AppRouter.editProfile),
                       ),
                     ],
                   ),
