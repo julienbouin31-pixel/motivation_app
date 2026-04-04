@@ -5,6 +5,7 @@ import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/core/theme/theme_cubit.dart';
+import 'package:motivation_app/core/widgets/home_widget_service.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_seed.dart';
 import 'package:motivation_app/features/affirmation/domain/repositories/affirmation_repository.dart';
@@ -34,6 +35,9 @@ void main() async {
   final initialLocation = isDone ? AppRouter.affirmation : AppRouter.home;
 
   final router = createAppRouter(initialLocation: initialLocation);
+
+  // Initialise le service de widgets iOS
+  await HomeWidgetService.init();
 
   // Charge la préférence de thème
   final themeCubit = ThemeCubit(di.sl<SecureStorage>());

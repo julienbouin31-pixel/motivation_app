@@ -157,7 +157,7 @@ class ProfilePage extends StatelessWidget {
                         icon: Icons.widgets_outlined,
                         title: 'Widgets',
                         subtitle: 'Écran d\'accueil & verrouillage',
-                        badge: 'Bientôt',
+                        onTap: () => context.push(AppRouter.widgets),
                       ),
                       _SettingsItem(
                         icon: Icons.palette_outlined,
@@ -269,14 +269,12 @@ class _SettingsItem {
   final IconData icon;
   final String title;
   final String? subtitle;
-  final String? badge;
   final VoidCallback? onTap;
 
   const _SettingsItem({
     required this.icon,
     required this.title,
     this.subtitle,
-    this.badge,
     this.onTap,
   });
 }
@@ -353,24 +351,7 @@ class _SettingsRow extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            if (item.badge != null)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: colors.surface,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  item.badge!,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: colors.secondary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              )
-            else
-              Icon(Icons.chevron_right, size: 18, color: colors.secondary),
+            Icon(Icons.chevron_right, size: 18, color: colors.secondary),
           ],
         ),
       ),

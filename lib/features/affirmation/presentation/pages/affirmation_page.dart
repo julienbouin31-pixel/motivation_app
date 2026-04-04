@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
+import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_state.dart';
 import 'package:motivation_app/features/affirmation/presentation/widgets/affirmation_card.dart';
@@ -9,6 +10,7 @@ import 'package:motivation_app/features/affirmation/presentation/widgets/affirma
 import 'package:motivation_app/features/affirmation/presentation/widgets/category_tabs.dart';
 import 'package:motivation_app/features/affirmation/presentation/widgets/revenue_bar.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
+import 'package:motivation_app/core/widgets/home_widget_service.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 
@@ -163,7 +165,31 @@ class _AffirmationPageState extends State<AffirmationPage>
             }
             return next is AffirmationLoaded;
           },
-          listener: (context, state) => _resetForNewCard(),
+          listener: (context, state) {
+            _resetForNewCard();
+            if (state is AffirmationLoaded) {
+              final resolvedText = state.affirmation.text
+                  .replaceAll('{name}', userName)
+                  .replaceAll('{target}', mrrTarget);
+              HomeWidgetService.updateAffirmation(
+                text: resolvedText,
+                category: state.affirmation.category.label.toLowerCase(),
+              );
+              if (profile?.objectiveType != null && profile!.objectiveType != 'none') {
+                final isMrr = profile.objectiveType == 'mrr';
+                HomeWidgetService.updateGoal(
+                  current: isMrr
+                      ? GoalProgressBar.mockMrrCurrent
+                      : GoalProgressBar.mockAnalyticsCurrent,
+                  target: isMrr
+                      ? GoalProgressBar.mockMrrCurrent * 3.7
+                      : GoalProgressBar.mockAnalyticsCurrent * 2.9,
+                  changePct: 12,
+                  objectiveType: profile.objectiveType!,
+                );
+              }
+            }
+          },
           builder: (context, state) {
             final cubit = context.read<AffirmationCubit>();
             final selectedCategory = switch (state) {

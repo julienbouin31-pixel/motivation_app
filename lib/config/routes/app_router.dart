@@ -16,6 +16,7 @@ import 'package:motivation_app/features/onboarding/presentation/pages/onboarding
 import 'package:motivation_app/features/profile/presentation/pages/appearance_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/profile_page.dart';
+import 'package:motivation_app/features/profile/presentation/pages/widgets_page.dart';
 import 'package:motivation_app/injection_container.dart' as di;
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -35,6 +36,7 @@ class AppRouter {
   static const String profile = '/profile';
   static const String editProfile = '/profile/edit';
   static const String appearance = '/profile/appearance';
+  static const String widgets = '/profile/widgets';
   static const String revenue = '/revenue';
 }
 
@@ -109,6 +111,12 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
       path: AppRouter.appearance,
       pageBuilder: (context, state) => const MaterialPage(
         child: AppearancePage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.widgets,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: WidgetsPage(),
       ),
     ),
     // ─── Affirmation — ShellRoute scopant AffirmationCubit ──────────────────

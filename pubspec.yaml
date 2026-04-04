@@ -22,6 +22,9 @@ dependencies:
   # Routing
   go_router: ^14.7.0
 
+  # Widgets
+  home_widget: ^0.9.0
+
   # Storage
   flutter_secure_storage: ^9.2.2
   connectivity_plus: ^6.1.3
