@@ -8,6 +8,7 @@ import 'package:motivation_app/features/affirmation/presentation/widgets/affirma
 import 'package:motivation_app/features/affirmation/presentation/widgets/affirmation_header.dart';
 import 'package:motivation_app/features/affirmation/presentation/widgets/category_tabs.dart';
 import 'package:motivation_app/features/affirmation/presentation/widgets/revenue_bar.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 
@@ -146,8 +147,10 @@ class _AffirmationPageState extends State<AffirmationPage>
     final userName = profile?.name ?? 'toi';
     final mrrTarget = profile?.mrrTarget ?? '10K€';
 
+    final colors = Theme.of(context).extension<AppColors>()!;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colors.card,
       body: SafeArea(
         child: BlocConsumer<AffirmationCubit, AffirmationState>(
           // Se déclenche uniquement quand c'est une nouvelle affirmation (id différent)
@@ -174,9 +177,8 @@ class _AffirmationPageState extends State<AffirmationPage>
                 Expanded(
                   child: switch (state) {
                     AffirmationInitial() => const SizedBox.shrink(),
-                    AffirmationLoading() => const Center(
-                        child:
-                            CircularProgressIndicator(color: Colors.black),
+                    AffirmationLoading() => Center(
+                        child: CircularProgressIndicator(color: colors.primary),
                       ),
                     AffirmationLoaded(:final affirmation) => GestureDetector(
                         behavior: HitTestBehavior.opaque,
@@ -269,7 +271,9 @@ class _AffirmationPageState extends State<AffirmationPage>
                 ),
                 GoalProgressBar(
                   objectiveType: profile?.objectiveType,
-                  target: profile?.mrrTarget,
+                  target: profile?.objectiveType == 'analytics'
+                      ? profile?.analyticsTarget
+                      : profile?.mrrTarget,
                 ),
               ],
             );

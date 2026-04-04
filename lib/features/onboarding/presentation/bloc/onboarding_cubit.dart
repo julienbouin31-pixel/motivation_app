@@ -52,6 +52,9 @@ class OnboardingCubit extends Cubit<OnboardingState> {
 
   void reset() => emit(const OnboardingState.initial());
 
+  Future<void> saveAnalyticsTarget(String target) =>
+      _save(_currentProfile().copyWith(analyticsTarget: target));
+
   Future<void> saveMrrTarget(String target) async {
     final profile = _currentProfile().copyWith(mrrTarget: target);
     final result = await saveUserProfile(profile);

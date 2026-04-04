@@ -20,6 +20,7 @@ class SecureStorage {
   static const String _keySelectedCategories = 'affirmation_selected_categories';
   static const String _keyLastFetchDate = 'affirmation_last_fetch_date';
   static const String _keyOnboardingDone = 'onboarding_done';
+  static const String _keyThemeMode = 'theme_mode';
   static const String _markerFileName = '.onboarding_complete';
   // Profil stocké en fichier (Keychain iOS Simulator perd les données au restart)
   static const String _profileFileName = 'user_profile.json';
@@ -93,6 +94,12 @@ class SecureStorage {
   Future<void> saveLastFetchDate(String value) async {
     await _storage.write(key: _keyLastFetchDate, value: value);
   }
+
+  // ─── Thème ───────────────────────────────────────────────────────────────
+  Future<String?> readThemeMode() => _storage.read(key: _keyThemeMode);
+
+  Future<void> saveThemeMode(String value) =>
+      _storage.write(key: _keyThemeMode, value: value);
 
   // ─── Reset complet ────────────────────────────────────────────────────────
   Future<void> deleteAll() async {

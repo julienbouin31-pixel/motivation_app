@@ -13,6 +13,7 @@ import 'package:motivation_app/features/onboarding/presentation/pages/onboarding
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_stripe_connected_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_stripe_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_transition_page.dart';
+import 'package:motivation_app/features/profile/presentation/pages/appearance_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/profile_page.dart';
 import 'package:motivation_app/injection_container.dart' as di;
@@ -33,6 +34,7 @@ class AppRouter {
   static const String affirmationFavorites = '/affirmation/favorites';
   static const String profile = '/profile';
   static const String editProfile = '/profile/edit';
+  static const String appearance = '/profile/appearance';
   static const String revenue = '/revenue';
 }
 
@@ -101,6 +103,12 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
       path: AppRouter.editProfile,
       pageBuilder: (context, state) => const MaterialPage(
         child: EditProfilePage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.appearance,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: AppearancePage(),
       ),
     ),
     // ─── Affirmation — ShellRoute scopant AffirmationCubit ──────────────────

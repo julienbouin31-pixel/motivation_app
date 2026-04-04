@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
+import 'package:motivation_app/core/storage/secure_storage.dart';
+import 'package:motivation_app/core/theme/theme_cubit.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_seed.dart';
 import 'package:motivation_app/features/affirmation/domain/repositories/affirmation_repository.dart';
@@ -28,31 +30,50 @@ void main() async {
     OnboardingDataSaved(:final profile) => profile,
     _ => null,
   };
-  final isDone = profile?.name!= null;
+  final isDone = profile?.name != null;
   final initialLocation = isDone ? AppRouter.affirmation : AppRouter.home;
 
   final router = createAppRouter(initialLocation: initialLocation);
 
-  runApp(MyApp(router: router, onboardingCubit: onboardingCubit));
+  // Charge la préférence de thème
+  final themeCubit = ThemeCubit(di.sl<SecureStorage>());
+  await themeCubit.load();
+
+  runApp(MyApp(
+    router: router,
+    onboardingCubit: onboardingCubit,
+    themeCubit: themeCubit,
+  ));
 }
 
 class MyApp extends StatelessWidget {
   final GoRouter router;
   final OnboardingCubit onboardingCubit;
+  final ThemeCubit themeCubit;
 
-  const MyApp({super.key, required this.router, required this.onboardingCubit});
+  const MyApp({
+    super.key,
+    required this.router,
+    required this.onboardingCubit,
+    required this.themeCubit,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: onboardingCubit,
-      child: MaterialApp.router(
-        title: 'Motivation App',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system,
-        routerConfig: router,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: onboardingCubit),
+        BlocProvider.value(value: themeCubit),
+      ],
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) => MaterialApp.router(
+          title: 'Motivation App',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeMode,
+          routerConfig: router,
+        ),
       ),
     );
   }

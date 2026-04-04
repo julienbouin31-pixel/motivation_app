@@ -9,5 +9,6 @@ abstract class UserProfile with _$UserProfile {
     String? objectiveType, // 'mrr' | 'analytics' | 'none'
     String? stripeApiKey,
     String? mrrTarget,
+    String? analyticsTarget,
   }) = _UserProfile;
 }

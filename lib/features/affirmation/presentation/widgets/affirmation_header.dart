@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 
 class AffirmationHeader extends StatelessWidget {
   final String userName;
@@ -9,6 +10,7 @@ class AffirmationHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     final initial = userName.isNotEmpty ? userName[0].toUpperCase() : '?';
 
     return Padding(
@@ -21,15 +23,15 @@ class AffirmationHeader extends StatelessWidget {
             child: Container(
               width: 40,
               height: 40,
-              decoration: const BoxDecoration(
-                color: Colors.black,
+              decoration: BoxDecoration(
+                color: colors.primary,
                 shape: BoxShape.circle,
               ),
               child: Center(
                 child: Text(
                   initial,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: colors.scaffold,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),

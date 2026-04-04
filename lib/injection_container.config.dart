@@ -15,7 +15,7 @@ import 'package:injectable/injectable.dart' as _i526;
 import 'package:motivation_app/core/database/app_database.dart' as _i55;
 import 'package:motivation_app/core/di/injection_module.dart' as _i82;
 import 'package:motivation_app/core/network/network_info.dart' as _i867;
-import 'package:motivation_app/core/storage/secure_storage.dart' as _i443;
+import 'package:motivation_app/core/storage/secure_storage.dart' as _i35;
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart'
     as _i987;
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_remote_data_source.dart'
@@ -61,32 +61,32 @@ extension GetItInjectableX on _i174.GetIt {
   }) async {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final appModule = _$AppModule();
-    gh.singleton<_i443.SecureStorage>(() => _i443.SecureStorage());
     gh.singleton<_i895.Connectivity>(() => appModule.connectivity);
     await gh.singletonAsync<_i55.AppDatabase>(
       () => appModule.appDatabase,
       preResolve: true,
     );
+    gh.singleton<_i35.SecureStorage>(() => _i35.SecureStorage());
     gh.lazySingleton<_i867.NetworkInfo>(
       () => _i867.NetworkInfoImpl(gh<_i895.Connectivity>()),
     );
     gh.lazySingleton<_i631.AffirmationRemoteDataSource>(
       () => _i631.AffirmationRemoteDataSourceImpl(),
     );
+    gh.lazySingleton<_i987.AffirmationLocalDataSource>(
+      () => _i987.AffirmationLocalDataSourceImpl(
+        db: gh<_i55.AppDatabase>(),
+        secureStorage: gh<_i35.SecureStorage>(),
+      ),
+    );
     gh.lazySingleton<_i576.OnboardingLocalDataSource>(
       () => _i576.OnboardingLocalDataSourceImpl(
-        secureStorage: gh<_i443.SecureStorage>(),
+        secureStorage: gh<_i35.SecureStorage>(),
       ),
     );
     gh.lazySingleton<_i829.OnboardingRepository>(
       () => _i10.OnboardingRepositoryImpl(
         localDataSource: gh<_i576.OnboardingLocalDataSource>(),
-      ),
-    );
-    gh.lazySingleton<_i987.AffirmationLocalDataSource>(
-      () => _i987.AffirmationLocalDataSourceImpl(
-        db: gh<_i55.AppDatabase>(),
-        secureStorage: gh<_i443.SecureStorage>(),
       ),
     );
     gh.lazySingleton<_i178.GetUserProfileUseCase>(

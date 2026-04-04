@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart';
 
@@ -65,8 +66,9 @@ class _CategoryPageState extends State<CategoryPage> {
     final activeCount =
         _selected.isEmpty ? AffirmationCategory.values.length : _selected.length;
 
+    final colors = Theme.of(context).extension<AppColors>()!;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colors.scaffold,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,25 +84,25 @@ class _CategoryPageState extends State<CategoryPage> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: colors.surface,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.arrow_back, size: 20, color: Colors.black),
+                      child: Icon(Icons.arrow_back, size: 20, color: colors.primary),
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Text(
+                  Text(
                     'Thèmes',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: colors.primary,
                     ),
                   ),
                   const Spacer(),
                   Text(
                     _selected.isEmpty ? 'tous actifs' : '$activeCount / ${AffirmationCategory.values.length}',
-                    style: TextStyle(fontSize: 13, color: Colors.grey[400]),
+                    style: TextStyle(fontSize: 13, color: colors.secondary),
                   ),
                 ],
               ),
@@ -149,15 +151,16 @@ class _CategoryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 120),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.black : Colors.white,
+          color: isSelected ? colors.primary : colors.scaffold,
           border: Border(
-            bottom: BorderSide(color: Colors.grey.shade100),
+            bottom: BorderSide(color: colors.border),
           ),
         ),
         child: Row(
@@ -171,7 +174,7 @@ class _CategoryRow extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
-                  color: isSelected ? Colors.grey[600] : Colors.grey[350],
+                  color: isSelected ? colors.secondary : colors.border,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -187,7 +190,7 @@ class _CategoryRow extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: isSelected ? Colors.white : Colors.black,
+                      color: isSelected ? colors.scaffold : colors.primary,
                       letterSpacing: 1.2,
                     ),
                   ),
@@ -196,7 +199,7 @@ class _CategoryRow extends StatelessWidget {
                     description,
                     style: TextStyle(
                       fontSize: 13,
-                      color: isSelected ? Colors.grey[500] : Colors.grey[500],
+                      color: colors.secondary,
                       height: 1.3,
                     ),
                   ),
@@ -209,7 +212,7 @@ class _CategoryRow extends StatelessWidget {
               width: 6,
               height: 6,
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white : Colors.transparent,
+                color: isSelected ? colors.scaffold : Colors.transparent,
                 shape: BoxShape.circle,
               ),
             ),

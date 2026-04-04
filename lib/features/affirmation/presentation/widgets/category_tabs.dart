@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 
 class CategoryPanel extends StatelessWidget {
@@ -21,6 +22,7 @@ class CategoryPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
       child: Wrap(
@@ -35,20 +37,20 @@ class CategoryPanel extends StatelessWidget {
               duration: const Duration(milliseconds: 150),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: isSelected ? Colors.black : Colors.grey[100],
+                color: isSelected ? colors.primary : colors.surface,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(icon, size: 14, color: isSelected ? Colors.white : Colors.black54),
+                  Icon(icon, size: 14, color: isSelected ? colors.scaffold : colors.secondary),
                   const SizedBox(width: 6),
                   Text(
                     category.label,
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: isSelected ? Colors.white : Colors.black87,
+                      color: isSelected ? colors.scaffold : colors.primary,
                     ),
                   ),
                 ],
@@ -75,23 +77,24 @@ class CategoryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: colors.primary,
           borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.grid_view_rounded, size: 16, color: Colors.white),
+            Icon(Icons.grid_view_rounded, size: 16, color: colors.scaffold),
             const SizedBox(width: 4),
             AnimatedRotation(
               turns: isOpen ? 0.5 : 0,
               duration: const Duration(milliseconds: 200),
-              child: const Icon(Icons.keyboard_arrow_up, size: 14, color: Colors.white),
+              child: Icon(Icons.keyboard_arrow_up, size: 14, color: colors.scaffold),
             ),
           ],
         ),

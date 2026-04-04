@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
@@ -8,15 +9,16 @@ import 'package:motivation_app/features/onboarding/presentation/widgets/progress
 class OnboardingStripeConnectedPage extends StatelessWidget {
   const OnboardingStripeConnectedPage({super.key});
 
-  Widget _backLink(String label, VoidCallback onTap) {
+  Widget _backLink(BuildContext context, String label, VoidCallback onTap) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return GestureDetector(
       onTap: onTap,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.arrow_back, size: 16, color: Colors.grey[700]),
+          Icon(Icons.arrow_back, size: 16, color: colors.secondary),
           const SizedBox(width: 6),
-          Text(label, style: TextStyle(fontSize: 14, color: Colors.grey[700])),
+          Text(label, style: TextStyle(fontSize: 14, color: colors.secondary)),
         ],
       ),
     );
@@ -24,8 +26,9 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: colors.scaffold,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -44,9 +47,9 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
                 totalSteps: OnboardingFlow.totalSteps,
               ),
               const SizedBox(height: 20),
-              _backLink('Retour', () => context.pop()),
+              _backLink(context, 'Retour', () => context.pop()),
               const SizedBox(height: 8),
-              _backLink('Changer de type', () => context.go(AppRouter.onboardingObjective)),
+              _backLink(context, 'Changer de type', () => context.go(AppRouter.onboardingObjective)),
               const SizedBox(height: 32),
               Container(
                 width: 52,
@@ -58,26 +61,26 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
                 child: const Icon(Icons.check, size: 26, color: Color(0xFF4CAF50)),
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 'Connecté !',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: colors.primary,
                 ),
               ),
               const SizedBox(height: 10),
               Text(
                 'Ton compte Stripe est maintenant lié.',
-                style: TextStyle(fontSize: 15, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 15, color: colors.secondary),
               ),
               const SizedBox(height: 24),
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colors.card,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey[200]!, width: 1),
+                  border: Border.all(color: colors.border, width: 1),
                 ),
                 child: Row(
                   children: [
@@ -85,10 +88,10 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: colors.surface,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Icon(Icons.credit_card, color: Colors.grey[600], size: 22),
+                      child: Icon(Icons.credit_card, color: colors.secondary, size: 22),
                     ),
                     const SizedBox(width: 14),
                     Expanded(
@@ -97,12 +100,12 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              const Text(
+                              Text(
                                 'Acme SaaS Inc.',
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black,
+                                  color: colors.primary,
                                 ),
                               ),
                               const SizedBox(width: 6),
@@ -119,7 +122,7 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
                           const SizedBox(height: 2),
                           Text(
                             'billing@acme-saas.com',
-                            style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                            style: TextStyle(fontSize: 13, color: colors.secondary),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -128,7 +131,7 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.6,
-                              color: Colors.grey[500],
+                              color: colors.secondary,
                             ),
                           ),
                         ],
@@ -140,7 +143,7 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 'Tes données seront synchronisées automatiquement.',
-                style: TextStyle(fontSize: 13, color: Colors.grey[500]),
+                style: TextStyle(fontSize: 13, color: colors.secondary),
               ),
               const Spacer(),
               SizedBox(
@@ -149,8 +152,8 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () => OnboardingFlow.next(context, AppRouter.onboardingStripeConnected),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.scaffold,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),

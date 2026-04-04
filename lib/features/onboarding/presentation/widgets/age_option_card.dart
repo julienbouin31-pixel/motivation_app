@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 
 class AgeOptionCard extends StatelessWidget {
   final String ageRange;
@@ -14,16 +15,17 @@ class AgeOptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.black : Colors.white,
+          color: isSelected ? colors.primary : colors.card,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSelected ? Colors.black : Colors.grey[200]!,
+            color: isSelected ? colors.primary : colors.border,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -35,14 +37,14 @@ class AgeOptionCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: isSelected ? Colors.white : Colors.black,
+                  color: isSelected ? colors.scaffold : colors.primary,
                 ),
               ),
             ),
             if (isSelected)
-              const Icon(
+              Icon(
                 Icons.check_circle,
-                color: Colors.white,
+                color: colors.scaffold,
                 size: 24,
               ),
           ],

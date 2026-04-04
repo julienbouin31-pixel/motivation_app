@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
@@ -32,15 +33,16 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
     super.dispose();
   }
 
-  Widget _backLink(String label, VoidCallback onTap) {
+  Widget _backLink(BuildContext context, String label, VoidCallback onTap) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return GestureDetector(
       onTap: onTap,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.arrow_back, size: 16, color: Colors.grey[700]),
+          Icon(Icons.arrow_back, size: 16, color: colors.secondary),
           const SizedBox(width: 6),
-          Text(label, style: TextStyle(fontSize: 14, color: Colors.grey[700])),
+          Text(label, style: TextStyle(fontSize: 14, color: colors.secondary)),
         ],
       ),
     );
@@ -48,8 +50,9 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: colors.scaffold,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -77,32 +80,30 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
                       totalSteps: OnboardingFlow.totalSteps,
                     ),
                     const SizedBox(height: 20),
-                    _backLink('Retour', () => context.pop()),
-                    const SizedBox(height: 8),
-                    _backLink('Retour', () => context.pop()),
+                    _backLink(context, 'Retour', () => context.pop()),
                     const SizedBox(height: 32),
                     Container(
                       width: 52,
                       height: 52,
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: colors.surface,
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: const Icon(Icons.link, size: 26, color: Colors.black),
+                      child: Icon(Icons.link, size: 26, color: colors.primary),
                     ),
                     const SizedBox(height: 20),
-                    const Text(
+                    Text(
                       'Connecter Stripe',
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: colors.primary,
                       ),
                     ),
                     const SizedBox(height: 10),
                     Text(
                       'Entre ta clé API secrète pour synchroniser ton MRR.',
-                      style: TextStyle(fontSize: 15, color: Colors.grey[600], height: 1.4),
+                      style: TextStyle(fontSize: 15, color: colors.secondary, height: 1.4),
                     ),
                     const SizedBox(height: 28),
                     Text(
@@ -111,28 +112,29 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.8,
-                        color: Colors.grey[500],
+                        color: colors.secondary,
                       ),
                     ),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _apiKeyController,
+                      style: TextStyle(color: colors.primary),
                       decoration: InputDecoration(
                         hintText: 'sk_live_...',
-                        hintStyle: TextStyle(color: Colors.grey[400]),
+                        hintStyle: TextStyle(color: colors.secondary),
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: colors.card,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey[300]!),
+                          borderSide: BorderSide(color: colors.border),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey[300]!),
+                          borderSide: BorderSide(color: colors.border),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: Colors.black, width: 1.5),
+                          borderSide: BorderSide(color: colors.primary, width: 1.5),
                         ),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       ),
@@ -151,10 +153,10 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
                               }
                             : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: _isValid ? Colors.black : Colors.grey[300],
-                          foregroundColor: Colors.white,
-                          disabledBackgroundColor: Colors.grey[300],
-                          disabledForegroundColor: Colors.grey[500],
+                          backgroundColor: _isValid ? colors.primary : colors.border,
+                          foregroundColor: colors.scaffold,
+                          disabledBackgroundColor: colors.border,
+                          disabledForegroundColor: colors.secondary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),
@@ -181,9 +183,9 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
                           'Passer cette étape',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey[500],
+                            color: colors.secondary,
                             decoration: TextDecoration.underline,
-                            decorationColor: Colors.grey[500],
+                            decorationColor: colors.secondary,
                           ),
                         ),
                       ),
@@ -192,7 +194,7 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: colors.surface,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
@@ -204,18 +206,18 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.8,
-                              color: Colors.grey[500],
+                              color: colors.secondary,
                             ),
                           ),
                           const SizedBox(height: 10),
                           Text('1. Connecte-toi à ton dashboard Stripe',
-                              style: TextStyle(fontSize: 13, color: Colors.grey[700])),
+                              style: TextStyle(fontSize: 13, color: colors.secondary)),
                           const SizedBox(height: 4),
                           Text('2. Va dans Développeurs → Clés API',
-                              style: TextStyle(fontSize: 13, color: Colors.grey[700])),
+                              style: TextStyle(fontSize: 13, color: colors.secondary)),
                           const SizedBox(height: 4),
                           Text('3. Copie ta clé secrète (sk_live_...)',
-                              style: TextStyle(fontSize: 13, color: Colors.grey[700])),
+                              style: TextStyle(fontSize: 13, color: colors.secondary)),
                         ],
                       ),
                     ),

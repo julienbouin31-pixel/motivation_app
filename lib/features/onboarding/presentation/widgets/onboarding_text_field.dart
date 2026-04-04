@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 
 class OnboardingTextField extends StatelessWidget {
   final String hintText;
@@ -14,24 +15,25 @@ class OnboardingTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return TextField(
       controller: controller,
       onChanged: onChanged,
       autofocus: false,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w500,
-        color: Colors.black87,
+        color: colors.primary,
       ),
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w400,
-          color: Colors.grey[400],
+          color: colors.secondary,
         ),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: colors.card,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 24,
           vertical: 20,
@@ -39,21 +41,21 @@ class OnboardingTextField extends StatelessWidget {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(
-            color: Colors.grey[200]!,
+            color: colors.border,
             width: 1,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(
-            color: Colors.grey[200]!,
+            color: colors.border,
             width: 1,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: Colors.black,
+          borderSide: BorderSide(
+            color: colors.primary,
             width: 2,
           ),
         ),

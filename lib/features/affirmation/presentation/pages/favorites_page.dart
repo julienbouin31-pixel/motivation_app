@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/favorites_cubit.dart';
@@ -25,29 +26,30 @@ class _FavoritesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colors.card,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: colors.card,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: colors.primary),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
+        title: Text(
           'Mes favoris',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: colors.primary,
           ),
         ),
       ),
       body: BlocBuilder<FavoritesCubit, FavoritesState>(
         builder: (context, state) => switch (state) {
-          FavoritesLoading() => const Center(
-              child: CircularProgressIndicator(color: Colors.black),
+          FavoritesLoading() => Center(
+              child: CircularProgressIndicator(color: colors.primary),
             ),
           FavoritesError() => const Center(
               child: Text('Erreur lors du chargement'),
@@ -65,24 +67,25 @@ class _FavoritesView extends StatelessWidget {
 class _EmptyFavorites extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.favorite_border, size: 64, color: Colors.grey[300]),
+          Icon(Icons.favorite_border, size: 64, color: colors.border),
           const SizedBox(height: 16),
           Text(
             'Pas encore de favoris',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Colors.grey[400],
+              color: colors.secondary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Like une affirmation pour la retrouver ici',
-            style: TextStyle(fontSize: 14, color: Colors.grey[400]),
+            style: TextStyle(fontSize: 14, color: colors.secondary),
           ),
         ],
       ),
@@ -114,6 +117,7 @@ class _FavoriteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     final onboardingState = context.watch<OnboardingCubit>().state;
     final profile = switch (onboardingState) {
       OnboardingDataSaved(:final profile) => profile,
@@ -127,9 +131,9 @@ class _FavoriteCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 12, 16),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: colors.scaffold,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[200]!, width: 1),
+        border: Border.all(color: colors.border, width: 1),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,14 +145,14 @@ class _FavoriteCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: Colors.black,
+                    color: colors.primary,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     affirmation.category.label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
-                      color: Colors.white,
+                      color: colors.scaffold,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.5,
                     ),
@@ -157,11 +161,11 @@ class _FavoriteCard extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   '"$displayText"',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                     height: 1.5,
-                    color: Colors.black87,
+                    color: colors.primary,
                   ),
                 ),
               ],
@@ -171,9 +175,9 @@ class _FavoriteCard extends StatelessWidget {
           GestureDetector(
             onTap: () =>
                 context.read<FavoritesCubit>().removeFavorite(affirmation.id),
-            child: Padding(
-              padding: const EdgeInsets.all(4),
-              child: const Icon(Icons.favorite, color: Colors.red, size: 22),
+            child: const Padding(
+              padding: EdgeInsets.all(4),
+              child: Icon(Icons.favorite, color: Colors.red, size: 22),
             ),
           ),
         ],

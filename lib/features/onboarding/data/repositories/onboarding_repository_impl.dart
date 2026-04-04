@@ -32,6 +32,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
         objectiveType: profile.objectiveType,
         stripeApiKey: profile.stripeApiKey,
         mrrTarget: profile.mrrTarget,
+        analyticsTarget: profile.analyticsTarget,
       ));
       return Right(null);
     } catch (e) {

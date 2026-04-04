@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/continue_button.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
@@ -9,8 +10,9 @@ class OnboardingTransitionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: colors.scaffold,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -24,14 +26,14 @@ class OnboardingTransitionPage extends StatelessWidget {
                 ],
               ),
               const Spacer(flex: 2),
-    
+
               const SizedBox(height: 28),
-              const Text(
+              Text(
                 'On va personnaliser\nton expérience.',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: colors.primary,
                   height: 1.2,
                 ),
               ),
@@ -40,7 +42,7 @@ class OnboardingTransitionPage extends StatelessWidget {
                 'Quelques questions rapides pour que\nchaque journée compte vraiment.',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey[500],
+                  color: colors.secondary,
                   height: 1.5,
                 ),
               ),

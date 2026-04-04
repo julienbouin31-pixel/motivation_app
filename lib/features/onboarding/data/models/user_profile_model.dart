@@ -13,6 +13,7 @@ abstract class UserProfileModel with _$UserProfileModel {
     String? objectiveType,
     String? stripeApiKey,
     String? mrrTarget,
+    String? analyticsTarget,
   }) = _UserProfileModel;
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) =>
@@ -23,5 +24,6 @@ abstract class UserProfileModel with _$UserProfileModel {
         objectiveType: objectiveType,
         stripeApiKey: stripeApiKey,
         mrrTarget: mrrTarget,
+        analyticsTarget: analyticsTarget,
       );
 }

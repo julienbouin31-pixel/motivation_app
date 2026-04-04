@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_seed.dart';
@@ -14,6 +15,7 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     final onboardingState = context.watch<OnboardingCubit>().state;
     final profile = switch (onboardingState) {
       OnboardingDataSaved(:final profile) => profile,
@@ -24,6 +26,7 @@ class ProfilePage extends StatelessWidget {
     final name = (profile?.name?.isNotEmpty == true) ? profile!.name! : null;
     final objectiveType = profile?.objectiveType;
     final mrrTarget = profile?.mrrTarget;
+    final analyticsTarget = profile?.analyticsTarget;
     final initial = (name != null && name.isNotEmpty) ? name[0].toUpperCase() : '?';
 
     final objectiveLabel = switch (objectiveType) {
@@ -33,17 +36,18 @@ class ProfilePage extends StatelessWidget {
     };
     final subtitle = [
       if (objectiveLabel != null) objectiveLabel,
-      if (objectiveType == 'mrr' && mrrTarget != null && mrrTarget.isNotEmpty)
-        mrrTarget,
+      if (objectiveType == 'mrr' && mrrTarget != null && mrrTarget.isNotEmpty) mrrTarget,
+      if (objectiveType == 'analytics' && analyticsTarget != null && analyticsTarget.isNotEmpty)
+        analyticsTarget,
     ].join(' · ');
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: colors.scaffold,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ─── Header ───────────────────────────────────────────────────────
+            // ─── Header ────────────────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Row(
@@ -54,19 +58,19 @@ class ProfilePage extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: colors.surface,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.arrow_back, size: 20, color: Colors.black),
+                      child: Icon(Icons.arrow_back, size: 20, color: colors.primary),
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Text(
+                  Text(
                     'Réglages',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: colors.primary,
                     ),
                   ),
                 ],
@@ -75,75 +79,79 @@ class ProfilePage extends StatelessWidget {
 
             const SizedBox(height: 8),
 
-            // ─── Contenu scrollable ───────────────────────────────────────────
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
                 children: [
                   // ── Carte profil ──────────────────────────────────────────
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 52,
-                          height: 52,
-                          decoration: const BoxDecoration(
-                            color: Colors.black,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: Text(
-                              initial,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 22,
+                  GestureDetector(
+                    onTap: () => context.push(AppRouter.editProfile),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: colors.card,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        children: [
+                          // Avatar — toujours noir/blanc (élément de brand)
+                          Container(
+                            width: 52,
+                            height: 52,
+                            decoration: const BoxDecoration(
+                              color: Colors.black,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                initial,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 22,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                name ?? '—',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              if (subtitle.isNotEmpty) ...[
-                                const SizedBox(height: 3),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
                                 Text(
-                                  subtitle,
+                                  name ?? '—',
                                   style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.grey[400],
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: colors.primary,
                                   ),
                                 ),
+                                if (subtitle.isNotEmpty) ...[
+                                  const SizedBox(height: 3),
+                                  Text(
+                                    subtitle,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: colors.secondary,
+                                    ),
+                                  ),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
-                        ),
-                        Icon(Icons.chevron_right, size: 20, color: Colors.grey[300]),
-                      ],
+                          Icon(Icons.chevron_right, size: 20, color: colors.secondary),
+                        ],
+                      ),
                     ),
                   ),
 
                   const SizedBox(height: 28),
 
                   // ── Section Personnalisation ───────────────────────────────
-                  const _SectionLabel('PERSONNALISATION'),
+                  _SectionLabel('PERSONNALISATION', colors),
                   const SizedBox(height: 8),
                   _SettingsGroup(
+                    colors: colors,
                     items: [
                       _SettingsItem(
                         icon: Icons.widgets_outlined,
@@ -155,7 +163,7 @@ class ProfilePage extends StatelessWidget {
                         icon: Icons.palette_outlined,
                         title: 'Apparence',
                         subtitle: 'Thème & couleurs',
-                        badge: 'Bientôt',
+                        onTap: () => context.push(AppRouter.appearance),
                       ),
                     ],
                   ),
@@ -163,9 +171,10 @@ class ProfilePage extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   // ── Section Notifications ──────────────────────────────────
-                  const _SectionLabel('NOTIFICATIONS'),
+                  _SectionLabel('NOTIFICATIONS', colors),
                   const SizedBox(height: 8),
                   _SettingsGroup(
+                    colors: colors,
                     items: [
                       _SettingsItem(
                         icon: Icons.notifications_outlined,
@@ -179,14 +188,15 @@ class ProfilePage extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   // ── Section Compte ─────────────────────────────────────────
-                  const _SectionLabel('COMPTE'),
+                  _SectionLabel('COMPTE', colors),
                   const SizedBox(height: 8),
                   _SettingsGroup(
+                    colors: colors,
                     items: [
                       _SettingsItem(
                         icon: Icons.person_outline,
                         title: 'Modifier le profil',
-                        subtitle: 'Nom, objectif, cible MRR',
+                        subtitle: 'Nom, objectif, cible',
                         onTap: () => context.push(AppRouter.editProfile),
                       ),
                     ],
@@ -238,7 +248,8 @@ class ProfilePage extends StatelessWidget {
 
 class _SectionLabel extends StatelessWidget {
   final String label;
-  const _SectionLabel(this.label);
+  final AppColors colors;
+  const _SectionLabel(this.label, this.colors);
 
   @override
   Widget build(BuildContext context) {
@@ -247,7 +258,7 @@ class _SectionLabel extends StatelessWidget {
       style: TextStyle(
         fontSize: 11,
         fontWeight: FontWeight.w600,
-        color: Colors.grey[400],
+        color: colors.secondary,
         letterSpacing: 0.8,
       ),
     );
@@ -272,21 +283,22 @@ class _SettingsItem {
 
 class _SettingsGroup extends StatelessWidget {
   final List<_SettingsItem> items;
-  const _SettingsGroup({required this.items});
+  final AppColors colors;
+  const _SettingsGroup({required this.items, required this.colors});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.card,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         children: [
           for (int i = 0; i < items.length; i++) ...[
-            _SettingsRow(item: items[i]),
+            _SettingsRow(item: items[i], colors: colors),
             if (i < items.length - 1)
-              Divider(height: 1, thickness: 1, indent: 54, color: Colors.grey[100]),
+              Divider(height: 1, thickness: 1, indent: 54, color: colors.border),
           ],
         ],
       ),
@@ -296,7 +308,8 @@ class _SettingsGroup extends StatelessWidget {
 
 class _SettingsRow extends StatelessWidget {
   final _SettingsItem item;
-  const _SettingsRow({required this.item});
+  final AppColors colors;
+  const _SettingsRow({required this.item, required this.colors});
 
   @override
   Widget build(BuildContext context) {
@@ -307,18 +320,16 @@ class _SettingsRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
         child: Row(
           children: [
-            // Icône dans un carré arrondi
             Container(
               width: 34,
               height: 34,
               decoration: BoxDecoration(
-                color: Colors.grey[100],
+                color: colors.surface,
                 borderRadius: BorderRadius.circular(9),
               ),
-              child: Icon(item.icon, size: 17, color: Colors.black87),
+              child: Icon(item.icon, size: 17, color: colors.primary),
             ),
             const SizedBox(width: 13),
-            // Texte
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -328,41 +339,38 @@ class _SettingsRow extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      color: item.onTap == null && item.badge == null
-                          ? Colors.black
-                          : Colors.black,
+                      color: colors.primary,
                     ),
                   ),
                   if (item.subtitle != null) ...[
                     const SizedBox(height: 2),
                     Text(
                       item.subtitle!,
-                      style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                      style: TextStyle(fontSize: 12, color: colors.secondary),
                     ),
                   ],
                 ],
               ),
             ),
             const SizedBox(width: 8),
-            // Badge "Bientôt" ou chevron
             if (item.badge != null)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   item.badge!,
                   style: TextStyle(
                     fontSize: 11,
-                    color: Colors.grey[400],
+                    color: colors.secondary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               )
             else
-              Icon(Icons.chevron_right, size: 18, color: Colors.grey[300]),
+              Icon(Icons.chevron_right, size: 18, color: colors.secondary),
           ],
         ),
       ),

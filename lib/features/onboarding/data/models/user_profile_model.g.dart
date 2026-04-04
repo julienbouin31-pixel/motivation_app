@@ -12,6 +12,7 @@ _UserProfileModel _$UserProfileModelFromJson(Map<String, dynamic> json) =>
       objectiveType: json['objectiveType'] as String?,
       stripeApiKey: json['stripeApiKey'] as String?,
       mrrTarget: json['mrrTarget'] as String?,
+      analyticsTarget: json['analyticsTarget'] as String?,
     );
 
 Map<String, dynamic> _$UserProfileModelToJson(_UserProfileModel instance) =>
@@ -20,4 +21,5 @@ Map<String, dynamic> _$UserProfileModelToJson(_UserProfileModel instance) =>
       'objectiveType': instance.objectiveType,
       'stripeApiKey': instance.stripeApiKey,
       'mrrTarget': instance.mrrTarget,
+      'analyticsTarget': instance.analyticsTarget,
     };

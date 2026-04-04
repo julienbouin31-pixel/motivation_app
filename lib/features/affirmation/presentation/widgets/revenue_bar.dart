@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 
 class GoalProgressBar extends StatelessWidget {
   final String? objectiveType;
@@ -10,13 +11,22 @@ class GoalProgressBar extends StatelessWidget {
     this.target,
   });
 
-  static double _parseTarget(String? target) {
-    if (target == null) return 5000;
-    final t = target.toUpperCase().replaceAll('€', '').replaceAll('+', '').trim();
+  // Valeurs mock fixes — indépendantes du target
+  static const double mockMrrCurrent = 1350;
+  static const double mockAnalyticsCurrent = 3412;
+
+  static double _parseTarget(String? target, {bool isAnalytics = false}) {
+    if (target == null) return isAnalytics ? 10000 : 5000;
+    final t = target
+        .toUpperCase()
+        .replaceAll('€', '')
+        .replaceAll('+', '')
+        .replaceAll('/MOIS', '')
+        .trim();
     if (t.endsWith('K')) {
-      return (double.tryParse(t.replaceAll('K', '')) ?? 5) * 1000;
+      return (double.tryParse(t.replaceAll('K', '')) ?? (isAnalytics ? 10 : 5)) * 1000;
     }
-    return double.tryParse(t) ?? 5000;
+    return double.tryParse(t) ?? (isAnalytics ? 10000 : 5000);
   }
 
   static String _fmtRevenue(double amount) {
@@ -54,13 +64,13 @@ class GoalProgressBar extends StatelessWidget {
 
     if (isMrr) {
       targetValue = _parseTarget(target);
-      currentValue = (targetValue * 0.27).roundToDouble();
+      currentValue = mockMrrCurrent;
       label = 'MRR mensuel';
       currentLabel = _fmtRevenue(currentValue);
       targetLabel = _fmtRevenue(targetValue);
     } else {
-      targetValue = 10000;
-      currentValue = 3412;
+      targetValue = _parseTarget(target, isAnalytics: true);
+      currentValue = mockAnalyticsCurrent;
       label = 'Visiteurs ce mois-ci';
       currentLabel = _fmtCount(currentValue);
       targetLabel = _fmtCount(targetValue);
@@ -68,6 +78,7 @@ class GoalProgressBar extends StatelessWidget {
 
     final double progress = (currentValue / targetValue).clamp(0.0, 1.0);
     final int pct = (progress * 100).round();
+    final colors = Theme.of(context).extension<AppColors>()!;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -83,24 +94,24 @@ class GoalProgressBar extends StatelessWidget {
                 label,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey[400],
+                  color: colors.secondary,
                   letterSpacing: 0.3,
                 ),
               ),
               const Spacer(),
               Text(
                 currentLabel,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
-                  color: Colors.black,
+                  color: colors.primary,
                 ),
               ),
               Text(
                 ' / $targetLabel',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey[400],
+                  color: colors.secondary,
                 ),
               ),
             ],

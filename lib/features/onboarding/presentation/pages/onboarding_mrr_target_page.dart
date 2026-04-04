@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
@@ -28,15 +29,16 @@ class _OnboardingMrrTargetPageState extends State<OnboardingMrrTargetPage> {
     (amount: '50K€+', label: 'Empire builder'),
   ];
 
-  Widget _backLink(String label, VoidCallback onTap) {
+  Widget _backLink(BuildContext context, String label, VoidCallback onTap) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return GestureDetector(
       onTap: onTap,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.arrow_back, size: 16, color: Colors.grey[700]),
+          Icon(Icons.arrow_back, size: 16, color: colors.secondary),
           const SizedBox(width: 6),
-          Text(label, style: TextStyle(fontSize: 14, color: Colors.grey[700])),
+          Text(label, style: TextStyle(fontSize: 14, color: colors.secondary)),
         ],
       ),
     );
@@ -44,8 +46,9 @@ class _OnboardingMrrTargetPageState extends State<OnboardingMrrTargetPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: colors.scaffold,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -64,33 +67,33 @@ class _OnboardingMrrTargetPageState extends State<OnboardingMrrTargetPage> {
                 totalSteps: OnboardingFlow.totalSteps,
               ),
               const SizedBox(height: 20),
-              _backLink('Retour', () => context.pop()),
+              _backLink(context, 'Retour', () => context.pop()),
               const SizedBox(height: 8),
-              _backLink('Modifier la connexion', () => context.pop()),
+              _backLink(context, 'Modifier la connexion', () => context.pop()),
               const SizedBox(height: 32),
               Container(
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.trending_up, size: 26, color: Colors.black),
+                child: Icon(Icons.trending_up, size: 26, color: colors.primary),
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 'Ton objectif MRR ?',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: colors.primary,
                   height: 1.2,
                 ),
               ),
               const SizedBox(height: 10),
               Text(
                 'On adaptera les affirmations à ton niveau d\'ambition.',
-                style: TextStyle(fontSize: 15, color: Colors.grey[600], height: 1.4),
+                style: TextStyle(fontSize: 15, color: colors.secondary, height: 1.4),
               ),
               const SizedBox(height: 12),
               Container(
@@ -136,10 +139,10 @@ class _OnboardingMrrTargetPageState extends State<OnboardingMrrTargetPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                         margin: const EdgeInsets.only(bottom: 8),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: colors.card,
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: isSelected ? Colors.black : Colors.grey[200]!,
+                            color: isSelected ? colors.primary : colors.border,
                             width: isSelected ? 2 : 1,
                           ),
                         ),
@@ -150,20 +153,20 @@ class _OnboardingMrrTargetPageState extends State<OnboardingMrrTargetPage> {
                               style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
-                                color: isSelected ? Colors.black : Colors.black87,
+                                color: colors.primary,
                               ),
                             ),
                             const SizedBox(width: 6),
                             Text(
                               '/mois',
-                              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                              style: TextStyle(fontSize: 14, color: colors.secondary),
                             ),
                             const Spacer(),
                             Text(
                               target.label,
                               style: TextStyle(
                                 fontSize: 13,
-                                color: isSelected ? Colors.black : Colors.grey[500],
+                                color: isSelected ? colors.primary : colors.secondary,
                                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                               ),
                             ),

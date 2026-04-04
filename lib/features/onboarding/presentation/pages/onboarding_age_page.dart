@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
@@ -28,8 +29,9 @@ class _OnboardingAgePageState extends State<OnboardingAgePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: colors.scaffold,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -58,12 +60,12 @@ class _OnboardingAgePageState extends State<OnboardingAgePage> {
                       totalSteps: OnboardingFlow.totalSteps,
                     ),
                     const SizedBox(height: 48),
-                    const Text(
+                    Text(
                       'Quel âge as-tu ?',
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: colors.primary,
                         height: 1.2,
                       ),
                     ),
@@ -72,7 +74,7 @@ class _OnboardingAgePageState extends State<OnboardingAgePage> {
                       'Pour adapter le ton de tes affirmations.',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.grey[600],
+                        color: colors.secondary,
                         height: 1.4,
                       ),
                     ),

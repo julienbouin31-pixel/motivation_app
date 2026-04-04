@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 
 class ObjectiveOptionCard extends StatelessWidget {
   final IconData icon;
@@ -22,15 +23,16 @@ class ObjectiveOptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.card,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey[200]!, width: 1),
+          border: Border.all(color: colors.border, width: 1),
         ),
         child: Row(
           children: [
@@ -50,16 +52,16 @@ class ObjectiveOptionCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: colors.primary,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     description,
-                    style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                    style: TextStyle(fontSize: 13, color: colors.secondary),
                   ),
                   if (connectLabel != null) ...[
                     const SizedBox(height: 5),
@@ -81,7 +83,7 @@ class ObjectiveOptionCard extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: Colors.grey[400], size: 22),
+            Icon(Icons.chevron_right, color: colors.secondary, size: 22),
           ],
         ),
       ),

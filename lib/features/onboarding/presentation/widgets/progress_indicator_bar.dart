@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 
 class ProgressIndicatorBar extends StatelessWidget {
   final int currentStep;
@@ -12,10 +13,11 @@ class ProgressIndicatorBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return LinearProgressIndicator(
       value: currentStep / totalSteps,
-      backgroundColor: Colors.grey[300],
-      valueColor: const AlwaysStoppedAnimation(Colors.black),
+      backgroundColor: colors.border,
+      valueColor: AlwaysStoppedAnimation(colors.primary),
       minHeight: 4,
       borderRadius: BorderRadius.circular(2),
     );

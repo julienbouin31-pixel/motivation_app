@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
@@ -13,8 +14,9 @@ class OnboardingObjectivePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: colors.scaffold,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -39,11 +41,11 @@ class OnboardingObjectivePage extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.arrow_back, size: 16, color: Colors.grey[700]),
+                      Icon(Icons.arrow_back, size: 16, color: colors.secondary),
                       const SizedBox(width: 6),
                       Text(
                         'Retour',
-                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                        style: TextStyle(fontSize: 14, color: colors.secondary),
                       ),
                     ],
                   ),
@@ -53,25 +55,25 @@ class OnboardingObjectivePage extends StatelessWidget {
                   width: 52,
                   height: 52,
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: colors.surface,
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  child: const Icon(Icons.gps_fixed_outlined, size: 26, color: Colors.black),
+                  child: Icon(Icons.gps_fixed_outlined, size: 26, color: colors.primary),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Quel type d\'objectif ?',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: colors.primary,
                     height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   'Choisis ce que tu veux tracker. On adaptera l\'app à ton besoin.',
-                  style: TextStyle(fontSize: 15, color: Colors.grey[600], height: 1.4),
+                  style: TextStyle(fontSize: 15, color: colors.secondary, height: 1.4),
                 ),
                 const SizedBox(height: 28),
                 ObjectiveOptionCard(

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 mixin _$UserProfile {
 
  String? get name; String? get objectiveType;// 'mrr' | 'analytics' | 'none'
- String? get stripeApiKey; String? get mrrTarget;
+ String? get stripeApiKey; String? get mrrTarget; String? get analyticsTarget;
 /// Create a copy of UserProfile
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $UserProfileCopyWith<UserProfile> get copyWith => _$UserProfileCopyWithImpl<User
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserProfile&&(identical(other.name, name) || other.name == name)&&(identical(other.objectiveType, objectiveType) || other.objectiveType == objectiveType)&&(identical(other.stripeApiKey, stripeApiKey) || other.stripeApiKey == stripeApiKey)&&(identical(other.mrrTarget, mrrTarget) || other.mrrTarget == mrrTarget));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserProfile&&(identical(other.name, name) || other.name == name)&&(identical(other.objectiveType, objectiveType) || other.objectiveType == objectiveType)&&(identical(other.stripeApiKey, stripeApiKey) || other.stripeApiKey == stripeApiKey)&&(identical(other.mrrTarget, mrrTarget) || other.mrrTarget == mrrTarget)&&(identical(other.analyticsTarget, analyticsTarget) || other.analyticsTarget == analyticsTarget));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name,objectiveType,stripeApiKey,mrrTarget);
+int get hashCode => Object.hash(runtimeType,name,objectiveType,stripeApiKey,mrrTarget,analyticsTarget);
 
 @override
 String toString() {
-  return 'UserProfile(name: $name, objectiveType: $objectiveType, stripeApiKey: $stripeApiKey, mrrTarget: $mrrTarget)';
+  return 'UserProfile(name: $name, objectiveType: $objectiveType, stripeApiKey: $stripeApiKey, mrrTarget: $mrrTarget, analyticsTarget: $analyticsTarget)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $UserProfileCopyWith<$Res>  {
   factory $UserProfileCopyWith(UserProfile value, $Res Function(UserProfile) _then) = _$UserProfileCopyWithImpl;
 @useResult
 $Res call({
- String? name, String? objectiveType, String? stripeApiKey, String? mrrTarget
+ String? name, String? objectiveType, String? stripeApiKey, String? mrrTarget, String? analyticsTarget
 });
 
 
@@ -63,12 +63,13 @@ class _$UserProfileCopyWithImpl<$Res>
 
 /// Create a copy of UserProfile
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? name = freezed,Object? objectiveType = freezed,Object? stripeApiKey = freezed,Object? mrrTarget = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = freezed,Object? objectiveType = freezed,Object? stripeApiKey = freezed,Object? mrrTarget = freezed,Object? analyticsTarget = freezed,}) {
   return _then(_self.copyWith(
 name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String?,objectiveType: freezed == objectiveType ? _self.objectiveType : objectiveType // ignore: cast_nullable_to_non_nullable
 as String?,stripeApiKey: freezed == stripeApiKey ? _self.stripeApiKey : stripeApiKey // ignore: cast_nullable_to_non_nullable
 as String?,mrrTarget: freezed == mrrTarget ? _self.mrrTarget : mrrTarget // ignore: cast_nullable_to_non_nullable
+as String?,analyticsTarget: freezed == analyticsTarget ? _self.analyticsTarget : analyticsTarget // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -154,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? name,  String? objectiveType,  String? stripeApiKey,  String? mrrTarget)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? name,  String? objectiveType,  String? stripeApiKey,  String? mrrTarget,  String? analyticsTarget)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserProfile() when $default != null:
-return $default(_that.name,_that.objectiveType,_that.stripeApiKey,_that.mrrTarget);case _:
+return $default(_that.name,_that.objectiveType,_that.stripeApiKey,_that.mrrTarget,_that.analyticsTarget);case _:
   return orElse();
 
 }
@@ -175,10 +176,10 @@ return $default(_that.name,_that.objectiveType,_that.stripeApiKey,_that.mrrTarge
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? name,  String? objectiveType,  String? stripeApiKey,  String? mrrTarget)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? name,  String? objectiveType,  String? stripeApiKey,  String? mrrTarget,  String? analyticsTarget)  $default,) {final _that = this;
 switch (_that) {
 case _UserProfile():
-return $default(_that.name,_that.objectiveType,_that.stripeApiKey,_that.mrrTarget);case _:
+return $default(_that.name,_that.objectiveType,_that.stripeApiKey,_that.mrrTarget,_that.analyticsTarget);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +196,10 @@ return $default(_that.name,_that.objectiveType,_that.stripeApiKey,_that.mrrTarge
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? name,  String? objectiveType,  String? stripeApiKey,  String? mrrTarget)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? name,  String? objectiveType,  String? stripeApiKey,  String? mrrTarget,  String? analyticsTarget)?  $default,) {final _that = this;
 switch (_that) {
 case _UserProfile() when $default != null:
-return $default(_that.name,_that.objectiveType,_that.stripeApiKey,_that.mrrTarget);case _:
+return $default(_that.name,_that.objectiveType,_that.stripeApiKey,_that.mrrTarget,_that.analyticsTarget);case _:
   return null;
 
 }
@@ -210,7 +211,7 @@ return $default(_that.name,_that.objectiveType,_that.stripeApiKey,_that.mrrTarge
 
 
 class _UserProfile implements UserProfile {
-  const _UserProfile({this.name, this.objectiveType, this.stripeApiKey, this.mrrTarget});
+  const _UserProfile({this.name, this.objectiveType, this.stripeApiKey, this.mrrTarget, this.analyticsTarget});
   
 
 @override final  String? name;
@@ -218,6 +219,7 @@ class _UserProfile implements UserProfile {
 // 'mrr' | 'analytics' | 'none'
 @override final  String? stripeApiKey;
 @override final  String? mrrTarget;
+@override final  String? analyticsTarget;
 
 /// Create a copy of UserProfile
 /// with the given fields replaced by the non-null parameter values.
@@ -229,16 +231,16 @@ _$UserProfileCopyWith<_UserProfile> get copyWith => __$UserProfileCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserProfile&&(identical(other.name, name) || other.name == name)&&(identical(other.objectiveType, objectiveType) || other.objectiveType == objectiveType)&&(identical(other.stripeApiKey, stripeApiKey) || other.stripeApiKey == stripeApiKey)&&(identical(other.mrrTarget, mrrTarget) || other.mrrTarget == mrrTarget));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserProfile&&(identical(other.name, name) || other.name == name)&&(identical(other.objectiveType, objectiveType) || other.objectiveType == objectiveType)&&(identical(other.stripeApiKey, stripeApiKey) || other.stripeApiKey == stripeApiKey)&&(identical(other.mrrTarget, mrrTarget) || other.mrrTarget == mrrTarget)&&(identical(other.analyticsTarget, analyticsTarget) || other.analyticsTarget == analyticsTarget));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name,objectiveType,stripeApiKey,mrrTarget);
+int get hashCode => Object.hash(runtimeType,name,objectiveType,stripeApiKey,mrrTarget,analyticsTarget);
 
 @override
 String toString() {
-  return 'UserProfile(name: $name, objectiveType: $objectiveType, stripeApiKey: $stripeApiKey, mrrTarget: $mrrTarget)';
+  return 'UserProfile(name: $name, objectiveType: $objectiveType, stripeApiKey: $stripeApiKey, mrrTarget: $mrrTarget, analyticsTarget: $analyticsTarget)';
 }
 
 
@@ -249,7 +251,7 @@ abstract mixin class _$UserProfileCopyWith<$Res> implements $UserProfileCopyWith
   factory _$UserProfileCopyWith(_UserProfile value, $Res Function(_UserProfile) _then) = __$UserProfileCopyWithImpl;
 @override @useResult
 $Res call({
- String? name, String? objectiveType, String? stripeApiKey, String? mrrTarget
+ String? name, String? objectiveType, String? stripeApiKey, String? mrrTarget, String? analyticsTarget
 });
 
 
@@ -266,12 +268,13 @@ class __$UserProfileCopyWithImpl<$Res>
 
 /// Create a copy of UserProfile
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? name = freezed,Object? objectiveType = freezed,Object? stripeApiKey = freezed,Object? mrrTarget = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? name = freezed,Object? objectiveType = freezed,Object? stripeApiKey = freezed,Object? mrrTarget = freezed,Object? analyticsTarget = freezed,}) {
   return _then(_UserProfile(
 name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String?,objectiveType: freezed == objectiveType ? _self.objectiveType : objectiveType // ignore: cast_nullable_to_non_nullable
 as String?,stripeApiKey: freezed == stripeApiKey ? _self.stripeApiKey : stripeApiKey // ignore: cast_nullable_to_non_nullable
 as String?,mrrTarget: freezed == mrrTarget ? _self.mrrTarget : mrrTarget // ignore: cast_nullable_to_non_nullable
+as String?,analyticsTarget: freezed == analyticsTarget ? _self.analyticsTarget : analyticsTarget // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

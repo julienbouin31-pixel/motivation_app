@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
@@ -40,8 +41,9 @@ class _OnboardingNamePageState extends State<OnboardingNamePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: colors.scaffold,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Padding(
@@ -62,12 +64,12 @@ class _OnboardingNamePageState extends State<OnboardingNamePage> {
                 totalSteps: OnboardingFlow.totalSteps,
               ),
               const SizedBox(height: 64),
-              const Text(
+              Text(
                 'Comment tu t\'appelles ?',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: colors.primary,
                   height: 1.2,
                 ),
               ),
@@ -76,7 +78,7 @@ class _OnboardingNamePageState extends State<OnboardingNamePage> {
                 'On personnalisera tes affirmations quotidiennes.',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey[600],
+                  color: colors.secondary,
                   height: 1.4,
                 ),
               ),

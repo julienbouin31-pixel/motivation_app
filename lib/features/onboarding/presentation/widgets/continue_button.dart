@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 
 class ContinueButton extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -12,16 +13,17 @@ class ContinueButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return SizedBox(
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
         onPressed: enabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: enabled ? Colors.black : Colors.grey[300],
-          foregroundColor: Colors.white,
-          disabledBackgroundColor: Colors.grey[300],
-          disabledForegroundColor: Colors.grey[500],
+          backgroundColor: enabled ? colors.primary : colors.border,
+          foregroundColor: colors.scaffold,
+          disabledBackgroundColor: colors.border,
+          disabledForegroundColor: colors.secondary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),

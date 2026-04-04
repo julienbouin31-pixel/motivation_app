@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
 
 class AffirmationCard extends StatelessWidget {
@@ -19,6 +20,7 @@ class AffirmationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     final displayText = affirmation.text
         .replaceAll('{name}', userName)
         .replaceAll('{target}', mrrTarget);
@@ -30,11 +32,11 @@ class AffirmationCard extends StatelessWidget {
           child: Text(
             '"$displayText"',
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
               height: 1.4,
-              color: Colors.black,
+              color: colors.primary,
             ),
           ),
         ),
@@ -49,7 +51,7 @@ class AffirmationCard extends StatelessWidget {
             const SizedBox(width: 16),
             _ActionButton(
               icon: Icons.share_outlined,
-              color: Colors.black54,
+              color: colors.secondary,
               onTap: onShare,
             ),
           ],
@@ -111,6 +113,7 @@ class _LikeButtonState extends State<_LikeButton>
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return GestureDetector(
       onTap: _handleTap,
       child: ScaleTransition(
@@ -119,14 +122,12 @@ class _LikeButtonState extends State<_LikeButton>
           width: 52,
           height: 52,
           decoration: BoxDecoration(
-            color: widget.isFavorite
-                ? Colors.red.shade50
-                : Colors.grey[100],
+            color: widget.isFavorite ? Colors.red.shade50 : colors.surface,
             shape: BoxShape.circle,
           ),
           child: Icon(
             widget.isFavorite ? Icons.favorite : Icons.favorite_border,
-            color: widget.isFavorite ? Colors.red : Colors.black54,
+            color: widget.isFavorite ? Colors.red : colors.secondary,
             size: 22,
           ),
         ),
@@ -144,13 +145,14 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 52,
         height: 52,
         decoration: BoxDecoration(
-          color: Colors.grey[100],
+          color: colors.surface,
           shape: BoxShape.circle,
         ),
         child: Icon(icon, color: color, size: 22),
