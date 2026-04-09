@@ -26,7 +26,7 @@
   {"text": "Fais moins, mais fais-le mieux.", "category": "focus"},
   {"text": "Ta prochaine session de travail est ton moment le plus important.", "category": "focus"},
 
-  {"text": "{name}, {target} MRR c'est atteignable — un client à la fois.", "category": "mrr"},
+  {"text": "{name}, {target} c'est atteignable — un client à la fois.", "category": "mrr"},
   {"text": "Chaque nouveau client te rapproche de ta liberté financière.", "category": "mrr"},
   {"text": "Le MRR récurrent, c'est ta liberté construite mois après mois.", "category": "mrr"},
   {"text": "Tu construis quelque chose qui génère de la valeur pendant que tu dors.", "category": "mrr"},
@@ -42,5 +42,32 @@
   {"text": "La persévérance distingue ceux qui réussissent des autres.", "category": "general"},
   {"text": "Tu construis quelque chose de réel, jour après jour.", "category": "general"},
   {"text": "Tes efforts d'aujourd'hui façonnent ton succès de demain.", "category": "general"},
-  {"text": "Continue, {name} — tu es plus proche que tu ne le crois.", "category": "general"}
+  {"text": "Continue, {name} — tu es plus proche que tu ne le crois.", "category": "general"},
+
+  {"text": "Chaque chute est le début de ton prochain élan, {name}.", "category": "resilience"},
+  {"text": "L'échec n'est pas la fin — c'est une donnée.", "category": "resilience"},
+  {"text": "Ce qui te brise aujourd'hui te rend plus solide demain.", "category": "resilience"},
+  {"text": "Tu es plus résistant que tu ne le penses.", "category": "resilience"},
+  {"text": "Rebondir, c'est ton superpouvoir de builder.", "category": "resilience"},
+  {"text": "Les meilleurs ont tous connu des moments difficiles — et ils ont continué.", "category": "resilience"},
+  {"text": "La douleur est temporaire. Ce que tu construis est permanent.", "category": "resilience"},
+  {"text": "Tu n'as pas arrêté jusqu'ici. Ce n'est pas le moment de commencer.", "category": "resilience"},
+
+  {"text": "{name}, ta vision a de la valeur — arrête de la minimiser.", "category": "confidence"},
+  {"text": "Tu n'as pas besoin de tout savoir pour commencer.", "category": "confidence"},
+  {"text": "Ta différence est ton avantage compétitif.", "category": "confidence"},
+  {"text": "Fais confiance à ce que tu as déjà accompli.", "category": "confidence"},
+  {"text": "Tu es légitime pour prendre ta place.", "category": "confidence"},
+  {"text": "Ton instinct de builder est plus fiable que tu ne le crois.", "category": "confidence"},
+  {"text": "L'imposture que tu ressens est la preuve que tu vises haut.", "category": "confidence"},
+  {"text": "Chaque jour tu te prouves que tu peux, {name}.", "category": "confidence"},
+
+  {"text": "Vois grand — les petits objectifs te coûtent autant d'énergie.", "category": "vision"},
+  {"text": "Ta vision du futur définit tes actions d'aujourd'hui.", "category": "vision"},
+  {"text": "{name}, imagine où tu seras dans 3 ans si tu continues à ce rythme.", "category": "vision"},
+  {"text": "Les rêves que tu oses formuler ont tendance à se réaliser.", "category": "vision"},
+  {"text": "Pense à ce que tu construis, pas juste à ce que tu fais.", "category": "vision"},
+  {"text": "La clarté de ta vision est proportionnelle à ta puissance d'action.", "category": "vision"},
+  {"text": "Ce que tu imagines aujourd'hui, d'autres le vivront demain.", "category": "vision"},
+  {"text": "Le futur que tu veux existe — il attend que tu le bâtisses.", "category": "vision"}
 ]

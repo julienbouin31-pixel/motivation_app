@@ -9,9 +9,6 @@ import 'package:motivation_app/features/affirmation/data/models/affirmation_mode
 /// Les placeholders {name} et {target} sont conservés en DB,
 /// le remplacement se fait à l'affichage dans AffirmationCard.
 Future<void> seedAffirmationsIfEmpty(AffirmationLocalDataSource local) async {
-  final total = await local.totalCount();
-  if (total > 0) return;
-
   final jsonStr = await rootBundle.loadString('assets/data/affirmations.json');
   final List<dynamic> raw = json.decode(jsonStr) as List<dynamic>;
 

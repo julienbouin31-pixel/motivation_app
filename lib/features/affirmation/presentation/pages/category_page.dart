@@ -15,29 +15,52 @@ class CategoryPage extends StatefulWidget {
 class _CategoryPageState extends State<CategoryPage> {
   static const _items = [
     (
-      index: '01',
       category: AffirmationCategory.general,
-      description: 'Affirmations du quotidien',
+      description: 'Du quotidien',
+      icon: Icons.auto_awesome_outlined,
+      accent: Color(0xFF6C8EF5),
     ),
     (
-      index: '02',
       category: AffirmationCategory.mindset,
-      description: 'Reprogramme tes croyances',
+      description: 'Tes croyances',
+      icon: Icons.psychology_outlined,
+      accent: Color(0xFFB06EF5),
     ),
     (
-      index: '03',
       category: AffirmationCategory.action,
-      description: 'Passe à l\'exécution',
+      description: "Passe à l'acte",
+      icon: Icons.rocket_launch_outlined,
+      accent: Color(0xFFF57C45),
     ),
     (
-      index: '04',
       category: AffirmationCategory.focus,
       description: 'Reste dans le flow',
+      icon: Icons.center_focus_strong_outlined,
+      accent: Color(0xFF45C4B0),
     ),
     (
-      index: '05',
       category: AffirmationCategory.mrr,
-      description: 'Scale ton chiffre d\'affaires',
+      description: 'Scale ton CA',
+      icon: Icons.trending_up,
+      accent: Color(0xFF4CAF50),
+    ),
+    (
+      category: AffirmationCategory.resilience,
+      description: 'Rebondir toujours',
+      icon: Icons.shield_outlined,
+      accent: Color(0xFFF5A623),
+    ),
+    (
+      category: AffirmationCategory.confidence,
+      description: 'Croire en toi',
+      icon: Icons.bolt_outlined,
+      accent: Color(0xFFE8C84A),
+    ),
+    (
+      category: AffirmationCategory.vision,
+      description: 'Voir grand',
+      icon: Icons.explore_outlined,
+      accent: Color(0xFF5EC4F5),
     ),
   ];
 
@@ -63,10 +86,11 @@ class _CategoryPageState extends State<CategoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final activeCount =
         _selected.isEmpty ? AffirmationCategory.values.length : _selected.length;
 
-    final colors = Theme.of(context).extension<AppColors>()!;
     return Scaffold(
       backgroundColor: colors.scaffold,
       body: SafeArea(
@@ -75,7 +99,7 @@ class _CategoryPageState extends State<CategoryPage> {
           children: [
             // ─── Header ──────────────────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
               child: Row(
                 children: [
                   GestureDetector(
@@ -91,37 +115,67 @@ class _CategoryPageState extends State<CategoryPage> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Text(
-                    'Thèmes',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: colors.primary,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Thèmes',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: colors.primary,
+                            letterSpacing: -0.3,
+                          ),
+                        ),
+                        Text(
+                          '$activeCount actif${activeCount > 1 ? 's' : ''}',
+                          style: TextStyle(fontSize: 12, color: colors.secondary),
+                        ),
+                      ],
                     ),
                   ),
-                  const Spacer(),
-                  Text(
-                    _selected.isEmpty ? 'tous actifs' : '$activeCount / ${AffirmationCategory.values.length}',
-                    style: TextStyle(fontSize: 13, color: colors.secondary),
+                  // Tout sélectionner / désélectionner
+                  GestureDetector(
+                    onTap: () {
+                      setState(() => _selected = []);
+                      context.read<AffirmationCubit>().setCategories([]);
+                    },
+                    child: Text(
+                      'Tous',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: isDark ? const Color(0xFF4CAF50) : colors.secondary,
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 20),
 
-            // ─── Liste ───────────────────────────────────────────────────────
+            // ─── Grille ───────────────────────────────────────────────────────
             Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.zero,
+              child: GridView.builder(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 1.15,
+                ),
                 itemCount: _items.length,
                 itemBuilder: (context, index) {
                   final item = _items[index];
                   final isSelected = _selected.contains(item.category);
-                  return _CategoryRow(
-                    index: item.index,
+                  return _CategoryTile(
                     category: item.category,
                     description: item.description,
+                    icon: item.icon,
+                    accent: item.accent,
                     isSelected: isSelected,
+                    isDark: isDark,
                     onTap: () => _toggle(item.category),
                   );
                 },
@@ -134,86 +188,112 @@ class _CategoryPageState extends State<CategoryPage> {
   }
 }
 
-class _CategoryRow extends StatelessWidget {
-  final String index;
+class _CategoryTile extends StatelessWidget {
   final AffirmationCategory category;
   final String description;
+  final IconData icon;
+  final Color accent;
   final bool isSelected;
+  final bool isDark;
   final VoidCallback onTap;
 
-  const _CategoryRow({
-    required this.index,
+  const _CategoryTile({
     required this.category,
     required this.description,
+    required this.icon,
+    required this.accent,
     required this.isSelected,
+    required this.isDark,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
+
+    final bgColor = isSelected
+        ? (isDark ? accent.withValues(alpha: 0.14) : accent.withValues(alpha: 0.09))
+        : colors.card;
+
+    final borderColor = isSelected
+        ? accent.withValues(alpha: isDark ? 0.55 : 0.45)
+        : colors.border;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 120),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? colors.primary : colors.scaffold,
-          border: Border(
-            bottom: BorderSide(color: colors.border),
-          ),
+          color: bgColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: borderColor, width: 1),
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Numéro
-            SizedBox(
-              width: 26,
-              child: Text(
-                index,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  color: isSelected ? colors.secondary : colors.border,
-                  letterSpacing: 0.5,
+            Row(
+              children: [
+                // Icône
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? accent.withValues(alpha: isDark ? 0.28 : 0.16)
+                        : colors.surface,
+                    borderRadius: BorderRadius.circular(11),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 20,
+                    color: isSelected ? accent : colors.secondary,
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            // Texte
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    category.label.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: isSelected ? colors.scaffold : colors.primary,
-                      letterSpacing: 1.2,
+                const Spacer(),
+                // Checkmark
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: isSelected ? accent : Colors.transparent,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: isSelected ? accent : colors.border,
+                      width: 1.5,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: colors.secondary,
-                      height: 1.3,
-                    ),
-                  ),
-                ],
+                  child: isSelected
+                      ? Icon(
+                          Icons.check,
+                          size: 12,
+                          color: isDark ? Colors.black : Colors.white,
+                        )
+                      : null,
+                ),
+              ],
+            ),
+            const Spacer(),
+            Text(
+              category.label,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.2,
+                color: isSelected
+                    ? (isDark ? accent : accent.withValues(alpha: 0.85))
+                    : colors.primary,
               ),
             ),
-            // Indicateur sélection
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 120),
-              width: 6,
-              height: 6,
-              decoration: BoxDecoration(
-                color: isSelected ? colors.scaffold : Colors.transparent,
-                shape: BoxShape.circle,
+            const SizedBox(height: 2),
+            Text(
+              description,
+              style: TextStyle(
+                fontSize: 12,
+                color: colors.secondary,
+                height: 1.3,
               ),
             ),
           ],
