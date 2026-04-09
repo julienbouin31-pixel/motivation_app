@@ -79,6 +79,9 @@ class GoalProgressBar extends StatelessWidget {
     final double progress = (currentValue / targetValue).clamp(0.0, 1.0);
     final int pct = (progress * 100).round();
     final colors = Theme.of(context).extension<AppColors>()!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // En dark : même track que les widgets iOS (blanc 12% opacité)
+    final trackColor = isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE8F5E9);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -91,18 +94,19 @@ class GoalProgressBar extends StatelessWidget {
             textBaseline: TextBaseline.alphabetic,
             children: [
               Text(
-                label,
+                label.toUpperCase(),
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
                   color: colors.secondary,
-                  letterSpacing: 0.3,
+                  letterSpacing: 0.8,
                 ),
               ),
               const Spacer(),
               Text(
                 currentLabel,
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: colors.primary,
                 ),
@@ -121,12 +125,12 @@ class GoalProgressBar extends StatelessWidget {
             children: [
               Expanded(
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.circular(3),
                   child: LinearProgressIndicator(
                     value: progress,
-                    backgroundColor: Color(0xFFE8F5E9),
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
-                    minHeight: 3,
+                    backgroundColor: trackColor,
+                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF4CAF50)),
+                    minHeight: 4,
                   ),
                 ),
               ),
@@ -134,8 +138,8 @@ class GoalProgressBar extends StatelessWidget {
               Text(
                 '$pct%',
                 style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
                   color: Color(0xFF4CAF50),
                 ),
               ),

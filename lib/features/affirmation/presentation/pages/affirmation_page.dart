@@ -279,18 +279,21 @@ class _AffirmationPageState extends State<AffirmationPage>
                       GestureDetector(
                         onTap: () =>
                             context.push(AppRouter.affirmationFavorites),
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.red.shade50,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                            size: 20,
-                          ),
-                        ),
+                        child: Builder(builder: (ctx) {
+                          final isDark = Theme.of(ctx).brightness == Brightness.dark;
+                          return Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: isDark ? colors.surface : Colors.red.shade50,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.favorite,
+                              color: isDark ? Colors.red.shade300 : Colors.red,
+                              size: 20,
+                            ),
+                          );
+                        }),
                       ),
                     ],
                   ),

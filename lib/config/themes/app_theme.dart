@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // ─── Palette de couleurs nommées (accessible via Theme.of(ctx).extension<AppColors>()!) ──
 @immutable
@@ -20,21 +21,22 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color border;     // séparateurs et bordures
 
   static const light = AppColors(
-    scaffold: Color(0xFFF5F5F5),
+    scaffold: Color(0xFFF7F7F5),
     card: Colors.white,
-    primary: Colors.black,
-    secondary: Color(0xFFBDBDBD),
-    surface: Color(0xFFF0F0F0),
-    border: Color(0xFFEEEEEE),
+    primary: Color(0xFF111111),
+    secondary: Color(0xFFAAAAAA),
+    surface: Color(0xFFEEEEEC),
+    border: Color(0xFFE6E6E4),
   );
 
+  // Aligné sur la palette des widgets iOS : #161616 fond, 38% white secondary
   static const dark = AppColors(
-    scaffold: Color(0xFF111111),
-    card: Color(0xFF1C1C1C),
+    scaffold: Color(0xFF161616),
+    card: Color(0xFF1E1E1E),
     primary: Colors.white,
-    secondary: Color(0xFF757575),
-    surface: Color(0xFF2A2A2A),
-    border: Color(0xFF2A2A2A),
+    secondary: Color(0x99FFFFFF),
+    surface: Color(0xFF252525),
+    border: Color(0xFF2C2C2C),
   );
 
   @override
@@ -80,7 +82,16 @@ class AppTheme {
         brightness: Brightness.light,
         scaffoldBackgroundColor: AppColors.light.scaffold,
         extensions: const [AppColors.light],
-        appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
+        textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme),
+        appBarTheme: AppBarTheme(
+          centerTitle: true,
+          elevation: 0,
+          titleTextStyle: GoogleFonts.inter(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: AppColors.light.primary,
+          ),
+        ),
       );
 
   static ThemeData get darkTheme => ThemeData(
@@ -88,6 +99,15 @@ class AppTheme {
         brightness: Brightness.dark,
         scaffoldBackgroundColor: AppColors.dark.scaffold,
         extensions: const [AppColors.dark],
-        appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
+        textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
+        appBarTheme: AppBarTheme(
+          centerTitle: true,
+          elevation: 0,
+          titleTextStyle: GoogleFonts.inter(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: AppColors.dark.primary,
+          ),
+        ),
       );
 }

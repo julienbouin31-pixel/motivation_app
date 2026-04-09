@@ -75,26 +75,41 @@ class CategoryButton extends StatelessWidget {
     required this.onTap,
   });
 
+  static const _green = Color(0xFF4CAF50);
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? colors.surface : colors.primary;
+    final fgColor = isDark ? _green : colors.scaffold;
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: colors.primary,
+          color: bgColor,
           borderRadius: BorderRadius.circular(24),
+          border: isDark ? Border.all(color: _green.withValues(alpha: 0.3), width: 1) : null,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.grid_view_rounded, size: 16, color: colors.scaffold),
+            Icon(Icons.grid_view_rounded, size: 16, color: fgColor),
+            const SizedBox(width: 6),
+            Text(
+              category.label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: fgColor,
+              ),
+            ),
             const SizedBox(width: 4),
             AnimatedRotation(
               turns: isOpen ? 0.5 : 0,
               duration: const Duration(milliseconds: 200),
-              child: Icon(Icons.keyboard_arrow_up, size: 14, color: colors.scaffold),
+              child: Icon(Icons.keyboard_arrow_up, size: 14, color: fgColor.withValues(alpha: 0.6)),
             ),
           ],
         ),

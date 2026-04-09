@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
 
@@ -32,10 +33,11 @@ class AffirmationCard extends StatelessWidget {
           child: Text(
             '"$displayText"',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
+            style: GoogleFonts.inter(
+              fontSize: 24,
+              fontWeight: FontWeight.w500,
               height: 1.4,
+              letterSpacing: -0.5,
               color: colors.primary,
             ),
           ),
@@ -122,12 +124,12 @@ class _LikeButtonState extends State<_LikeButton>
           width: 52,
           height: 52,
           decoration: BoxDecoration(
-            color: widget.isFavorite ? Colors.red.shade50 : colors.surface,
+            color: colors.surface,
             shape: BoxShape.circle,
           ),
           child: Icon(
             widget.isFavorite ? Icons.favorite : Icons.favorite_border,
-            color: widget.isFavorite ? Colors.red : colors.secondary,
+            color: widget.isFavorite ? Colors.red.shade400 : colors.secondary,
             size: 22,
           ),
         ),
