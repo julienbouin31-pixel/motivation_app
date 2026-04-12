@@ -14,20 +14,12 @@ class ProgressIndicatorBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
-    return Row(
-      children: List.generate(totalSteps, (i) {
-        final active = i < currentStep;
-        return Expanded(
-          child: Container(
-            margin: EdgeInsets.only(right: i < totalSteps - 1 ? 4 : 0),
-            height: 3,
-            decoration: BoxDecoration(
-              color: active ? colors.primary : colors.border,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-        );
-      }),
+    return LinearProgressIndicator(
+      value: currentStep / totalSteps,
+      backgroundColor: colors.border,
+      valueColor: AlwaysStoppedAnimation(colors.primary),
+      minHeight: 3,
+      borderRadius: BorderRadius.circular(2),
     );
   }
 }
