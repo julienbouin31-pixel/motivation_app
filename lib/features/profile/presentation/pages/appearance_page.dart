@@ -229,10 +229,10 @@ class _MiniPreview extends StatelessWidget {
         height: 24,
         child: switch (type) {
           _ThemePreview.light => Container(
-              color: const Color(0xFFF5F5F5),
+              color: const Color(0xFFF0EDE7),
               child: Column(
                 children: [
-                  Container(height: 8, color: Colors.white),
+                  Container(height: 8, color: const Color(0xFFF8F6F1)),
                   const Spacer(),
                   Container(
                     height: 3,
@@ -266,10 +266,10 @@ class _MiniPreview extends StatelessWidget {
               children: [
                 Expanded(
                   child: Container(
-                    color: const Color(0xFFF5F5F5),
+                    color: const Color(0xFFF0EDE7),
                     child: Column(
                       children: [
-                        Container(height: 8, color: Colors.white),
+                        Container(height: 8, color: const Color(0xFFF8F6F1)),
                       ],
                     ),
                   ),

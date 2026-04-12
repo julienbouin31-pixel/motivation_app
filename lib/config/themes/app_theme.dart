@@ -21,12 +21,12 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color border;     // séparateurs et bordures
 
   static const light = AppColors(
-    scaffold: Color(0xFFF7F7F5),
-    card: Colors.white,
+    scaffold: Color(0xFFF0EDE7),
+    card: Color(0xFFF8F6F1),
     primary: Color(0xFF111111),
     secondary: Color(0xFFAAAAAA),
-    surface: Color(0xFFEEEEEC),
-    border: Color(0xFFE6E6E4),
+    surface: Color(0xFFE8E5DF),
+    border: Color(0xFFDEDBD5),
   );
 
   // Aligné sur la palette des widgets iOS : #161616 fond, 38% white secondary
