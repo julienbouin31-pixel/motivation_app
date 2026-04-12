@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:motivation_app/features/affirmation/presentation/widgets/affirmation_share_sheet.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart';
@@ -254,7 +255,16 @@ class _AffirmationPageState extends State<AffirmationPage>
                             mrrTarget: mrrTarget,
                             onFavorite: () =>
                                 cubit.toggleFavoriteAction(affirmation.id),
-                            onShare: () {},
+                            onShare: () {
+                              final text = affirmation.text
+                                  .replaceAll('{name}', userName)
+                                  .replaceAll('{target}', mrrTarget);
+                              showAffirmationShareSheet(
+                                context,
+                                text: text,
+                                category: affirmation.category.label,
+                              );
+                            },
                           ),
                         ),
                       ),
