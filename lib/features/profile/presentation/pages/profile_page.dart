@@ -148,6 +148,23 @@ class ProfilePage extends StatelessWidget {
 
                   const SizedBox(height: 28),
 
+                  // ── Section Affirmations ───────────────────────────────────
+                  _SectionLabel('AFFIRMATIONS', colors),
+                  const SizedBox(height: 8),
+                  _SettingsGroup(
+                    colors: colors,
+                    items: [
+                      _SettingsItem(
+                        icon: Icons.favorite_outline,
+                        title: 'Mes favoris',
+                        subtitle: 'Affirmations sauvegardées',
+                        onTap: () => context.push(AppRouter.affirmationFavorites),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
                   // ── Section Personnalisation ───────────────────────────────
                   _SectionLabel('PERSONNALISATION', colors),
                   const SizedBox(height: 8),
@@ -182,23 +199,6 @@ class ProfilePage extends StatelessWidget {
                         title: 'Rappels quotidiens',
                         subtitle: 'Heure & fréquence',
                         onTap: () => context.push(AppRouter.notifications),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // ── Section Compte ─────────────────────────────────────────
-                  _SectionLabel('COMPTE', colors),
-                  const SizedBox(height: 8),
-                  _SettingsGroup(
-                    colors: colors,
-                    items: [
-                      _SettingsItem(
-                        icon: Icons.person_outline,
-                        title: 'Modifier le profil',
-                        subtitle: 'Nom, objectif, cible',
-                        onTap: () => context.push(AppRouter.editProfile),
                       ),
                     ],
                   ),
