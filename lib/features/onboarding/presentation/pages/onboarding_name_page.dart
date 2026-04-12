@@ -58,16 +58,16 @@ class _OnboardingNamePageState extends State<OnboardingNamePage> {
                   const OnboardingLogo(),
                 ],
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 20),
               ProgressIndicatorBar(
                 currentStep: OnboardingFlow.stepNumber(AppRouter.onboardingName),
                 totalSteps: OnboardingFlow.totalSteps,
               ),
-              const SizedBox(height: 64),
+              const SizedBox(height: 32),
               Text(
                 'Comment tu t\'appelles ?',
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: colors.primary,
                   height: 1.2,
@@ -77,12 +77,12 @@ class _OnboardingNamePageState extends State<OnboardingNamePage> {
               Text(
                 'On personnalisera tes affirmations quotidiennes.',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   color: colors.secondary,
                   height: 1.4,
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
               OnboardingTextField(
                 hintText: 'Ton prénom',
                 controller: _nameController,

@@ -16,7 +16,7 @@ class ContinueButton extends StatelessWidget {
     final colors = Theme.of(context).extension<AppColors>()!;
     return SizedBox(
       width: double.infinity,
-      height: 56,
+      height: 48,
       child: ElevatedButton(
         onPressed: enabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
@@ -35,7 +35,7 @@ class ContinueButton extends StatelessWidget {
             Text(
               'Continuer',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
             ),

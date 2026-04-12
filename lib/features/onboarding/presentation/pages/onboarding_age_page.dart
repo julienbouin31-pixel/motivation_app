@@ -59,11 +59,11 @@ class _OnboardingAgePageState extends State<OnboardingAgePage> {
                       currentStep: OnboardingFlow.stepNumber(AppRouter.onboardingAge),
                       totalSteps: OnboardingFlow.totalSteps,
                     ),
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 24),
                     Text(
                       'Quel âge as-tu ?',
                       style: TextStyle(
-                        fontSize: 32,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: colors.primary,
                         height: 1.2,
@@ -73,7 +73,7 @@ class _OnboardingAgePageState extends State<OnboardingAgePage> {
                     Text(
                       'Pour adapter le ton de tes affirmations.',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         color: colors.secondary,
                         height: 1.4,
                       ),

@@ -64,7 +64,7 @@ class OnboardingObjectivePage extends StatelessWidget {
                 Text(
                   'Quel type d\'objectif ?',
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: colors.primary,
                     height: 1.2,
@@ -73,7 +73,7 @@ class OnboardingObjectivePage extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   'Choisis ce que tu veux tracker. On adaptera l\'app à ton besoin.',
-                  style: TextStyle(fontSize: 15, color: colors.secondary, height: 1.4),
+                  style: TextStyle(fontSize: 13, color: colors.secondary, height: 1.4),
                 ),
                 const SizedBox(height: 28),
                 ObjectiveOptionCard(

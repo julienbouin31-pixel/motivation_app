@@ -21,14 +21,14 @@ class OnboardingTextField extends StatelessWidget {
       onChanged: onChanged,
       autofocus: false,
       style: TextStyle(
-        fontSize: 18,
+        fontSize: 15,
         fontWeight: FontWeight.w500,
         color: colors.primary,
       ),
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(
-          fontSize: 18,
+          fontSize: 15,
           fontWeight: FontWeight.w400,
           color: colors.secondary,
         ),

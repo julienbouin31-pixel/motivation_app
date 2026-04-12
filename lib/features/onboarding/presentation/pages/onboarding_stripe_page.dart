@@ -95,7 +95,7 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
                     Text(
                       'Connecter Stripe',
                       style: TextStyle(
-                        fontSize: 28,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: colors.primary,
                       ),
@@ -103,7 +103,7 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
                     const SizedBox(height: 10),
                     Text(
                       'Entre ta clé API secrète pour synchroniser ton MRR.',
-                      style: TextStyle(fontSize: 15, color: colors.secondary, height: 1.4),
+                      style: TextStyle(fontSize: 13, color: colors.secondary, height: 1.4),
                     ),
                     const SizedBox(height: 28),
                     Text(

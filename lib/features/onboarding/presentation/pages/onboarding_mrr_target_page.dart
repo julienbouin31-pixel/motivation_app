@@ -84,7 +84,7 @@ class _OnboardingMrrTargetPageState extends State<OnboardingMrrTargetPage> {
               Text(
                 'Ton objectif MRR ?',
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: colors.primary,
                   height: 1.2,
@@ -93,7 +93,7 @@ class _OnboardingMrrTargetPageState extends State<OnboardingMrrTargetPage> {
               const SizedBox(height: 10),
               Text(
                 'On adaptera les affirmations à ton niveau d\'ambition.',
-                style: TextStyle(fontSize: 15, color: colors.secondary, height: 1.4),
+                style: TextStyle(fontSize: 13, color: colors.secondary, height: 1.4),
               ),
               const SizedBox(height: 12),
               Container(

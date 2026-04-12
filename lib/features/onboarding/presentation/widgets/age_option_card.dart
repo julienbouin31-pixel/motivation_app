@@ -20,7 +20,7 @@ class AgeOptionCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 13),
         decoration: BoxDecoration(
           color: isSelected ? colors.primary : colors.card,
           borderRadius: BorderRadius.circular(14),
@@ -35,7 +35,7 @@ class AgeOptionCard extends StatelessWidget {
               child: Text(
                 ageRange,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: isSelected ? colors.scaffold : colors.primary,
                 ),
