@@ -22,8 +22,22 @@ class FavoritesPage extends StatelessWidget {
   }
 }
 
-class _FavoritesView extends StatelessWidget {
+class _FavoritesView extends StatefulWidget {
   const _FavoritesView();
+
+  @override
+  State<_FavoritesView> createState() => _FavoritesViewState();
+}
+
+class _FavoritesViewState extends State<_FavoritesView> {
+  final _searchController = TextEditingController();
+  String _query = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +49,7 @@ class _FavoritesView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ─── Header ────────────────────────────────────────────────────
+            // ─── Header ──────────────────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Row(
@@ -61,11 +75,65 @@ class _FavoritesView extends StatelessWidget {
                       color: colors.primary,
                     ),
                   ),
+                  const Spacer(),
+                  // Compteur
+                  BlocBuilder<FavoritesCubit, FavoritesState>(
+                    builder: (context, state) {
+                      final count = state is FavoritesLoaded ? state.favorites.length : 0;
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: colors.surface,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '$count',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: colors.secondary,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
 
-            // ─── Contenu ───────────────────────────────────────────────────
+            // ─── Barre de recherche ───────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: colors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (v) => setState(() => _query = v.toLowerCase()),
+                  style: TextStyle(fontSize: 14, color: colors.primary),
+                  decoration: InputDecoration(
+                    hintText: 'Rechercher...',
+                    hintStyle: TextStyle(fontSize: 14, color: colors.secondary),
+                    prefixIcon: Icon(Icons.search, size: 18, color: colors.secondary),
+                    suffixIcon: _query.isNotEmpty
+                        ? GestureDetector(
+                            onTap: () {
+                              _searchController.clear();
+                              setState(() => _query = '');
+                            },
+                            child: Icon(Icons.close, size: 16, color: colors.secondary),
+                          )
+                        : null,
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+            ),
+
+            // ─── Contenu ─────────────────────────────────────────────────────
             Expanded(
               child: BlocBuilder<FavoritesCubit, FavoritesState>(
                 builder: (context, state) => switch (state) {
@@ -80,7 +148,7 @@ class _FavoritesView extends StatelessWidget {
                     ),
                   FavoritesLoaded(:final favorites) => favorites.isEmpty
                       ? _EmptyState(colors: colors)
-                      : _FavoritesList(favorites: favorites),
+                      : _FavoritesList(favorites: favorites, query: _query),
                   _ => const SizedBox.shrink(),
                 },
               ),
@@ -92,7 +160,7 @@ class _FavoritesView extends StatelessWidget {
   }
 }
 
-// ─── Empty state ───────────────────────────────────────────────────────────────
+// ─── Empty state ──────────────────────────────────────────────────────────────
 
 class _EmptyState extends StatelessWidget {
   final AppColors colors;
@@ -134,24 +202,42 @@ class _EmptyState extends StatelessWidget {
   }
 }
 
-// ─── Liste ─────────────────────────────────────────────────────────────────────
+// ─── Liste ────────────────────────────────────────────────────────────────────
 
 class _FavoritesList extends StatelessWidget {
   final List<Affirmation> favorites;
-  const _FavoritesList({required this.favorites});
+  final String query;
+  const _FavoritesList({required this.favorites, required this.query});
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
+    final filtered = query.isEmpty
+        ? favorites
+        : favorites
+            .where((a) => a.text.toLowerCase().contains(query) ||
+                a.category.label.toLowerCase().contains(query))
+            .toList();
+
+    if (filtered.isEmpty) {
+      return Center(
+        child: Text(
+          'Aucun résultat pour "$query"',
+          style: TextStyle(fontSize: 14, color: colors.secondary),
+        ),
+      );
+    }
+
     return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
-      itemCount: favorites.length,
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
+      itemCount: filtered.length,
       separatorBuilder: (context, i) => const SizedBox(height: 10),
-      itemBuilder: (context, i) => _FavoriteCard(affirmation: favorites[i]),
+      itemBuilder: (context, i) => _FavoriteCard(affirmation: filtered[i]),
     );
   }
 }
 
-// ─── Card ──────────────────────────────────────────────────────────────────────
+// ─── Card ─────────────────────────────────────────────────────────────────────
 
 class _FavoriteCard extends StatelessWidget {
   final Affirmation affirmation;
@@ -195,10 +281,7 @@ class _FavoriteCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   '— ${affirmation.category.label}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: colors.secondary,
-                  ),
+                  style: TextStyle(fontSize: 12, color: colors.secondary),
                 ),
               ],
             ),
