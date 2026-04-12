@@ -103,9 +103,8 @@ class _OnboardingNotificationPageState
                   ),
                   const SizedBox(height: 20),
                   ProgressIndicatorBar(
-                    currentStep: OnboardingFlow.stepNumber(
-                        AppRouter.onboardingNotifications),
-                    totalSteps: OnboardingFlow.totalSteps,
+                    currentStep: OnboardingFlow.progress(AppRouter.onboardingNotifications, isMrr: false).step,
+                    totalSteps: OnboardingFlow.progress(AppRouter.onboardingNotifications, isMrr: false).total,
                   ),
                 ],
               ),

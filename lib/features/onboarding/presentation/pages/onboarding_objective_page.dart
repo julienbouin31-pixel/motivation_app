@@ -32,8 +32,8 @@ class OnboardingObjectivePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 ProgressIndicatorBar(
-                  currentStep: OnboardingFlow.stepNumber(AppRouter.onboardingObjective),
-                  totalSteps: OnboardingFlow.totalSteps,
+                  currentStep: OnboardingFlow.progress(AppRouter.onboardingObjective, isMrr: false).step,
+                  totalSteps: OnboardingFlow.progress(AppRouter.onboardingObjective, isMrr: false).total,
                 ),
                 const SizedBox(height: 20),
                 GestureDetector(
