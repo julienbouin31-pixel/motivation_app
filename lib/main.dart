@@ -5,6 +5,7 @@ import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/core/theme/theme_cubit.dart';
+import 'package:motivation_app/core/notifications/notification_service.dart';
 import 'package:motivation_app/core/widgets/home_widget_service.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_seed.dart';
@@ -31,10 +32,30 @@ void main() async {
     OnboardingDataSaved(:final profile) => profile,
     _ => null,
   };
+  final storage = di.sl<SecureStorage>();
+
   final isDone = profile?.name != null;
   final initialLocation = isDone ? AppRouter.affirmation : AppRouter.home;
 
   final router = createAppRouter(initialLocation: initialLocation);
+
+  // Initialise le service de notifications + replanifie si activées
+  await NotificationService.init();
+  if (await storage.readNotificationEnabled()) {
+    final rawTexts = await local.getAllTexts();
+    final userName = profile?.name ?? '';
+    final target = profile?.mrrTarget ?? profile?.analyticsTarget ?? '';
+    final resolved = rawTexts
+        .map((t) => t.replaceAll('{name}', userName).replaceAll('{target}', target))
+        .toList()
+      ..shuffle();
+    await NotificationService.schedule(
+      affirmations: resolved,
+      frequency: await storage.readNotificationFrequency(),
+      startHour: await storage.readNotificationStartHour(),
+      endHour: await storage.readNotificationEndHour(),
+    );
+  }
 
   // Initialise le service de widgets iOS
   await HomeWidgetService.init();

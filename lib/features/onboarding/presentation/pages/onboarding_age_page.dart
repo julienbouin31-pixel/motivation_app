@@ -92,7 +92,7 @@ class _OnboardingAgePageState extends State<OnboardingAgePage> {
                     ContinueButton(
                       enabled: _selectedAgeRange != null,
                       onPressed: _selectedAgeRange != null
-                          ? () => context.go(AppRouter.affirmation)
+                          ? () => context.push(AppRouter.onboardingNotifications)
                           : null,
                     ),
                   ],

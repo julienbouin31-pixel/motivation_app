@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
+import 'package:motivation_app/core/notifications/notification_service.dart';
 import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_seed.dart';
@@ -180,7 +181,7 @@ class ProfilePage extends StatelessWidget {
                         icon: Icons.notifications_outlined,
                         title: 'Rappels quotidiens',
                         subtitle: 'Heure & fréquence',
-                        onTap: () {},
+                        onTap: () => context.push(AppRouter.notifications),
                       ),
                     ],
                   ),
@@ -210,6 +211,7 @@ class ProfilePage extends StatelessWidget {
                       final local = di.sl<AffirmationLocalDataSource>();
                       await local.clearAll();
                       await seedAffirmationsIfEmpty(local);
+                      await NotificationService.cancelAll();
                       await di.sl<SecureStorage>().deleteAll();
                       di.sl<OnboardingCubit>().reset();
                       if (context.mounted) context.go(AppRouter.home);

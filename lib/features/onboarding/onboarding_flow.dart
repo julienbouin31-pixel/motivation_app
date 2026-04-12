@@ -15,6 +15,7 @@ class OnboardingFlow {
     AppRouter.onboardingStripe,
     AppRouter.onboardingStripeConnected,
     AppRouter.onboardingMrrTarget,
+    AppRouter.onboardingNotifications,
   ];
 
   /// Navigate to the next step, or to the main app if it was the last step.

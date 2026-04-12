@@ -9,6 +9,7 @@ import 'package:motivation_app/features/affirmation/domain/entities/affirmation_
 abstract class AffirmationLocalDataSource {
   Future<AffirmationModel?> getNextUnviewed({List<String>? categories});
   Future<List<AffirmationModel>> getFavorites();
+  Future<List<String>> getAllTexts();
   Future<void> saveAll(List<AffirmationModel> affirmations);
   Future<void> clearAll();
   Future<void> markAsViewed(int id);
@@ -48,6 +49,12 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
     final results = await query.get();
     if (results.isEmpty) return null;
     return _fromRow(results.first);
+  }
+
+  @override
+  Future<List<String>> getAllTexts() async {
+    final rows = await db.select(db.affirmationItems).get();
+    return rows.map((r) => r.content).toList();
   }
 
   @override

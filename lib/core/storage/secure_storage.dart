@@ -95,6 +95,52 @@ class SecureStorage {
     await _storage.write(key: _keyLastFetchDate, value: value);
   }
 
+  // ─── Notifications ───────────────────────────────────────────────────────
+  static const String _keyNotificationEnabled = 'notification_enabled';
+  static const String _keyNotificationFrequency = 'notification_frequency';
+  static const String _keyNotificationStartHour = 'notification_start_hour';
+  static const String _keyNotificationEndHour = 'notification_end_hour';
+
+  Future<bool> readNotificationEnabled() async {
+    return await _storage.read(key: _keyNotificationEnabled) == 'true';
+  }
+
+  Future<void> saveNotificationEnabled(bool enabled) async {
+    await _storage.write(key: _keyNotificationEnabled, value: enabled.toString());
+  }
+
+  /// Retourne null si le setup notifications n'a jamais été fait.
+  Future<int?> readNotificationFrequencyRaw() async {
+    final raw = await _storage.read(key: _keyNotificationFrequency);
+    return int.tryParse(raw ?? '');
+  }
+
+  Future<int> readNotificationFrequency() async {
+    return await readNotificationFrequencyRaw() ?? 1;
+  }
+
+  Future<void> saveNotificationFrequency(int freq) async {
+    await _storage.write(key: _keyNotificationFrequency, value: freq.toString());
+  }
+
+  Future<int> readNotificationStartHour() async {
+    final raw = await _storage.read(key: _keyNotificationStartHour);
+    return int.tryParse(raw ?? '') ?? 8;
+  }
+
+  Future<void> saveNotificationStartHour(int hour) async {
+    await _storage.write(key: _keyNotificationStartHour, value: hour.toString());
+  }
+
+  Future<int> readNotificationEndHour() async {
+    final raw = await _storage.read(key: _keyNotificationEndHour);
+    return int.tryParse(raw ?? '') ?? 21;
+  }
+
+  Future<void> saveNotificationEndHour(int hour) async {
+    await _storage.write(key: _keyNotificationEndHour, value: hour.toString());
+  }
+
   // ─── Thème ───────────────────────────────────────────────────────────────
   Future<String?> readThemeMode() => _storage.read(key: _keyThemeMode);
 

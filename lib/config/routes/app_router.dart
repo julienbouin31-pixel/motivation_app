@@ -16,6 +16,8 @@ import 'package:motivation_app/features/onboarding/presentation/pages/onboarding
 import 'package:motivation_app/features/profile/presentation/pages/appearance_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/profile_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_notification_page.dart';
+import 'package:motivation_app/features/profile/presentation/pages/notification_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/widgets_page.dart';
 import 'package:motivation_app/injection_container.dart' as di;
 
@@ -30,6 +32,7 @@ class AppRouter {
   static const String onboardingStripe = '/onboarding/stripe';
   static const String onboardingStripeConnected = '/onboarding/stripe-connected';
   static const String onboardingMrrTarget = '/onboarding/mrr-target';
+  static const String onboardingNotifications = '/onboarding/notifications';
   static const String affirmation = '/affirmation';
   static const String affirmationCategories = '/affirmation/categories';
   static const String affirmationFavorites = '/affirmation/favorites';
@@ -37,6 +40,7 @@ class AppRouter {
   static const String editProfile = '/profile/edit';
   static const String appearance = '/profile/appearance';
   static const String widgets = '/profile/widgets';
+  static const String notifications = '/profile/notifications';
   static const String revenue = '/revenue';
 }
 
@@ -94,6 +98,12 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
         child: OnboardingMrrTargetPage(),
       ),
     ),
+    GoRoute(
+      path: AppRouter.onboardingNotifications,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: OnboardingNotificationPage(),
+      ),
+    ),
     // ─── Profil / Paramètres ─────────────────────────────────────────────────
     GoRoute(
       path: AppRouter.profile,
@@ -117,6 +127,12 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
       path: AppRouter.widgets,
       pageBuilder: (context, state) => const MaterialPage(
         child: WidgetsPage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.notifications,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: NotificationPage(),
       ),
     ),
     // ─── Affirmation — ShellRoute scopant AffirmationCubit ──────────────────
