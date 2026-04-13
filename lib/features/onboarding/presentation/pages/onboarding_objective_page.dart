@@ -4,7 +4,6 @@ import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
-import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/objective_option_card.dart';
 import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
@@ -26,7 +25,6 @@ class OnboardingObjectivePage extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const OnboardingLogo(),
                     const Spacer(),
                   ],
                 ),

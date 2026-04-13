@@ -11,7 +11,7 @@ class HomeHeroSection extends StatelessWidget {
         'Commence à construire\nton futur, aujourd\'hui.',
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontSize: 36,
+          fontSize: 28,
           fontWeight: FontWeight.bold,
           height: 1.2,
           color: Colors.white,

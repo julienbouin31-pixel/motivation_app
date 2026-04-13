@@ -9,7 +9,6 @@ import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/back_button_widget.dart';
-import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 import 'package:motivation_app/injection_container.dart' as di;
 
@@ -98,7 +97,6 @@ class _OnboardingNotificationPageState
                     children: [
                       const BackButtonWidget(),
                       const Spacer(),
-                      const OnboardingLogo(),
                     ],
                   ),
                   const SizedBox(height: 20),

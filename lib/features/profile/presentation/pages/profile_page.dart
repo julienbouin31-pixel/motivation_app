@@ -95,19 +95,18 @@ class ProfilePage extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          // Avatar — toujours noir/blanc (élément de brand)
                           Container(
                             width: 52,
                             height: 52,
-                            decoration: const BoxDecoration(
-                              color: Colors.black,
+                            decoration: BoxDecoration(
+                              color: colors.primary,
                               shape: BoxShape.circle,
                             ),
                             child: Center(
                               child: Text(
                                 initial,
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: colors.scaffold,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 22,
                                 ),

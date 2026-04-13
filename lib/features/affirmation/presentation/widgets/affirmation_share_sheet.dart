@@ -9,8 +9,6 @@ import 'package:motivation_app/core/widgets/home_widget_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-// ← Change ici quand tu as un nom d'appli
-const _kAppName = 'MON APP';
 
 void showAffirmationShareSheet(
   BuildContext context, {
@@ -178,15 +176,7 @@ class _AffirmationShareSheetState extends State<AffirmationShareSheet> {
                     final messenger = ScaffoldMessenger.of(context);
                     Navigator.pop(context);
                     messenger.showSnackBar(
-                      SnackBar(
-                        content: const Text('Texte copié !'),
-                        duration: const Duration(seconds: 2),
-                        backgroundColor: colors.card,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
+                      const SnackBar(content: Text('Texte copié !')),
                     );
                   },
                 ),
@@ -201,15 +191,7 @@ class _AffirmationShareSheetState extends State<AffirmationShareSheet> {
                     final messenger = ScaffoldMessenger.of(context);
                     Navigator.pop(context);
                     messenger.showSnackBar(
-                      SnackBar(
-                        content: const Text('Widget mis à jour !'),
-                        duration: const Duration(seconds: 2),
-                        backgroundColor: colors.card,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
+                      const SnackBar(content: Text('Widget mis à jour !')),
                     );
                   },
                 ),
@@ -306,21 +288,17 @@ class _PreviewCard extends StatelessWidget {
             const Spacer(),
 
             // Branding
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Icon(Icons.rocket_launch_outlined, size: 11, color: secondary),
-                const SizedBox(width: 4),
-                Text(
-                  _kAppName,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.6,
-                    color: secondary,
-                  ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                'curves',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: secondary,
+                  letterSpacing: -0.2,
                 ),
-              ],
+              ),
             ),
           ],
         ),

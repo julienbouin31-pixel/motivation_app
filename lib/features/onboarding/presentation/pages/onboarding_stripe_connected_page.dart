@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
-import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 
 class OnboardingStripeConnectedPage extends StatelessWidget {
@@ -37,7 +36,6 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const OnboardingLogo(),
                   const Spacer(),
                 ],
               ),

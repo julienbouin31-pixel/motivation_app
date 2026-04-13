@@ -154,13 +154,13 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
             child: CategoryPage(),
           ),
         ),
-        GoRoute(
-          path: AppRouter.affirmationFavorites,
-          pageBuilder: (context, state) => const MaterialPage(
-            child: FavoritesPage(),
-          ),
-        ),
       ],
+    ),
+    GoRoute(
+      path: AppRouter.affirmationFavorites,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: FavoritesPage(),
+      ),
     ),
   ],
 );

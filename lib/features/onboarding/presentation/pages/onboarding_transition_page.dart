@@ -3,7 +3,6 @@ import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/continue_button.dart';
-import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
 
 class OnboardingTransitionPage extends StatelessWidget {
   const OnboardingTransitionPage({super.key});
@@ -22,7 +21,6 @@ class OnboardingTransitionPage extends StatelessWidget {
               Row(
                 children: const [
                   Spacer(),
-                  OnboardingLogo(),
                 ],
               ),
               const Spacer(flex: 2),

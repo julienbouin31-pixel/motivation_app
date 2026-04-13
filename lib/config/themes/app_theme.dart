@@ -92,6 +92,16 @@ class AppTheme {
             color: AppColors.light.primary,
           ),
         ),
+        snackBarTheme: SnackBarThemeData(
+          backgroundColor: AppColors.light.primary,
+          contentTextStyle: GoogleFonts.inter(
+            color: AppColors.light.scaffold,
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
       );
 
   static ThemeData get darkTheme => ThemeData(
@@ -108,6 +118,16 @@ class AppTheme {
             fontWeight: FontWeight.w600,
             color: AppColors.dark.primary,
           ),
+        ),
+        snackBarTheme: SnackBarThemeData(
+          backgroundColor: AppColors.dark.card,
+          contentTextStyle: GoogleFonts.inter(
+            color: AppColors.dark.primary,
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       );
 }

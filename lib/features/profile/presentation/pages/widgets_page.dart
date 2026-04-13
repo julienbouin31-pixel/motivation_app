@@ -245,9 +245,15 @@ class _WidgetPreviewSmall extends StatelessWidget {
       children: [
         AspectRatio(
           aspectRatio: 1,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(22),
-            child: child,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(color: colors.border, width: 1),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(21),
+              child: child,
+            ),
           ),
         ),
         const SizedBox(height: 8),
@@ -277,9 +283,15 @@ class _WidgetPreviewMedium extends StatelessWidget {
       children: [
         AspectRatio(
           aspectRatio: 2,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(22),
-            child: child,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(color: colors.border, width: 1),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(21),
+              child: child,
+            ),
           ),
         ),
         const SizedBox(height: 8),

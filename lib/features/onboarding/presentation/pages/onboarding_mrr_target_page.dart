@@ -6,7 +6,6 @@ import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
-import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/continue_button.dart';
 import 'package:motivation_app/injection_container.dart' as di;
@@ -57,7 +56,6 @@ class _OnboardingMrrTargetPageState extends State<OnboardingMrrTargetPage> {
             children: [
               Row(
                 children: [
-                  const OnboardingLogo(),
                   const Spacer(),
                 ],
               ),

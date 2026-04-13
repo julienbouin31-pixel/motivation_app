@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
-import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/age_option_card.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/continue_button.dart';
@@ -51,7 +50,6 @@ class _OnboardingAgePageState extends State<OnboardingAgePage> {
                       children: [
                         const BackButtonWidget(),
                         const Spacer(),
-                        const OnboardingLogo(),
                       ],
                     ),
                     const SizedBox(height: 32),

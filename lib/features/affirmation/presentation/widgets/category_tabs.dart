@@ -99,15 +99,6 @@ class CategoryButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.grid_view_rounded, size: 16, color: fgColor),
-            const SizedBox(width: 6),
-            Text(
-              category.label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: fgColor,
-              ),
-            ),
             const SizedBox(width: 4),
             AnimatedRotation(
               turns: isOpen ? 0.5 : 0,

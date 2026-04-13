@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
-import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_logo.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_text_field.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/continue_button.dart';
@@ -55,7 +54,6 @@ class _OnboardingNamePageState extends State<OnboardingNamePage> {
                 children: [
                   const BackButtonWidget(),
                   const Spacer(),
-                  const OnboardingLogo(),
                 ],
               ),
               const SizedBox(height: 20),
