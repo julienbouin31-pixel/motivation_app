@@ -33,6 +33,9 @@ dependencies:
   flutter_local_notifications: ^18.0.0
   timezone: ^0.9.4
 
+  # HTTP
+  dio: ^5.4.0
+
   # Storage
   flutter_secure_storage: ^9.2.2
   connectivity_plus: ^6.1.3

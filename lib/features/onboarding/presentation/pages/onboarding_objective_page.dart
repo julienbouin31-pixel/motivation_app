@@ -86,17 +86,6 @@ class OnboardingObjectivePage extends StatelessWidget {
                   },
                 ),
                 ObjectiveOptionCard(
-                  icon: Icons.bar_chart,
-                  iconBgColor: const Color(0xFFE3F2FD),
-                  title: 'Analytics',
-                  description: 'Suivi des visites et métriques de ton site',
-                  connectLabel: 'Connecte Google Analytics',
-                  onTap: () {
-                    context.read<OnboardingCubit>().saveObjectiveType('analytics');
-                    OnboardingFlow.next(context, AppRouter.onboardingObjective);
-                  },
-                ),
-                ObjectiveOptionCard(
                   icon: Icons.block,
                   iconBgColor: const Color(0xFFF5F5F5),
                   iconColor: Colors.black54,

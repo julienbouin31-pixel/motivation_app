@@ -10,6 +10,7 @@ import 'package:motivation_app/core/widgets/home_widget_service.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_seed.dart';
 import 'package:motivation_app/features/affirmation/domain/repositories/affirmation_repository.dart';
+import 'package:motivation_app/features/goal/presentation/bloc/goal_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 import 'package:motivation_app/injection_container.dart' as di;
@@ -71,7 +72,7 @@ void main() async {
   ));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final GoRouter router;
   final OnboardingCubit onboardingCubit;
   final ThemeCubit themeCubit;
@@ -84,11 +85,43 @@ class MyApp extends StatelessWidget {
   });
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  /// Appelé quand l'app revient au premier plan depuis le fond.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      final onboardingState = widget.onboardingCubit.state;
+      final profile = switch (onboardingState) {
+        OnboardingDataSaved(:final profile) => profile,
+        OnboardingProfileLoaded(:final profile) => profile,
+        _ => null,
+      };
+      di.sl<GoalCubit>().fetchGoal(profile);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider.value(value: onboardingCubit),
-        BlocProvider.value(value: themeCubit),
+        BlocProvider.value(value: widget.onboardingCubit),
+        BlocProvider.value(value: widget.themeCubit),
+        BlocProvider.value(value: di.sl<GoalCubit>()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) => MaterialApp.router(
@@ -97,7 +130,7 @@ class MyApp extends StatelessWidget {
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: themeMode,
-          routerConfig: router,
+          routerConfig: widget.router,
         ),
       ),
     );

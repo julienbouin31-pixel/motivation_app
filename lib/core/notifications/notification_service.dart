@@ -126,6 +126,37 @@ class NotificationService {
     await _plugin.cancelAll();
   }
 
+  /// Affiche une notification immédiate (ex: objectif atteint).
+  static Future<void> showNow({
+    required int id,
+    required String title,
+    required String body,
+  }) async {
+    try {
+      await _plugin.show(
+        id,
+        title,
+        body,
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'goal_achieved',
+            'Objectifs atteints',
+            channelDescription: 'Célébration de tes objectifs',
+            importance: Importance.max,
+            priority: Priority.high,
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: false,
+            presentSound: true,
+          ),
+        ),
+      );
+    } catch (e) {
+      debugPrint('[NotificationService] showNow error: $e');
+    }
+  }
+
   /// Test uniquement — déclenche une notif dans 5 secondes avec [text].
   static Future<void> scheduleTestIn5Seconds(String text) async {
     final now = tz.TZDateTime.now(tz.local);

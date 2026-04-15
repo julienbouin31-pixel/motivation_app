@@ -141,6 +141,16 @@ class SecureStorage {
     await _storage.write(key: _keyNotificationEndHour, value: hour.toString());
   }
 
+  // ─── Objectif atteint ────────────────────────────────────────────────
+  static const String _keyGoalAchievedNotified = 'goal_achieved_notified_target';
+
+  /// Retourne la cible pour laquelle la notif "objectif atteint" a déjà été envoyée.
+  Future<String?> readGoalAchievedNotifiedTarget() =>
+      _storage.read(key: _keyGoalAchievedNotified);
+
+  Future<void> saveGoalAchievedNotifiedTarget(String target) =>
+      _storage.write(key: _keyGoalAchievedNotified, value: target);
+
   // ─── Thème ───────────────────────────────────────────────────────────────
   Future<String?> readThemeMode() => _storage.read(key: _keyThemeMode);
 

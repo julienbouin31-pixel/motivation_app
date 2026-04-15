@@ -10,10 +10,12 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:connectivity_plus/connectivity_plus.dart' as _i895;
+import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:motivation_app/core/database/app_database.dart' as _i55;
 import 'package:motivation_app/core/di/injection_module.dart' as _i82;
+import 'package:motivation_app/core/network/dio_module.dart' as _i526;
 import 'package:motivation_app/core/network/network_info.dart' as _i867;
 import 'package:motivation_app/core/storage/secure_storage.dart' as _i35;
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart'
@@ -40,6 +42,14 @@ import 'package:motivation_app/features/affirmation/presentation/bloc/affirmatio
     as _i1059;
 import 'package:motivation_app/features/affirmation/presentation/bloc/favorites_cubit.dart'
     as _i841;
+import 'package:motivation_app/features/goal/data/datasources/stripe_remote_data_source.dart'
+    as _i23;
+import 'package:motivation_app/features/goal/data/repositories/goal_repository_impl.dart'
+    as _i381;
+import 'package:motivation_app/features/goal/domain/repositories/goal_repository.dart'
+    as _i192;
+import 'package:motivation_app/features/goal/presentation/bloc/goal_cubit.dart'
+    as _i658;
 import 'package:motivation_app/features/onboarding/data/datasources/onboarding_local_data_source.dart'
     as _i576;
 import 'package:motivation_app/features/onboarding/data/repositories/onboarding_repository_impl.dart'
@@ -61,23 +71,31 @@ extension GetItInjectableX on _i174.GetIt {
   }) async {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final appModule = _$AppModule();
+    final dioModule = _$DioModule();
     gh.singleton<_i895.Connectivity>(() => appModule.connectivity);
     await gh.singletonAsync<_i55.AppDatabase>(
       () => appModule.appDatabase,
       preResolve: true,
     );
     gh.singleton<_i35.SecureStorage>(() => _i35.SecureStorage());
+    gh.lazySingleton<_i361.Dio>(() => dioModule.dio);
     gh.lazySingleton<_i867.NetworkInfo>(
       () => _i867.NetworkInfoImpl(gh<_i895.Connectivity>()),
     );
     gh.lazySingleton<_i631.AffirmationRemoteDataSource>(
       () => _i631.AffirmationRemoteDataSourceImpl(),
     );
+    gh.lazySingleton<_i23.StripeRemoteDataSource>(
+      () => _i23.StripeRemoteDataSource(gh<_i361.Dio>()),
+    );
     gh.lazySingleton<_i987.AffirmationLocalDataSource>(
       () => _i987.AffirmationLocalDataSourceImpl(
         db: gh<_i55.AppDatabase>(),
         secureStorage: gh<_i35.SecureStorage>(),
       ),
+    );
+    gh.lazySingleton<_i192.GoalRepository>(
+      () => _i381.GoalRepositoryImpl(gh<_i23.StripeRemoteDataSource>()),
     );
     gh.lazySingleton<_i576.OnboardingLocalDataSource>(
       () => _i576.OnboardingLocalDataSourceImpl(
@@ -88,6 +106,10 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i10.OnboardingRepositoryImpl(
         localDataSource: gh<_i576.OnboardingLocalDataSource>(),
       ),
+    );
+    gh.lazySingleton<_i658.GoalCubit>(
+      () =>
+          _i658.GoalCubit(gh<_i192.GoalRepository>(), gh<_i35.SecureStorage>()),
     );
     gh.lazySingleton<_i178.GetUserProfileUseCase>(
       () => _i178.GetUserProfileUseCase(gh<_i829.OnboardingRepository>()),
@@ -147,3 +169,5 @@ extension GetItInjectableX on _i174.GetIt {
 }
 
 class _$AppModule extends _i82.AppModule {}
+
+class _$DioModule extends _i526.DioModule {}

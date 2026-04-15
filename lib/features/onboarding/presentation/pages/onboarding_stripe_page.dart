@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
+import 'package:motivation_app/features/goal/data/datasources/stripe_remote_data_source.dart';
 import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
+import 'package:motivation_app/injection_container.dart' as di;
 
 class OnboardingStripePage extends StatefulWidget {
   const OnboardingStripePage({super.key});
@@ -16,20 +18,53 @@ class OnboardingStripePage extends StatefulWidget {
 
 class _OnboardingStripePageState extends State<OnboardingStripePage> {
   final TextEditingController _apiKeyController = TextEditingController();
-  bool _isValid = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _apiKeyController.addListener(() {
-      setState(() => _isValid = _apiKeyController.text.trim().isNotEmpty);
-    });
-  }
+  bool _isValidating = false;
+  String? _error;
 
   @override
   void dispose() {
     _apiKeyController.dispose();
     super.dispose();
+  }
+
+  bool get _canValidate =>
+      _apiKeyController.text.trim().isNotEmpty && !_isValidating;
+
+  Future<void> _validate() async {
+    setState(() {
+      _isValidating = true;
+      _error = null;
+    });
+
+    try {
+      final apiKey = _apiKeyController.text.trim();
+      final accountInfo = await di.sl<StripeRemoteDataSource>().fetchAccountInfo(apiKey);
+
+      // Save the API key
+      if (mounted) {
+        await context.read<OnboardingCubit>().saveStripeApiKey(apiKey);
+      }
+
+      if (mounted) {
+        // Pass account info to the connected page via extra
+        context.push(
+          AppRouter.onboardingStripeConnected,
+          extra: accountInfo,
+        );
+      }
+    } catch (e) {
+      setState(() {
+        if (e.toString().contains('401') || e.toString().contains('Invalid API Key')) {
+          _error = 'Clé API invalide — vérifie et réessaye';
+        } else if (e.toString().contains('SocketException') || e.toString().contains('timeout')) {
+          _error = 'Pas de connexion internet';
+        } else {
+          _error = 'Erreur : ${e.toString().length > 80 ? '${e.toString().substring(0, 80)}...' : e}';
+        }
+      });
+    } finally {
+      if (mounted) setState(() => _isValidating = false);
+    }
   }
 
   Widget _backLink(BuildContext context, String label, VoidCallback onTap) {
@@ -67,11 +102,6 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        const Spacer(),
-                      ],
-                    ),
                     const SizedBox(height: 24),
                     ProgressIndicatorBar(
                       currentStep: OnboardingFlow.progress(AppRouter.onboardingStripe, isMrr: true).step,
@@ -117,6 +147,7 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
                     TextField(
                       controller: _apiKeyController,
                       style: TextStyle(color: colors.primary),
+                      onChanged: (_) => setState(() => _error = null),
                       decoration: InputDecoration(
                         hintText: 'sk_live_...',
                         hintStyle: TextStyle(color: colors.secondary),
@@ -137,21 +168,21 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       ),
                     ),
+                    if (_error != null) ...[
+                      const SizedBox(height: 12),
+                      Text(
+                        _error!,
+                        style: TextStyle(fontSize: 12, color: Colors.red.shade400),
+                      ),
+                    ],
                     const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
                       height: 56,
                       child: ElevatedButton(
-                        onPressed: _isValid
-                            ? () {
-                                context.read<OnboardingCubit>().saveStripeApiKey(
-                                      _apiKeyController.text.trim(),
-                                    );
-                                OnboardingFlow.next(context, AppRouter.onboardingStripe);
-                              }
-                            : null,
+                        onPressed: _canValidate ? _validate : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: _isValid ? colors.primary : colors.border,
+                          backgroundColor: _canValidate ? colors.primary : colors.border,
                           foregroundColor: colors.scaffold,
                           disabledBackgroundColor: colors.border,
                           disabledForegroundColor: colors.secondary,
@@ -160,17 +191,26 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
                           ),
                           elevation: 0,
                         ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.check, size: 20),
-                            SizedBox(width: 10),
-                            Text(
-                              'Valider la connexion',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                            ),
-                          ],
-                        ),
+                        child: _isValidating
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: colors.scaffold,
+                                ),
+                              )
+                            : const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.check, size: 20),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    'Valider la connexion',
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
                       ),
                     ),
                     const SizedBox(height: 16),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
+import 'package:motivation_app/features/goal/data/datasources/stripe_remote_data_source.dart';
 import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 
@@ -26,6 +27,10 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
+    final accountInfo = GoRouterState.of(context).extra as StripeAccountInfo?;
+    final displayName = accountInfo?.displayName ?? 'Compte Stripe';
+    final email = accountInfo?.email ?? '';
+
     return Scaffold(
       backgroundColor: colors.scaffold,
       body: SafeArea(
@@ -34,11 +39,6 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  const Spacer(),
-                ],
-              ),
               const SizedBox(height: 24),
               ProgressIndicatorBar(
                 currentStep: OnboardingFlow.progress(AppRouter.onboardingStripeConnected, isMrr: true).step,
@@ -98,12 +98,15 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Text(
-                                'Acme SaaS Inc.',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: colors.primary,
+                              Flexible(
+                                child: Text(
+                                  displayName,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: colors.primary,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                               const SizedBox(width: 6),
@@ -117,21 +120,14 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'billing@acme-saas.com',
-                            style: TextStyle(fontSize: 13, color: colors.secondary),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'PLAN SCALE',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.6,
-                              color: colors.secondary,
+                          if (email.isNotEmpty) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              email,
+                              style: TextStyle(fontSize: 13, color: colors.secondary),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
+                          ],
                         ],
                       ),
                     ),

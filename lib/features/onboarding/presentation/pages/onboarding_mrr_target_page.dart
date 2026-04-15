@@ -113,7 +113,7 @@ class _OnboardingMrrTargetPageState extends State<OnboardingMrrTargetPage> {
                     ),
                     const SizedBox(width: 8),
                     const Text(
-                      'Stripe connecté • Acme SaaS Inc.',
+                      'Stripe connecté',
                       style: TextStyle(
                         fontSize: 13,
                         color: Color(0xFF4CAF50),
@@ -183,7 +183,7 @@ class _OnboardingMrrTargetPageState extends State<OnboardingMrrTargetPage> {
                         await context.read<OnboardingCubit>().saveMrrTarget(_selectedTarget!);
                         await di.sl<SecureStorage>().setOnboardingDone();
                         if (context.mounted) {
-                          OnboardingFlow.next(context, AppRouter.onboardingMrrTarget);
+                          context.push(AppRouter.onboardingNotifications);
                         }
                       }
                     : null,

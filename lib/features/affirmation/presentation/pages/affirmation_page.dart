@@ -12,6 +12,8 @@ import 'package:motivation_app/features/affirmation/presentation/widgets/categor
 import 'package:motivation_app/features/affirmation/presentation/widgets/revenue_bar.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/widgets/home_widget_service.dart';
+import 'package:motivation_app/features/goal/presentation/bloc/goal_cubit.dart';
+import 'package:motivation_app/features/goal/presentation/bloc/goal_state.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 
@@ -29,9 +31,9 @@ class _AffirmationPageState extends State<AffirmationPage>
 
   double _dragY = 0;
   bool _isExiting = false;
-  bool _goingBack = false;   // true = swipe bas (retour), false = swipe haut (suivant)
-  bool _enterFromTop = false; // direction de l'animation d'entrée
-  bool _pendingGoBack = false; // swipe bas reçu pendant l'animation de sortie
+  bool _goingBack = false;
+  bool _enterFromTop = false;
+  bool _pendingGoBack = false;
 
   @override
   void initState() {
@@ -43,20 +45,33 @@ class _AffirmationPageState extends State<AffirmationPage>
     _enterCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 380),
-      value: 1.0, // Première carte visible immédiatement
+      value: 1.0,
     );
 
     _exitCtrl.addStatusListener((status) {
       if (status == AnimationStatus.completed && mounted) {
         if (_goingBack) {
-          // Swipe bas → revenir à l'affirmation précédente
           context.read<AffirmationCubit>().goBack();
         } else {
-          // Swipe haut → marquer comme vue + charger la suivante
           context.read<AffirmationCubit>().markCurrentAsViewed();
         }
       }
     });
+
+    // Fetch goal data on page init
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchGoalData();
+    });
+  }
+
+  void _fetchGoalData() {
+    final onboardingState = context.read<OnboardingCubit>().state;
+    final profile = switch (onboardingState) {
+      OnboardingDataSaved(:final profile) => profile,
+      OnboardingProfileLoaded(:final profile) => profile,
+      _ => null,
+    };
+    context.read<GoalCubit>().fetchGoal(profile);
   }
 
   @override
@@ -72,10 +87,8 @@ class _AffirmationPageState extends State<AffirmationPage>
     setState(() {
       final newY = _dragY + d.delta.dy;
       if (newY < 0) {
-        // Glisse vers le haut (suivant)
         _dragY = newY.clamp(-350.0, 0.0);
       } else if (newY > 0 && cubit.canGoBack) {
-        // Glisse vers le bas (retour) — seulement s'il y a un historique
         _dragY = newY.clamp(0.0, 350.0);
       } else {
         _dragY = 0;
@@ -86,7 +99,6 @@ class _AffirmationPageState extends State<AffirmationPage>
   void _onDragEnd(DragEndDetails d) {
     final velocity = d.primaryVelocity ?? 0;
     if (_isExiting) {
-      // Swipe bas pendant l'animation de sortie → mémoriser l'intention de retour
       if (velocity > 400 && context.read<AffirmationCubit>().canGoBack) {
         _pendingGoBack = true;
       }
@@ -95,26 +107,22 @@ class _AffirmationPageState extends State<AffirmationPage>
     final cubit = context.read<AffirmationCubit>();
 
     if (_dragY < -60 || velocity < -500) {
-      // Swipe haut : affirmation suivante
       setState(() {
         _isExiting = true;
         _goingBack = false;
       });
       _exitCtrl.forward();
     } else if ((_dragY > 60 || velocity > 500) && cubit.canGoBack) {
-      // Swipe bas : affirmation précédente
       setState(() {
         _isExiting = true;
         _goingBack = true;
       });
       _exitCtrl.forward();
     } else {
-      // Seuil non atteint → revenir en place
       setState(() => _dragY = 0);
     }
   }
 
-  // Appelé par le BlocConsumer quand une nouvelle affirmation (id différent) arrive
   void _resetForNewCard() {
     final goingBack = _goingBack;
     final pendingBack = _pendingGoBack;
@@ -123,12 +131,11 @@ class _AffirmationPageState extends State<AffirmationPage>
       _isExiting = false;
       _goingBack = false;
       _pendingGoBack = false;
-      _enterFromTop = goingBack; // Retour = entrée par le haut
+      _enterFromTop = goingBack;
     });
     _exitCtrl.reset();
 
     if (pendingBack && context.read<AffirmationCubit>().canGoBack) {
-      // L'utilisateur a swipé bas pendant l'animation de sortie → exécuter le retour maintenant
       setState(() {
         _isExiting = true;
         _goingBack = true;
@@ -156,12 +163,9 @@ class _AffirmationPageState extends State<AffirmationPage>
       backgroundColor: colors.card,
       body: SafeArea(
         child: BlocConsumer<AffirmationCubit, AffirmationState>(
-          // Se déclenche uniquement quand c'est une nouvelle affirmation (id différent)
-          // Pas sur un simple toggle de isFavorite
           listenWhen: (prev, next) {
             if (prev is AffirmationLoaded && next is AffirmationLoaded) {
               if (prev.affirmation.id != next.affirmation.id) return true;
-              // Même id : déclencher sauf si c'est juste un toggle favori
               return prev.affirmation.isFavorite == next.affirmation.isFavorite;
             }
             return next is AffirmationLoaded;
@@ -176,17 +180,15 @@ class _AffirmationPageState extends State<AffirmationPage>
                 text: resolvedText,
                 category: state.affirmation.category.label.toLowerCase(),
               );
-              if (profile?.objectiveType != null && profile!.objectiveType != 'none') {
-                final isMrr = profile.objectiveType == 'mrr';
+              // Update goal widget with real data from GoalCubit
+              final goalState = context.read<GoalCubit>().state;
+              if (goalState is GoalLoaded) {
+                final data = goalState.data;
                 HomeWidgetService.updateGoal(
-                  current: isMrr
-                      ? GoalProgressBar.mockMrrCurrent
-                      : GoalProgressBar.mockAnalyticsCurrent,
-                  target: isMrr
-                      ? GoalProgressBar.mockMrrCurrent * 3.7
-                      : GoalProgressBar.mockAnalyticsCurrent * 2.9,
-                  changePct: 12,
-                  objectiveType: profile.objectiveType!,
+                  current: data.current,
+                  target: data.target,
+                  changePct: data.changePct,
+                  objectiveType: data.objectiveType,
                 );
               }
             }
@@ -221,8 +223,6 @@ class _AffirmationPageState extends State<AffirmationPage>
                             final double opacity;
 
                             if (_isExiting) {
-                              // Swipe haut → sort par le haut
-                              // Swipe bas → sort par le bas
                               final dir = _goingBack ? 1.0 : -1.0;
                               offset = Offset(
                                 0,
@@ -231,7 +231,6 @@ class _AffirmationPageState extends State<AffirmationPage>
                               opacity = (1.0 - _exitCtrl.value * 2)
                                   .clamp(0.0, 1.0);
                             } else {
-                              // Entrée depuis le bas (swipe haut) ou depuis le haut (retour)
                               final enterDir = _enterFromTop ? -1.0 : 1.0;
                               offset = Offset(
                                 0,
@@ -308,12 +307,7 @@ class _AffirmationPageState extends State<AffirmationPage>
                     ],
                   ),
                 ),
-                GoalProgressBar(
-                  objectiveType: profile?.objectiveType,
-                  target: profile?.objectiveType == 'analytics'
-                      ? profile?.analyticsTarget
-                      : profile?.mrrTarget,
-                ),
+                const GoalProgressBar(),
               ],
             );
           },

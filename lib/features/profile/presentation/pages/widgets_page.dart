@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
-import 'package:motivation_app/features/affirmation/presentation/widgets/revenue_bar.dart';
+import 'package:motivation_app/features/goal/presentation/bloc/goal_cubit.dart';
+import 'package:motivation_app/features/goal/presentation/bloc/goal_state.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 
@@ -23,6 +24,16 @@ class WidgetsPage extends StatelessWidget {
     final category = 'général';
     final isMrr = profile?.objectiveType == 'mrr';
     final hasGoal = profile?.objectiveType != null && profile!.objectiveType != 'none';
+
+    // Get real data from GoalCubit, fallback to placeholder
+    final goalState = context.watch<GoalCubit>().state;
+    final goalData = switch (goalState) {
+      GoalLoaded(:final data) => data,
+      _ => null,
+    };
+    final goalCurrent = goalData?.current ?? (isMrr ? 0.0 : 0.0);
+    final goalTarget = goalData?.target ?? (isMrr ? 5000.0 : 10000.0);
+    final goalChangePct = goalData?.changePct ?? 0.0;
 
     return Scaffold(
       backgroundColor: colors.scaffold,
@@ -123,11 +134,9 @@ class WidgetsPage extends StatelessWidget {
                         child: _WidgetPreviewSmall(
                           label: hasGoal ? (isMrr ? 'MRR' : 'Visites') : 'Objectif',
                           child: _GoalMini(
-                            current: isMrr
-                                ? GoalProgressBar.mockMrrCurrent
-                                : GoalProgressBar.mockAnalyticsCurrent,
-                            target: isMrr ? 5000 : 10000,
-                            changePct: 12,
+                            current: goalCurrent,
+                            target: goalTarget,
+                            changePct: goalChangePct,
                             isMrr: isMrr,
                           ),
                         ),
@@ -145,11 +154,9 @@ class WidgetsPage extends StatelessWidget {
                     child: _CombinedMini(
                       text: affirmationText,
                       category: category,
-                      current: isMrr
-                          ? GoalProgressBar.mockMrrCurrent
-                          : GoalProgressBar.mockAnalyticsCurrent,
-                      target: isMrr ? 5000 : 10000,
-                      changePct: 12,
+                      current: goalCurrent,
+                      target: goalTarget,
+                      changePct: goalChangePct,
                       isMrr: isMrr,
                     ),
                   ),

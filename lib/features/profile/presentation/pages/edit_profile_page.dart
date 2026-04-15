@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
-import 'package:motivation_app/features/affirmation/presentation/widgets/revenue_bar.dart';
+import 'package:motivation_app/features/goal/presentation/bloc/goal_cubit.dart';
+import 'package:motivation_app/features/goal/presentation/bloc/goal_state.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 
@@ -20,7 +21,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late String _initialObjectiveType;
   late String? _initialStripeKey;
   String? _mrrTarget;
-  String? _analyticsTarget;
   bool _saving = false;
 
   static const _mrrTargets = [
@@ -29,14 +29,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     (amount: '10K€', label: 'Liberté financière', value: 10000.0),
     (amount: '25K€', label: 'Scale mode', value: 25000.0),
     (amount: '50K€+', label: 'Empire builder', value: 50000.0),
-  ];
-
-  static const _analyticsTargets = [
-    (amount: '1K/mois', label: 'Premiers visiteurs', value: 1000.0),
-    (amount: '10K/mois', label: 'Croissance', value: 10000.0),
-    (amount: '50K/mois', label: 'Trafic sérieux', value: 50000.0),
-    (amount: '100K/mois', label: 'Scale', value: 100000.0),
-    (amount: '500K+/mois', label: 'Top site', value: 500000.0),
   ];
 
   @override
@@ -53,7 +45,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _initialObjectiveType = _objectiveType;
     _initialStripeKey = profile?.stripeApiKey;
     _mrrTarget = profile?.mrrTarget;
-    _analyticsTarget = profile?.analyticsTarget;
   }
 
   @override
@@ -73,19 +64,25 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (_objectiveType == 'mrr' && _mrrTarget != null) {
       await cubit.saveMrrTarget(_mrrTarget!);
     }
-    if (_objectiveType == 'analytics' && _analyticsTarget != null) {
-      await cubit.saveAnalyticsTarget(_analyticsTarget!);
-    }
+
 
     if (!mounted) return;
     setState(() => _saving = false);
+
+    // Re-fetch les données goal avec le nouveau profil
+    final updatedState = context.read<OnboardingCubit>().state;
+    final updatedProfile = switch (updatedState) {
+      OnboardingDataSaved(:final profile) => profile,
+      OnboardingProfileLoaded(:final profile) => profile,
+      _ => null,
+    };
+    context.read<GoalCubit>().fetchGoal(updatedProfile);
 
     final switchedToMrr =
         _objectiveType == 'mrr' && _initialObjectiveType != 'mrr';
     final needsStripe = _initialStripeKey == null;
 
     if (switchedToMrr && needsStripe) {
-      // Redirige vers la connexion Stripe
       context.pop();
       context.push(AppRouter.onboardingStripe);
     } else {
@@ -98,7 +95,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final colors = Theme.of(context).extension<AppColors>()!;
     final canSave = _nameController.text.trim().isNotEmpty &&
         (_objectiveType != 'mrr' || _mrrTarget != null) &&
-        (_objectiveType != 'analytics' || _analyticsTarget != null);
+        (_objectiveType != 'mrr' || _mrrTarget != null);
+
+    final goalState = context.watch<GoalCubit>().state;
+    final goalCurrent = switch (goalState) {
+      GoalLoaded(:final data) => data.current,
+      _ => 0.0,
+    };
 
     return Scaffold(
       backgroundColor: colors.scaffold,
@@ -188,16 +191,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         ),
                         Divider(height: 1, thickness: 1, indent: 58, color: colors.border),
                         _ObjectiveRow(
-                          icon: Icons.bar_chart,
-                          iconColor: const Color(0xFF2196F3),
-                          iconBg: const Color(0xFFE3F2FD),
-                          title: 'Analytics',
-                          subtitle: 'Métriques de visites & site',
-                          selected: _objectiveType == 'analytics',
-                          onTap: () => setState(() => _objectiveType = 'analytics'),
-                        ),
-                        Divider(height: 1, thickness: 1, indent: 58, color: colors.border),
-                        _ObjectiveRow(
                           icon: Icons.block,
                           iconColor: Colors.black54,
                           iconBg: colors.surface,
@@ -218,21 +211,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     _TargetList(
                       targets: _mrrTargets,
                       selected: _mrrTarget,
-                      currentValue: GoalProgressBar.mockMrrCurrent,
+                      currentValue: goalCurrent,
                       onSelect: (v) => setState(() => _mrrTarget = v),
-                    ),
-                  ],
-
-                  // ── Cible Analytics (conditionnel) ─────────────────────────
-                  if (_objectiveType == 'analytics') ...[
-                    const SizedBox(height: 28),
-                    _SectionLabel('OBJECTIF VISITES'),
-                    const SizedBox(height: 8),
-                    _TargetList(
-                      targets: _analyticsTargets,
-                      selected: _analyticsTarget,
-                      currentValue: GoalProgressBar.mockAnalyticsCurrent,
-                      onSelect: (v) => setState(() => _analyticsTarget = v),
                     ),
                   ],
 

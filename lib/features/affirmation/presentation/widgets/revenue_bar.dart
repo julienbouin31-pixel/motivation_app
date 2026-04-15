@@ -1,35 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
+import 'package:motivation_app/features/goal/presentation/bloc/goal_cubit.dart';
+import 'package:motivation_app/features/goal/presentation/bloc/goal_state.dart';
 
 class GoalProgressBar extends StatelessWidget {
-  final String? objectiveType;
-  final String? target;
+  const GoalProgressBar({super.key});
 
-  const GoalProgressBar({
-    super.key,
-    required this.objectiveType,
-    this.target,
-  });
-
-  // Valeurs mock fixes — indépendantes du target
-  static const double mockMrrCurrent = 1350;
-  static const double mockAnalyticsCurrent = 3412;
-
-  static double _parseTarget(String? target, {bool isAnalytics = false}) {
-    if (target == null) return isAnalytics ? 10000 : 5000;
-    final t = target
-        .toUpperCase()
-        .replaceAll('€', '')
-        .replaceAll('+', '')
-        .replaceAll('/MOIS', '')
-        .trim();
-    if (t.endsWith('K')) {
-      return (double.tryParse(t.replaceAll('K', '')) ?? (isAnalytics ? 10 : 5)) * 1000;
-    }
-    return double.tryParse(t) ?? (isAnalytics ? 10000 : 5000);
-  }
-
-  static String _fmtRevenue(double amount) {
+  static String fmtRevenue(double amount) {
     if (amount >= 1000) {
       final k = amount / 1000;
       final rounded = (k * 10).round() / 10;
@@ -40,7 +20,7 @@ class GoalProgressBar extends StatelessWidget {
     return '${amount.toStringAsFixed(0)}€';
   }
 
-  static String _fmtCount(double count) {
+  static String fmtCount(double count) {
     if (count >= 1000) {
       final k = count / 1000;
       return '${k.toStringAsFixed(1)}K';
@@ -50,37 +30,177 @@ class GoalProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (objectiveType == null || objectiveType == 'none') {
-      return const SizedBox.shrink();
-    }
+    return BlocBuilder<GoalCubit, GoalState>(
+      builder: (context, state) {
+        return switch (state) {
+          GoalLoaded(:final data) => data.current >= data.target
+              ? _GoalAchieved(
+                  current: data.current,
+                  target: data.target,
+                  isMrr: data.objectiveType == 'mrr',
+                )
+              : _GoalBar(
+                  current: data.current,
+                  target: data.target,
+                  changePct: data.changePct,
+                  isMrr: data.objectiveType == 'mrr',
+                ),
+          GoalLoading() => const Padding(
+              padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+              child: SizedBox(
+                height: 40,
+                child: Center(
+                  child: SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF4CAF50)),
+                  ),
+                ),
+              ),
+            ),
+          GoalError(:final message) => Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              child: Text(
+                message,
+                style: TextStyle(fontSize: 11, color: Colors.red.shade300),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          _ => const SizedBox.shrink(),
+        };
+      },
+    );
+  }
+}
 
-    final isMrr = objectiveType == 'mrr';
+// ─── Objectif atteint ─────────────────────────────────────────────────────────
 
-    final double targetValue;
-    final double currentValue;
-    final String label;
-    final String currentLabel;
-    final String targetLabel;
+class _GoalAchieved extends StatelessWidget {
+  final double current;
+  final double target;
+  final bool isMrr;
 
-    if (isMrr) {
-      targetValue = _parseTarget(target);
-      currentValue = mockMrrCurrent;
-      label = 'MRR mensuel';
-      currentLabel = _fmtRevenue(currentValue);
-      targetLabel = _fmtRevenue(targetValue);
-    } else {
-      targetValue = _parseTarget(target, isAnalytics: true);
-      currentValue = mockAnalyticsCurrent;
-      label = 'Visiteurs ce mois-ci';
-      currentLabel = _fmtCount(currentValue);
-      targetLabel = _fmtCount(targetValue);
-    }
+  const _GoalAchieved({
+    required this.current,
+    required this.target,
+    required this.isMrr,
+  });
 
-    final double progress = (currentValue / targetValue).clamp(0.0, 1.0);
+  String _affirmation(String currentLabel, String targetLabel) {
+    const messages = [
+      'Tu as dépassé {target}/mois. Relève la barre.',
+      'Objectif {target} atteint. Maintenant vise plus haut.',
+      '{current}/mois — tu es là où tu voulais être.',
+      'Tu génères {current}. L\'objectif {target} est derrière toi.',
+      'De l\'ambition, encore. {current}/mois, c\'est ton nouveau plancher.',
+    ];
+    // Déterministe selon les valeurs pour éviter un changement aléatoire
+    final idx = (current.toInt() + target.toInt()) % messages.length;
+    return messages[idx]
+        .replaceAll('{current}', currentLabel)
+        .replaceAll('{target}', targetLabel);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final currentLabel = isMrr
+        ? GoalProgressBar.fmtRevenue(current)
+        : GoalProgressBar.fmtCount(current);
+    final targetLabel = isMrr
+        ? GoalProgressBar.fmtRevenue(target)
+        : GoalProgressBar.fmtCount(target);
+
+    const green = Color(0xFF4CAF50);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      child: GestureDetector(
+        onTap: () => context.push(AppRouter.editProfile),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1B3A1C) : const Color(0xFFD6F0D8),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: green.withValues(alpha: 0.45)),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Icône
+              Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: green.withValues(alpha: 0.25),
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Text('✦', style: TextStyle(fontSize: 14, color: green)),
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Texte
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'OBJECTIF DÉPASSÉ',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: green,
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      _affirmation(currentLabel, targetLabel),
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: isDark ? Colors.white : const Color(0xFF0A2E0B),
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              const Icon(Icons.arrow_forward_ios, size: 12, color: green),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Barre de progression normale ─────────────────────────────────────────────
+
+class _GoalBar extends StatelessWidget {
+  final double current;
+  final double target;
+  final double changePct;
+  final bool isMrr;
+
+  const _GoalBar({
+    required this.current,
+    required this.target,
+    required this.changePct,
+    required this.isMrr,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final label = isMrr ? 'MRR mensuel' : 'Visiteurs ce mois-ci';
+    final currentLabel = isMrr ? GoalProgressBar.fmtRevenue(current) : GoalProgressBar.fmtCount(current);
+    final targetLabel = isMrr ? GoalProgressBar.fmtRevenue(target) : GoalProgressBar.fmtCount(target);
+    final double progress = (current / target).clamp(0.0, 1.0);
     final int pct = (progress * 100).round();
     final colors = Theme.of(context).extension<AppColors>()!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    // En dark : même track que les widgets iOS (blanc 12% opacité)
     final trackColor = isDark ? const Color(0x1FFFFFFF) : const Color(0xFFE8F5E9);
 
     return Padding(

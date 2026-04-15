@@ -163,7 +163,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
-                  childAspectRatio: 1.15,
+                  childAspectRatio: 0.9,
                 ),
                 itemCount: _items.length,
                 itemBuilder: (context, index) {
@@ -211,89 +211,76 @@ class _CategoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
 
-    final bgColor = isSelected
-        ? (isDark ? accent.withValues(alpha: 0.14) : accent.withValues(alpha: 0.09))
-        : colors.card;
-
-    final borderColor = isSelected
-        ? accent.withValues(alpha: isDark ? 0.55 : 0.45)
-        : colors.border;
-
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.all(16),
+        duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: borderColor, width: 1),
+          color: isSelected
+              ? accent.withValues(alpha: isDark ? 0.18 : 0.1)
+              : colors.card,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: isSelected
+                ? accent.withValues(alpha: isDark ? 0.6 : 0.5)
+                : colors.border,
+            width: isSelected ? 1.5 : 1,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                // Icône
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 180),
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? accent.withValues(alpha: isDark ? 0.28 : 0.16)
-                        : colors.surface,
-                    borderRadius: BorderRadius.circular(11),
-                  ),
+            // ── Zone icône ─────────────────────────────────────────────────
+            Expanded(
+              flex: 5,
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? accent.withValues(alpha: isDark ? 0.22 : 0.12)
+                      : colors.surface,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(17)),
+                ),
+                child: Center(
                   child: Icon(
                     icon,
-                    size: 20,
+                    size: 32,
                     color: isSelected ? accent : colors.secondary,
                   ),
                 ),
-                const Spacer(),
-                // Checkmark
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 180),
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: isSelected ? accent : Colors.transparent,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: isSelected ? accent : colors.border,
-                      width: 1.5,
-                    ),
-                  ),
-                  child: isSelected
-                      ? Icon(
-                          Icons.check,
-                          size: 12,
-                          color: isDark ? Colors.black : Colors.white,
-                        )
-                      : null,
-                ),
-              ],
-            ),
-            const Spacer(),
-            Text(
-              category.label,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                letterSpacing: -0.2,
-                color: isSelected
-                    ? (isDark ? accent : accent.withValues(alpha: 0.85))
-                    : colors.primary,
               ),
             ),
-            const SizedBox(height: 2),
-            Text(
-              description,
-              style: TextStyle(
-                fontSize: 12,
-                color: colors.secondary,
-                height: 1.3,
+
+            // ── Zone texte ─────────────────────────────────────────────────
+            Expanded(
+              flex: 4,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      category.label,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.3,
+                        color: isSelected
+                            ? (isDark ? accent : accent.withValues(alpha: 0.9))
+                            : colors.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      description,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: colors.secondary,
+                        height: 1.3,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
