@@ -5,8 +5,15 @@ import 'package:motivation_app/config/themes/app_theme.dart';
 
 class AffirmationHeader extends StatelessWidget {
   final String userName;
+  final Color? avatarBg;
+  final Color? avatarFg;
 
-  const AffirmationHeader({super.key, required this.userName});
+  const AffirmationHeader({
+    super.key,
+    required this.userName,
+    this.avatarBg,
+    this.avatarFg,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +31,14 @@ class AffirmationHeader extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: colors.primary,
+                color: avatarBg ?? colors.primary,
                 shape: BoxShape.circle,
               ),
               child: Center(
                 child: Text(
                   initial,
                   style: TextStyle(
-                    color: colors.scaffold,
+                    color: avatarFg ?? colors.scaffold,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),

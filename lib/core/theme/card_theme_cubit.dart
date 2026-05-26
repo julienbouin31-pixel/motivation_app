@@ -5,14 +5,14 @@ import 'package:motivation_app/core/theme/card_visual_theme.dart';
 class CardThemeCubit extends Cubit<CardVisualTheme> {
   final SecureStorage _storage;
 
-  CardThemeCubit(this._storage) : super(CardVisualTheme.minimal);
+  CardThemeCubit(this._storage) : super(CardVisualTheme.pur);
 
   Future<void> load() async {
     final saved = await _storage.readCardTheme();
     if (saved == null) return;
     emit(CardVisualTheme.values.firstWhere(
       (t) => t.name == saved,
-      orElse: () => CardVisualTheme.minimal,
+      orElse: () => CardVisualTheme.pur,
     ));
   }
 

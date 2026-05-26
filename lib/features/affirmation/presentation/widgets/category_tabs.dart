@@ -70,12 +70,16 @@ class CategoryButton extends StatelessWidget {
   final AffirmationCategory category;
   final bool isOpen;
   final VoidCallback onTap;
+  final Color? colorOverride;
+  final Color? iconColorOverride;
 
   const CategoryButton({
     super.key,
     required this.category,
     required this.isOpen,
     required this.onTap,
+    this.colorOverride,
+    this.iconColorOverride,
   });
 
   static const _green = Color(0xFF4CAF50);
@@ -84,8 +88,8 @@ class CategoryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? colors.surface : colors.primary;
-    final fgColor = isDark ? _green : colors.scaffold;
+    final bgColor = colorOverride ?? (isDark ? colors.surface : colors.primary);
+    final fgColor = iconColorOverride ?? (isDark ? _green : colors.scaffold);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -93,7 +97,9 @@ class CategoryButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(24),
-          border: isDark ? Border.all(color: _green.withValues(alpha: 0.3), width: 1) : null,
+          border: (colorOverride == null && isDark)
+              ? Border.all(color: _green.withValues(alpha: 0.3), width: 1)
+              : null,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

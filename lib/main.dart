@@ -5,7 +5,6 @@ import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/core/theme/card_theme_cubit.dart';
-import 'package:motivation_app/core/theme/theme_cubit.dart';
 import 'package:motivation_app/core/notifications/notification_service.dart';
 import 'package:motivation_app/core/widgets/home_widget_service.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
@@ -25,7 +24,6 @@ void main() async {
   await seedAffirmationsIfEmpty(local);
   di.sl<AffirmationRepository>().weeklyRefreshInBackground();
 
-  // Charge le profil et détermine l'écran de départ
   final onboardingCubit = di.sl<OnboardingCubit>();
   await onboardingCubit.loadUserProfile();
 
@@ -41,7 +39,6 @@ void main() async {
 
   final router = createAppRouter(initialLocation: initialLocation);
 
-  // Initialise le service de notifications + replanifie si activées
   await NotificationService.init();
   if (await storage.readNotificationEnabled()) {
     final rawTexts = await local.getAllTexts();
@@ -59,21 +56,14 @@ void main() async {
     );
   }
 
-  // Initialise le service de widgets iOS
   await HomeWidgetService.init();
 
-  // Charge la préférence de thème
-  final themeCubit = ThemeCubit(di.sl<SecureStorage>());
-  await themeCubit.load();
-
-  // Charge le thème visuel de carte
   final cardThemeCubit = CardThemeCubit(di.sl<SecureStorage>());
   await cardThemeCubit.load();
 
   runApp(MyApp(
     router: router,
     onboardingCubit: onboardingCubit,
-    themeCubit: themeCubit,
     cardThemeCubit: cardThemeCubit,
   ));
 }
@@ -81,14 +71,12 @@ void main() async {
 class MyApp extends StatefulWidget {
   final GoRouter router;
   final OnboardingCubit onboardingCubit;
-  final ThemeCubit themeCubit;
   final CardThemeCubit cardThemeCubit;
 
   const MyApp({
     super.key,
     required this.router,
     required this.onboardingCubit,
-    required this.themeCubit,
     required this.cardThemeCubit,
   });
 
@@ -109,7 +97,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  /// Appelé quand l'app revient au premier plan depuis le fond.
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
@@ -128,19 +115,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: widget.onboardingCubit),
-        BlocProvider.value(value: widget.themeCubit),
         BlocProvider.value(value: widget.cardThemeCubit),
         BlocProvider.value(value: di.sl<GoalCubit>()),
       ],
-      child: BlocBuilder<ThemeCubit, ThemeMode>(
-        builder: (context, themeMode) => MaterialApp.router(
-          title: 'Motivation App',
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: themeMode,
-          routerConfig: widget.router,
-        ),
+      child: MaterialApp.router(
+        title: 'Motivation App',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.dark,
+        routerConfig: widget.router,
       ),
     );
   }

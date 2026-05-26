@@ -164,7 +164,7 @@ class _AffirmationPageState extends State<AffirmationPage>
     final themeData = cardTheme.data;
 
     final body = Scaffold(
-      backgroundColor: cardTheme.isAdaptive ? colors.card : Colors.transparent,
+      backgroundColor: themeData.isAdaptive ? colors.card : Colors.transparent,
       body: SafeArea(
         child: BlocConsumer<AffirmationCubit, AffirmationState>(
           listenWhen: (prev, next) {
@@ -203,9 +203,17 @@ class _AffirmationPageState extends State<AffirmationPage>
               _ => cubit.displayCategory,
             };
 
+            final themed = !themeData.isAdaptive;
+            final uiBg = themed ? themeData.uiOverlayBg : null;
+            final uiFg = themed ? themeData.uiOverlayFg : null;
+
             return Column(
               children: [
-                AffirmationHeader(userName: userName),
+                AffirmationHeader(
+                  userName: userName,
+                  avatarBg: uiBg,
+                  avatarFg: uiFg,
+                ),
                 Expanded(
                   child: switch (state) {
                     AffirmationInitial() => const SizedBox.shrink(),
@@ -255,9 +263,9 @@ class _AffirmationPageState extends State<AffirmationPage>
                             affirmation: affirmation,
                             userName: userName,
                             mrrTarget: mrrTarget,
-                            textColor: cardTheme.isAdaptive ? null : themeData.textColor,
-                            buttonBg: cardTheme.isAdaptive ? null : themeData.buttonBg,
-                            buttonIconColor: cardTheme.isAdaptive ? null : themeData.buttonIconColor,
+                            textColor: themed ? themeData.textColor : null,
+                            buttonBg: themed ? themeData.buttonBg : null,
+                            buttonIconColor: themed ? themeData.buttonIconColor : null,
                             onFavorite: () =>
                                 cubit.toggleFavoriteAction(affirmation.id),
                             onShare: () {
@@ -289,26 +297,27 @@ class _AffirmationPageState extends State<AffirmationPage>
                         isOpen: false,
                         onTap: () =>
                             context.push(AppRouter.affirmationCategories),
+                        colorOverride: uiBg,
+                        iconColorOverride: uiFg,
                       ),
                       const Spacer(),
                       GestureDetector(
                         onTap: () =>
                             context.push(AppRouter.affirmationFavorites),
-                        child: Builder(builder: (ctx) {
-                          final isDark = Theme.of(ctx).brightness == Brightness.dark;
-                          return Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: isDark ? colors.surface : Colors.red.shade50,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.favorite,
-                              color: isDark ? Colors.red.shade300 : Colors.red,
-                              size: 20,
-                            ),
-                          );
-                        }),
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: uiBg ?? colors.surface,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.favorite,
+                            color: themed
+                                ? themeData.textColor.withValues(alpha: 0.8)
+                                : Colors.red,
+                            size: 20,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -321,7 +330,39 @@ class _AffirmationPageState extends State<AffirmationPage>
       ),
     );
 
-    if (cardTheme.isAdaptive) return body;
+    if (themeData.isAdaptive) return body;
+
+    if (themeData.imageUrl != null) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.network(
+            themeData.imageUrl!,
+            fit: BoxFit.cover,
+            errorBuilder: (_, _, _) => Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: themeData.gradientColors,
+                  begin: themeData.begin,
+                  end: themeData.end,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0x99000000), Color(0x44000000), Color(0x77000000)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [0.0, 0.45, 1.0],
+              ),
+            ),
+          ),
+          body,
+        ],
+      );
+    }
 
     return Container(
       decoration: BoxDecoration(
