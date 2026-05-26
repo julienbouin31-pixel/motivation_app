@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
+import 'package:motivation_app/core/theme/card_theme_cubit.dart';
+import 'package:motivation_app/core/theme/card_visual_theme.dart';
 import 'package:motivation_app/core/theme/theme_cubit.dart';
 
 class AppearancePage extends StatelessWidget {
@@ -11,6 +13,7 @@ class AppearancePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
     final current = context.watch<ThemeCubit>().state;
+    final currentCardTheme = context.watch<CardThemeCubit>().state;
 
     return Scaffold(
       backgroundColor: colors.scaffold,
@@ -92,6 +95,150 @@ class AppearancePage extends StatelessWidget {
                         ),
                       ],
                     ),
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  // ── Thème visuel carte ──────────────────────────────────
+                  _SectionLabel('THÈME VISUEL', colors),
+                  const SizedBox(height: 8),
+                  GridView.count(
+                    crossAxisCount: 3,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 0.85,
+                    children: CardVisualTheme.values.map((theme) {
+                      final data = theme.data;
+                      final selected = currentCardTheme == theme;
+                      return GestureDetector(
+                        onTap: () => context.read<CardThemeCubit>().setTheme(theme),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: selected ? colors.primary : Colors.transparent,
+                              width: 2.5,
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                // Fond
+                                theme.isAdaptive
+                                    ? Container(color: colors.card)
+                                    : Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: data.gradientColors,
+                                            begin: data.begin,
+                                            end: data.end,
+                                          ),
+                                        ),
+                                      ),
+                                // Contenu preview
+                                Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        height: 3,
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: theme.isAdaptive
+                                              ? colors.primary.withValues(alpha: 0.5)
+                                              : data.textColor.withValues(alpha: 0.6),
+                                          borderRadius: BorderRadius.circular(2),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Container(
+                                        height: 3,
+                                        width: 50,
+                                        decoration: BoxDecoration(
+                                          color: theme.isAdaptive
+                                              ? colors.primary.withValues(alpha: 0.3)
+                                              : data.textColor.withValues(alpha: 0.4),
+                                          borderRadius: BorderRadius.circular(2),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            width: 20,
+                                            height: 20,
+                                            decoration: BoxDecoration(
+                                              color: theme.isAdaptive
+                                                  ? colors.surface
+                                                  : data.buttonBg,
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Container(
+                                            width: 20,
+                                            height: 20,
+                                            decoration: BoxDecoration(
+                                              color: theme.isAdaptive
+                                                  ? colors.surface
+                                                  : data.buttonBg,
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                // Nom du thème
+                                Positioned(
+                                  bottom: 7,
+                                  left: 0,
+                                  right: 0,
+                                  child: Text(
+                                    data.name,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      color: theme.isAdaptive
+                                          ? colors.secondary
+                                          : data.textColor.withValues(alpha: 0.85),
+                                    ),
+                                  ),
+                                ),
+                                // Checkmark
+                                if (selected)
+                                  Positioned(
+                                    top: 6,
+                                    right: 6,
+                                    child: Container(
+                                      width: 18,
+                                      height: 18,
+                                      decoration: BoxDecoration(
+                                        color: colors.primary,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.check,
+                                        size: 11,
+                                        color: colors.scaffold,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ],
               ),

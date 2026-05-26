@@ -54,7 +54,7 @@ class _OnboardingNotificationPageState
         _ => null,
       };
       final userName = profile?.name ?? '';
-      final target = profile?.mrrTarget ?? profile?.analyticsTarget ?? '';
+      final target = profile?.mrrTarget ?? '';
 
       final rawTexts =
           await di.sl<AffirmationLocalDataSource>().getAllTexts();
@@ -101,8 +101,8 @@ class _OnboardingNotificationPageState
                   ),
                   const SizedBox(height: 20),
                   ProgressIndicatorBar(
-                    currentStep: OnboardingFlow.progress(AppRouter.onboardingNotifications, isMrr: false).step,
-                    totalSteps: OnboardingFlow.progress(AppRouter.onboardingNotifications, isMrr: false).total,
+                    currentStep: OnboardingFlow.progress(AppRouter.onboardingNotifications).step,
+                    totalSteps: OnboardingFlow.progress(AppRouter.onboardingNotifications).total,
                   ),
                 ],
               ),

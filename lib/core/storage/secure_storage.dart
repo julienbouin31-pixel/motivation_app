@@ -151,6 +151,14 @@ class SecureStorage {
   Future<void> saveGoalAchievedNotifiedTarget(String target) =>
       _storage.write(key: _keyGoalAchievedNotified, value: target);
 
+  // ─── Thème visuel carte ──────────────────────────────────────────────────
+  static const String _keyCardTheme = 'card_visual_theme';
+
+  Future<String?> readCardTheme() => _storage.read(key: _keyCardTheme);
+
+  Future<void> saveCardTheme(String value) =>
+      _storage.write(key: _keyCardTheme, value: value);
+
   // ─── Thème ───────────────────────────────────────────────────────────────
   Future<String?> readThemeMode() => _storage.read(key: _keyThemeMode);
 

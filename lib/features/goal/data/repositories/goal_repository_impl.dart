@@ -13,28 +13,21 @@ class GoalRepositoryImpl implements GoalRepository {
 
   @override
   Future<Either<String, GoalData>> fetchGoalData({
-    required String objectiveType,
     String? stripeApiKey,
-    String? analyticsPropertyId,
-    String? analyticsServiceAccountJson,
     String? target,
   }) async {
     try {
-      if (objectiveType == 'mrr') {
-        if (stripeApiKey == null || stripeApiKey.isEmpty) {
-          return const Left('Clé API Stripe manquante');
-        }
-        final mrr = await _stripe.fetchMrr(stripeApiKey);
-        final parsedTarget = _parseTarget(target);
-        return Right(GoalData(
-          current: mrr.currentMrr,
-          target: parsedTarget,
-          changePct: mrr.changePct,
-          objectiveType: 'mrr',
-          lastUpdated: DateTime.now(),
-        ));
+      if (stripeApiKey == null || stripeApiKey.isEmpty) {
+        return const Left('Clé API Stripe manquante');
       }
-      return const Left('Type d\'objectif non supporté');
+      final mrr = await _stripe.fetchMrr(stripeApiKey);
+      final parsedTarget = _parseTarget(target);
+      return Right(GoalData(
+        current: mrr.currentMrr,
+        target: parsedTarget,
+        changePct: mrr.changePct,
+        lastUpdated: DateTime.now(),
+      ));
     } on DioException catch (e) {
       final statusCode = e.response?.statusCode;
       if (statusCode == 401) return const Left('Clé API invalide ou expirée');

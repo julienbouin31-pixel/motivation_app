@@ -20,12 +20,10 @@ class HomeWidgetService {
     required double current,
     required double target,
     required double changePct,
-    required String objectiveType,
   }) async {
     await HomeWidget.saveWidgetData<double>('goal_current', current);
     await HomeWidget.saveWidgetData<double>('goal_target', target);
     await HomeWidget.saveWidgetData<double>('goal_change_pct', changePct);
-    await HomeWidget.saveWidgetData<String>('objective_type', objectiveType);
     await _reloadAll();
   }
 

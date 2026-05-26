@@ -9,17 +9,13 @@ part of 'user_profile_model.dart';
 _UserProfileModel _$UserProfileModelFromJson(Map<String, dynamic> json) =>
     _UserProfileModel(
       name: json['name'] as String? ?? '',
-      objectiveType: json['objectiveType'] as String?,
       stripeApiKey: json['stripeApiKey'] as String?,
       mrrTarget: json['mrrTarget'] as String?,
-      analyticsTarget: json['analyticsTarget'] as String?,
     );
 
 Map<String, dynamic> _$UserProfileModelToJson(_UserProfileModel instance) =>
     <String, dynamic>{
       'name': instance.name,
-      'objectiveType': instance.objectiveType,
       'stripeApiKey': instance.stripeApiKey,
       'mrrTarget': instance.mrrTarget,
-      'analyticsTarget': instance.analyticsTarget,
     };

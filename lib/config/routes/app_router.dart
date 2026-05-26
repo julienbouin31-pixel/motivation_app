@@ -9,7 +9,6 @@ import 'package:motivation_app/features/home/presentation/pages/home_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_age_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_mrr_target_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_name_page.dart';
-import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_objective_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_stripe_connected_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_stripe_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_transition_page.dart';
@@ -28,7 +27,6 @@ class AppRouter {
   static const String onboardingName = '/onboarding/name';
   static const String onboardingTransition = '/onboarding/transition';
   static const String onboardingAge = '/onboarding/age';
-  static const String onboardingObjective = '/onboarding/objective';
   static const String onboardingStripe = '/onboarding/stripe';
   static const String onboardingStripeConnected = '/onboarding/stripe-connected';
   static const String onboardingMrrTarget = '/onboarding/mrr-target';
@@ -72,12 +70,6 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
       path: AppRouter.onboardingAge,
       pageBuilder: (context, state) => const MaterialPage(
         child: OnboardingAgePage(),
-      ),
-    ),
-    GoRoute(
-      path: AppRouter.onboardingObjective,
-      pageBuilder: (context, state) => const MaterialPage(
-        child: OnboardingObjectivePage(),
       ),
     ),
     GoRoute(

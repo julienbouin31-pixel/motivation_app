@@ -41,13 +41,11 @@ class OnboardingStripeConnectedPage extends StatelessWidget {
             children: [
               const SizedBox(height: 24),
               ProgressIndicatorBar(
-                currentStep: OnboardingFlow.progress(AppRouter.onboardingStripeConnected, isMrr: true).step,
-                totalSteps: OnboardingFlow.progress(AppRouter.onboardingStripeConnected, isMrr: true).total,
+                currentStep: OnboardingFlow.progress(AppRouter.onboardingStripeConnected).step,
+                totalSteps: OnboardingFlow.progress(AppRouter.onboardingStripeConnected).total,
               ),
               const SizedBox(height: 20),
               _backLink(context, 'Retour', () => context.pop()),
-              const SizedBox(height: 8),
-              _backLink(context, 'Changer de type', () => context.go(AppRouter.onboardingObjective)),
               const SizedBox(height: 32),
               Container(
                 width: 52,

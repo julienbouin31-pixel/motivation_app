@@ -15,14 +15,13 @@ class GoalCubit extends Cubit<GoalState> {
 
   Future<void> fetchGoal(UserProfile? profile) async {
     if (profile == null) return;
-    final objectiveType = profile.objectiveType;
-    if (objectiveType == null || objectiveType == 'none') return;
+    final apiKey = profile.stripeApiKey;
+    if (apiKey == null || apiKey.isEmpty) return;
 
     emit(const GoalState.loading());
 
     final result = await _repository.fetchGoalData(
-      objectiveType: objectiveType,
-      stripeApiKey: profile.stripeApiKey,
+      stripeApiKey: apiKey,
       target: profile.mrrTarget,
     );
 
@@ -31,19 +30,15 @@ class GoalCubit extends Cubit<GoalState> {
       (data) async {
         emit(GoalState.loaded(data));
 
-        // Notif "objectif atteint" — une seule fois par cible
         if (data.current >= data.target) {
           final targetKey = data.target.toStringAsFixed(0);
           final alreadyNotified = await _storage.readGoalAchievedNotifiedTarget();
           if (alreadyNotified != targetKey) {
             await _storage.saveGoalAchievedNotifiedTarget(targetKey);
-            final currentLabel = data.objectiveType == 'mrr'
-                ? _fmtRevenue(data.current)
-                : _fmtCount(data.current);
             await NotificationService.showNow(
               id: 8888,
               title: '🎯 Objectif dépassé !',
-              body: 'Tu génères $currentLabel ce mois-ci. Relève la barre.',
+              body: 'Tu génères ${_fmt(data.current)} ce mois-ci. Relève la barre.',
             );
           }
         }
@@ -51,17 +46,12 @@ class GoalCubit extends Cubit<GoalState> {
     );
   }
 
-  String _fmtRevenue(double amount) {
+  String _fmt(double amount) {
     if (amount >= 1000) {
       final k = amount / 1000;
       final r = (k * 10).round() / 10;
       return r == r.truncateToDouble() ? '${r.toInt()}K€' : '${r.toStringAsFixed(1)}K€';
     }
     return '${amount.toInt()}€';
-  }
-
-  String _fmtCount(double count) {
-    if (count >= 1000) return '${(count / 1000).toStringAsFixed(1)}K';
-    return count.toInt().toString();
   }
 }

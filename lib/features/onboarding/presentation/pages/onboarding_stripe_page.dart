@@ -104,8 +104,8 @@ class _OnboardingStripePageState extends State<OnboardingStripePage> {
                   children: [
                     const SizedBox(height: 24),
                     ProgressIndicatorBar(
-                      currentStep: OnboardingFlow.progress(AppRouter.onboardingStripe, isMrr: true).step,
-                      totalSteps: OnboardingFlow.progress(AppRouter.onboardingStripe, isMrr: true).total,
+                      currentStep: OnboardingFlow.progress(AppRouter.onboardingStripe).step,
+                      totalSteps: OnboardingFlow.progress(AppRouter.onboardingStripe).total,
                     ),
                     const SizedBox(height: 20),
                     _backLink(context, 'Retour', () => context.pop()),

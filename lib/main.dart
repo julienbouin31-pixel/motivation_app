@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/storage/secure_storage.dart';
+import 'package:motivation_app/core/theme/card_theme_cubit.dart';
 import 'package:motivation_app/core/theme/theme_cubit.dart';
 import 'package:motivation_app/core/notifications/notification_service.dart';
 import 'package:motivation_app/core/widgets/home_widget_service.dart';
@@ -45,7 +46,7 @@ void main() async {
   if (await storage.readNotificationEnabled()) {
     final rawTexts = await local.getAllTexts();
     final userName = profile?.name ?? '';
-    final target = profile?.mrrTarget ?? profile?.analyticsTarget ?? '';
+    final target = profile?.mrrTarget ?? '';
     final resolved = rawTexts
         .map((t) => t.replaceAll('{name}', userName).replaceAll('{target}', target))
         .toList()
@@ -65,10 +66,15 @@ void main() async {
   final themeCubit = ThemeCubit(di.sl<SecureStorage>());
   await themeCubit.load();
 
+  // Charge le thème visuel de carte
+  final cardThemeCubit = CardThemeCubit(di.sl<SecureStorage>());
+  await cardThemeCubit.load();
+
   runApp(MyApp(
     router: router,
     onboardingCubit: onboardingCubit,
     themeCubit: themeCubit,
+    cardThemeCubit: cardThemeCubit,
   ));
 }
 
@@ -76,12 +82,14 @@ class MyApp extends StatefulWidget {
   final GoRouter router;
   final OnboardingCubit onboardingCubit;
   final ThemeCubit themeCubit;
+  final CardThemeCubit cardThemeCubit;
 
   const MyApp({
     super.key,
     required this.router,
     required this.onboardingCubit,
     required this.themeCubit,
+    required this.cardThemeCubit,
   });
 
   @override
@@ -121,6 +129,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       providers: [
         BlocProvider.value(value: widget.onboardingCubit),
         BlocProvider.value(value: widget.themeCubit),
+        BlocProvider.value(value: widget.cardThemeCubit),
         BlocProvider.value(value: di.sl<GoalCubit>()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(

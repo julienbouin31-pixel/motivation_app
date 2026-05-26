@@ -61,8 +61,8 @@ class _OnboardingMrrTargetPageState extends State<OnboardingMrrTargetPage> {
               ),
               const SizedBox(height: 24),
               ProgressIndicatorBar(
-                currentStep: OnboardingFlow.progress(AppRouter.onboardingMrrTarget, isMrr: true).step,
-                totalSteps: OnboardingFlow.progress(AppRouter.onboardingMrrTarget, isMrr: true).total,
+                currentStep: OnboardingFlow.progress(AppRouter.onboardingMrrTarget).step,
+                totalSteps: OnboardingFlow.progress(AppRouter.onboardingMrrTarget).total,
               ),
               const SizedBox(height: 20),
               _backLink(context, 'Retour', () => context.pop()),

@@ -29,10 +29,8 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
     try {
       await localDataSource.saveProfile(UserProfileModel(
         name: profile.name ?? '',
-        objectiveType: profile.objectiveType,
         stripeApiKey: profile.stripeApiKey,
         mrrTarget: profile.mrrTarget,
-        analyticsTarget: profile.analyticsTarget,
       ));
       return Right(null);
     } catch (e) {

@@ -46,7 +46,6 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
       final profile = profileEither.fold((_) => null, (p) => p);
 
       final fresh = await remoteDataSource.fetchAffirmations(
-        objectiveType: profile?.objectiveType ?? 'mrr',
         mrrTarget: profile?.mrrTarget,
         name: profile?.name?.isNotEmpty == true ? profile!.name : null,
       );

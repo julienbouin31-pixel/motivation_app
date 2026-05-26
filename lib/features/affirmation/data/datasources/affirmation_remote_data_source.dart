@@ -6,7 +6,6 @@ abstract class AffirmationRemoteDataSource {
   /// À remplacer par un vrai appel API — ne doit retourner que du contenu
   /// non encore présent en DB (la déduplication est faite côté repository).
   Future<List<AffirmationModel>> fetchAffirmations({
-    required String objectiveType,
     String? mrrTarget,
     String? name,
     String? category,
@@ -18,7 +17,6 @@ abstract class AffirmationRemoteDataSource {
 class AffirmationRemoteDataSourceImpl implements AffirmationRemoteDataSource {
   @override
   Future<List<AffirmationModel>> fetchAffirmations({
-    required String objectiveType,
     String? mrrTarget,
     String? name,
     String? category,

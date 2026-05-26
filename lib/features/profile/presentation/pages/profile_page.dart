@@ -25,22 +25,12 @@ class ProfilePage extends StatelessWidget {
     };
 
     final name = (profile?.name?.isNotEmpty == true) ? profile!.name! : null;
-    final objectiveType = profile?.objectiveType;
     final mrrTarget = profile?.mrrTarget;
-    final analyticsTarget = profile?.analyticsTarget;
     final initial = (name != null && name.isNotEmpty) ? name[0].toUpperCase() : '?';
 
-    final objectiveLabel = switch (objectiveType) {
-      'mrr' => 'MRR',
-      'analytics' => 'Analytics',
-      _ => null,
-    };
     final subtitle = [
-      if (objectiveLabel != null) objectiveLabel,
-      if (objectiveType == 'mrr' && mrrTarget != null && mrrTarget.isNotEmpty) mrrTarget,
-      if (objectiveType == 'analytics' && analyticsTarget != null && analyticsTarget.isNotEmpty)
-        analyticsTarget,
-    ].join(' · ');
+      if (mrrTarget != null && mrrTarget.isNotEmpty) 'MRR · $mrrTarget',
+    ].join();
 
     return Scaffold(
       backgroundColor: colors.scaffold,

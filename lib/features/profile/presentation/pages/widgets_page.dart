@@ -22,8 +22,7 @@ class WidgetsPage extends StatelessWidget {
 
     final affirmationText = 'Ship it. Learn it. Iterate.';
     final category = 'général';
-    final isMrr = profile?.objectiveType == 'mrr';
-    final hasGoal = profile?.objectiveType != null && profile!.objectiveType != 'none';
+    final hasGoal = profile?.stripeApiKey != null;
 
     // Get real data from GoalCubit, fallback to placeholder
     final goalState = context.watch<GoalCubit>().state;
@@ -31,8 +30,8 @@ class WidgetsPage extends StatelessWidget {
       GoalLoaded(:final data) => data,
       _ => null,
     };
-    final goalCurrent = goalData?.current ?? (isMrr ? 0.0 : 0.0);
-    final goalTarget = goalData?.target ?? (isMrr ? 5000.0 : 10000.0);
+    final goalCurrent = goalData?.current ?? 0.0;
+    final goalTarget = goalData?.target ?? 5000.0;
     final goalChangePct = goalData?.changePct ?? 0.0;
 
     return Scaffold(
@@ -132,12 +131,12 @@ class WidgetsPage extends StatelessWidget {
                       const SizedBox(width: 12),
                       Expanded(
                         child: _WidgetPreviewSmall(
-                          label: hasGoal ? (isMrr ? 'MRR' : 'Visites') : 'Objectif',
+                          label: hasGoal ? 'MRR' : 'Objectif',
                           child: _GoalMini(
                             current: goalCurrent,
                             target: goalTarget,
                             changePct: goalChangePct,
-                            isMrr: isMrr,
+                            isMrr: true,
                           ),
                         ),
                       ),
@@ -157,7 +156,7 @@ class WidgetsPage extends StatelessWidget {
                       current: goalCurrent,
                       target: goalTarget,
                       changePct: goalChangePct,
-                      isMrr: isMrr,
+                      isMrr: true,
                     ),
                   ),
                 ],

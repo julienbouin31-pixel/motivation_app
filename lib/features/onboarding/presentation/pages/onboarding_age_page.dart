@@ -54,8 +54,8 @@ class _OnboardingAgePageState extends State<OnboardingAgePage> {
                     ),
                     const SizedBox(height: 32),
                     ProgressIndicatorBar(
-                      currentStep: OnboardingFlow.progress(AppRouter.onboardingAge, isMrr: false).step,
-                      totalSteps: OnboardingFlow.progress(AppRouter.onboardingAge, isMrr: false).total,
+                      currentStep: OnboardingFlow.progress(AppRouter.onboardingAge).step,
+                      totalSteps: OnboardingFlow.progress(AppRouter.onboardingAge).total,
                     ),
                     const SizedBox(height: 24),
                     Text(

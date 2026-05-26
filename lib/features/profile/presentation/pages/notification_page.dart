@@ -81,7 +81,7 @@ class _NotificationPageState extends State<NotificationPage> {
       _ => null,
     };
     final userName = profile?.name ?? '';
-    final target = profile?.mrrTarget ?? profile?.analyticsTarget ?? '';
+    final target = profile?.mrrTarget ?? '';
 
     final rawTexts = await di.sl<AffirmationLocalDataSource>().getAllTexts();
     final resolved = rawTexts
@@ -394,7 +394,7 @@ class _TestButtonState extends State<_TestButton> {
               };
               final userName = profile?.name ?? '';
               final target =
-                  profile?.mrrTarget ?? profile?.analyticsTarget ?? '';
+                  profile?.mrrTarget ?? '';
               final texts =
                   await di.sl<AffirmationLocalDataSource>().getAllTexts();
               texts.shuffle();

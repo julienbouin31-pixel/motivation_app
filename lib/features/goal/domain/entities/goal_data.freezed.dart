@@ -14,8 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$GoalData {
 
- double get current; double get target; double get changePct; String get objectiveType;// 'mrr' | 'analytics'
- DateTime get lastUpdated;
+ double get current; double get target; double get changePct; DateTime get lastUpdated;
 /// Create a copy of GoalData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +25,16 @@ $GoalDataCopyWith<GoalData> get copyWith => _$GoalDataCopyWithImpl<GoalData>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GoalData&&(identical(other.current, current) || other.current == current)&&(identical(other.target, target) || other.target == target)&&(identical(other.changePct, changePct) || other.changePct == changePct)&&(identical(other.objectiveType, objectiveType) || other.objectiveType == objectiveType)&&(identical(other.lastUpdated, lastUpdated) || other.lastUpdated == lastUpdated));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GoalData&&(identical(other.current, current) || other.current == current)&&(identical(other.target, target) || other.target == target)&&(identical(other.changePct, changePct) || other.changePct == changePct)&&(identical(other.lastUpdated, lastUpdated) || other.lastUpdated == lastUpdated));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,current,target,changePct,objectiveType,lastUpdated);
+int get hashCode => Object.hash(runtimeType,current,target,changePct,lastUpdated);
 
 @override
 String toString() {
-  return 'GoalData(current: $current, target: $target, changePct: $changePct, objectiveType: $objectiveType, lastUpdated: $lastUpdated)';
+  return 'GoalData(current: $current, target: $target, changePct: $changePct, lastUpdated: $lastUpdated)';
 }
 
 
@@ -46,7 +45,7 @@ abstract mixin class $GoalDataCopyWith<$Res>  {
   factory $GoalDataCopyWith(GoalData value, $Res Function(GoalData) _then) = _$GoalDataCopyWithImpl;
 @useResult
 $Res call({
- double current, double target, double changePct, String objectiveType, DateTime lastUpdated
+ double current, double target, double changePct, DateTime lastUpdated
 });
 
 
@@ -63,13 +62,12 @@ class _$GoalDataCopyWithImpl<$Res>
 
 /// Create a copy of GoalData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? current = null,Object? target = null,Object? changePct = null,Object? objectiveType = null,Object? lastUpdated = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? current = null,Object? target = null,Object? changePct = null,Object? lastUpdated = null,}) {
   return _then(_self.copyWith(
 current: null == current ? _self.current : current // ignore: cast_nullable_to_non_nullable
 as double,target: null == target ? _self.target : target // ignore: cast_nullable_to_non_nullable
 as double,changePct: null == changePct ? _self.changePct : changePct // ignore: cast_nullable_to_non_nullable
-as double,objectiveType: null == objectiveType ? _self.objectiveType : objectiveType // ignore: cast_nullable_to_non_nullable
-as String,lastUpdated: null == lastUpdated ? _self.lastUpdated : lastUpdated // ignore: cast_nullable_to_non_nullable
+as double,lastUpdated: null == lastUpdated ? _self.lastUpdated : lastUpdated // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
 }
@@ -155,10 +153,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double current,  double target,  double changePct,  String objectiveType,  DateTime lastUpdated)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double current,  double target,  double changePct,  DateTime lastUpdated)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GoalData() when $default != null:
-return $default(_that.current,_that.target,_that.changePct,_that.objectiveType,_that.lastUpdated);case _:
+return $default(_that.current,_that.target,_that.changePct,_that.lastUpdated);case _:
   return orElse();
 
 }
@@ -176,10 +174,10 @@ return $default(_that.current,_that.target,_that.changePct,_that.objectiveType,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double current,  double target,  double changePct,  String objectiveType,  DateTime lastUpdated)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double current,  double target,  double changePct,  DateTime lastUpdated)  $default,) {final _that = this;
 switch (_that) {
 case _GoalData():
-return $default(_that.current,_that.target,_that.changePct,_that.objectiveType,_that.lastUpdated);case _:
+return $default(_that.current,_that.target,_that.changePct,_that.lastUpdated);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +194,10 @@ return $default(_that.current,_that.target,_that.changePct,_that.objectiveType,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double current,  double target,  double changePct,  String objectiveType,  DateTime lastUpdated)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double current,  double target,  double changePct,  DateTime lastUpdated)?  $default,) {final _that = this;
 switch (_that) {
 case _GoalData() when $default != null:
-return $default(_that.current,_that.target,_that.changePct,_that.objectiveType,_that.lastUpdated);case _:
+return $default(_that.current,_that.target,_that.changePct,_that.lastUpdated);case _:
   return null;
 
 }
@@ -211,14 +209,12 @@ return $default(_that.current,_that.target,_that.changePct,_that.objectiveType,_
 
 
 class _GoalData implements GoalData {
-  const _GoalData({required this.current, required this.target, required this.changePct, required this.objectiveType, required this.lastUpdated});
+  const _GoalData({required this.current, required this.target, required this.changePct, required this.lastUpdated});
   
 
 @override final  double current;
 @override final  double target;
 @override final  double changePct;
-@override final  String objectiveType;
-// 'mrr' | 'analytics'
 @override final  DateTime lastUpdated;
 
 /// Create a copy of GoalData
@@ -231,16 +227,16 @@ _$GoalDataCopyWith<_GoalData> get copyWith => __$GoalDataCopyWithImpl<_GoalData>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GoalData&&(identical(other.current, current) || other.current == current)&&(identical(other.target, target) || other.target == target)&&(identical(other.changePct, changePct) || other.changePct == changePct)&&(identical(other.objectiveType, objectiveType) || other.objectiveType == objectiveType)&&(identical(other.lastUpdated, lastUpdated) || other.lastUpdated == lastUpdated));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GoalData&&(identical(other.current, current) || other.current == current)&&(identical(other.target, target) || other.target == target)&&(identical(other.changePct, changePct) || other.changePct == changePct)&&(identical(other.lastUpdated, lastUpdated) || other.lastUpdated == lastUpdated));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,current,target,changePct,objectiveType,lastUpdated);
+int get hashCode => Object.hash(runtimeType,current,target,changePct,lastUpdated);
 
 @override
 String toString() {
-  return 'GoalData(current: $current, target: $target, changePct: $changePct, objectiveType: $objectiveType, lastUpdated: $lastUpdated)';
+  return 'GoalData(current: $current, target: $target, changePct: $changePct, lastUpdated: $lastUpdated)';
 }
 
 
@@ -251,7 +247,7 @@ abstract mixin class _$GoalDataCopyWith<$Res> implements $GoalDataCopyWith<$Res>
   factory _$GoalDataCopyWith(_GoalData value, $Res Function(_GoalData) _then) = __$GoalDataCopyWithImpl;
 @override @useResult
 $Res call({
- double current, double target, double changePct, String objectiveType, DateTime lastUpdated
+ double current, double target, double changePct, DateTime lastUpdated
 });
 
 
@@ -268,13 +264,12 @@ class __$GoalDataCopyWithImpl<$Res>
 
 /// Create a copy of GoalData
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? current = null,Object? target = null,Object? changePct = null,Object? objectiveType = null,Object? lastUpdated = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? current = null,Object? target = null,Object? changePct = null,Object? lastUpdated = null,}) {
   return _then(_GoalData(
 current: null == current ? _self.current : current // ignore: cast_nullable_to_non_nullable
 as double,target: null == target ? _self.target : target // ignore: cast_nullable_to_non_nullable
 as double,changePct: null == changePct ? _self.changePct : changePct // ignore: cast_nullable_to_non_nullable
-as double,objectiveType: null == objectiveType ? _self.objectiveType : objectiveType // ignore: cast_nullable_to_non_nullable
-as String,lastUpdated: null == lastUpdated ? _self.lastUpdated : lastUpdated // ignore: cast_nullable_to_non_nullable
+as double,lastUpdated: null == lastUpdated ? _self.lastUpdated : lastUpdated // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
 }

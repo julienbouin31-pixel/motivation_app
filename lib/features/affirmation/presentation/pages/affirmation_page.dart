@@ -11,6 +11,8 @@ import 'package:motivation_app/features/affirmation/presentation/widgets/affirma
 import 'package:motivation_app/features/affirmation/presentation/widgets/category_tabs.dart';
 import 'package:motivation_app/features/affirmation/presentation/widgets/revenue_bar.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
+import 'package:motivation_app/core/theme/card_theme_cubit.dart';
+import 'package:motivation_app/core/theme/card_visual_theme.dart';
 import 'package:motivation_app/core/widgets/home_widget_service.dart';
 import 'package:motivation_app/features/goal/presentation/bloc/goal_cubit.dart';
 import 'package:motivation_app/features/goal/presentation/bloc/goal_state.dart';
@@ -158,9 +160,11 @@ class _AffirmationPageState extends State<AffirmationPage>
     final mrrTarget = profile?.mrrTarget ?? '10K€';
 
     final colors = Theme.of(context).extension<AppColors>()!;
+    final cardTheme = context.watch<CardThemeCubit>().state;
+    final themeData = cardTheme.data;
 
-    return Scaffold(
-      backgroundColor: colors.card,
+    final body = Scaffold(
+      backgroundColor: cardTheme.isAdaptive ? colors.card : Colors.transparent,
       body: SafeArea(
         child: BlocConsumer<AffirmationCubit, AffirmationState>(
           listenWhen: (prev, next) {
@@ -188,7 +192,6 @@ class _AffirmationPageState extends State<AffirmationPage>
                   current: data.current,
                   target: data.target,
                   changePct: data.changePct,
-                  objectiveType: data.objectiveType,
                 );
               }
             }
@@ -252,6 +255,9 @@ class _AffirmationPageState extends State<AffirmationPage>
                             affirmation: affirmation,
                             userName: userName,
                             mrrTarget: mrrTarget,
+                            textColor: cardTheme.isAdaptive ? null : themeData.textColor,
+                            buttonBg: cardTheme.isAdaptive ? null : themeData.buttonBg,
+                            buttonIconColor: cardTheme.isAdaptive ? null : themeData.buttonIconColor,
                             onFavorite: () =>
                                 cubit.toggleFavoriteAction(affirmation.id),
                             onShare: () {
@@ -313,6 +319,19 @@ class _AffirmationPageState extends State<AffirmationPage>
           },
         ),
       ),
+    );
+
+    if (cardTheme.isAdaptive) return body;
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: themeData.gradientColors,
+          begin: themeData.begin,
+          end: themeData.end,
+        ),
+      ),
+      child: body,
     );
   }
 }

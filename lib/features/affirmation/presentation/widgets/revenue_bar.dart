@@ -37,13 +37,11 @@ class GoalProgressBar extends StatelessWidget {
               ? _GoalAchieved(
                   current: data.current,
                   target: data.target,
-                  isMrr: data.objectiveType == 'mrr',
                 )
               : _GoalBar(
                   current: data.current,
                   target: data.target,
                   changePct: data.changePct,
-                  isMrr: data.objectiveType == 'mrr',
                 ),
           GoalLoading() => const Padding(
               padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -78,12 +76,10 @@ class GoalProgressBar extends StatelessWidget {
 class _GoalAchieved extends StatelessWidget {
   final double current;
   final double target;
-  final bool isMrr;
 
   const _GoalAchieved({
     required this.current,
     required this.target,
-    required this.isMrr,
   });
 
   String _affirmation(String currentLabel, String targetLabel) {
@@ -94,7 +90,6 @@ class _GoalAchieved extends StatelessWidget {
       'Tu génères {current}. L\'objectif {target} est derrière toi.',
       'De l\'ambition, encore. {current}/mois, c\'est ton nouveau plancher.',
     ];
-    // Déterministe selon les valeurs pour éviter un changement aléatoire
     final idx = (current.toInt() + target.toInt()) % messages.length;
     return messages[idx]
         .replaceAll('{current}', currentLabel)
@@ -104,12 +99,8 @@ class _GoalAchieved extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final currentLabel = isMrr
-        ? GoalProgressBar.fmtRevenue(current)
-        : GoalProgressBar.fmtCount(current);
-    final targetLabel = isMrr
-        ? GoalProgressBar.fmtRevenue(target)
-        : GoalProgressBar.fmtCount(target);
+    final currentLabel = GoalProgressBar.fmtRevenue(current);
+    final targetLabel = GoalProgressBar.fmtRevenue(target);
 
     const green = Color(0xFF4CAF50);
 
@@ -183,20 +174,18 @@ class _GoalBar extends StatelessWidget {
   final double current;
   final double target;
   final double changePct;
-  final bool isMrr;
 
   const _GoalBar({
     required this.current,
     required this.target,
     required this.changePct,
-    required this.isMrr,
   });
 
   @override
   Widget build(BuildContext context) {
-    final label = isMrr ? 'MRR mensuel' : 'Visiteurs ce mois-ci';
-    final currentLabel = isMrr ? GoalProgressBar.fmtRevenue(current) : GoalProgressBar.fmtCount(current);
-    final targetLabel = isMrr ? GoalProgressBar.fmtRevenue(target) : GoalProgressBar.fmtCount(target);
+    const label = 'MRR mensuel';
+    final currentLabel = GoalProgressBar.fmtRevenue(current);
+    final targetLabel = GoalProgressBar.fmtRevenue(target);
     final double progress = (current / target).clamp(0.0, 1.0);
     final int pct = (progress * 100).round();
     final colors = Theme.of(context).extension<AppColors>()!;

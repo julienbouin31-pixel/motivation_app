@@ -44,16 +44,10 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   Future<void> saveName(String name) =>
       _save(_currentProfile().copyWith(name: name));
 
-  Future<void> saveObjectiveType(String objectiveType) =>
-      _save(_currentProfile().copyWith(objectiveType: objectiveType));
-
   Future<void> saveStripeApiKey(String key) =>
       _save(_currentProfile().copyWith(stripeApiKey: key));
 
   void reset() => emit(const OnboardingState.initial());
-
-  Future<void> saveAnalyticsTarget(String target) =>
-      _save(_currentProfile().copyWith(analyticsTarget: target));
 
   Future<void> saveMrrTarget(String target) async {
     final profile = _currentProfile().copyWith(mrrTarget: target);
