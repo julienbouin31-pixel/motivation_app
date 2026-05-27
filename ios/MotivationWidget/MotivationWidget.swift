@@ -48,24 +48,28 @@ struct AffirmationProvider: TimelineProvider {
 struct AffirmationSmallView: View {
     let entry: AffirmationEntry
     var body: some View {
-        ZStack {
+        ZStack(alignment: .topLeading) {
             kBg
-            VStack(spacing: 0) { Color(red: 0.298, green: 0.686, blue: 0.314).frame(height: 2.5); Spacer() }
-            VStack(spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
+                // Grand guillemet fané
+                Text("\u{201C}")
+                    .font(.system(size: 48, weight: .black))
+                    .foregroundColor(Color.white.opacity(0.08))
+                    .frame(height: 36)
                 Spacer()
-                Text("« \(entry.text) »")
-                    .font(.system(size: 13, weight: .medium))
+                // Texte de l'affirmation
+                Text(entry.text)
+                    .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(3)
-                    .lineLimit(5)
+                    .multilineTextAlignment(.leading)
+                    .lineSpacing(2)
+                    .lineLimit(4)
                     .minimumScaleFactor(0.8)
-                    .padding(.horizontal, 4)
-                Spacer()
-                Text(entry.category.uppercased())
-                    .font(.system(size: 8, weight: .semibold))
+                Spacer().frame(height: 6)
+                // Catégorie
+                Text("— \(entry.category)")
+                    .font(.system(size: 10))
                     .foregroundColor(kSecondary)
-                    .tracking(1.5)
             }
             .padding(14)
         }
