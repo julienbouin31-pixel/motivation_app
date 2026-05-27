@@ -10,7 +10,6 @@ import SwiftUI
 struct MotivationWidgetBundle: WidgetBundle {
     var body: some Widget {
         AffirmationWidget()
-        GoalWidget()
-        CombinedWidget()
+        LockScreenWidget()
     }
 }
