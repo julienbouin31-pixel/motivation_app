@@ -15,7 +15,6 @@ import 'package:motivation_app/core/theme/card_theme_cubit.dart';
 import 'package:motivation_app/core/theme/card_visual_theme.dart';
 import 'package:motivation_app/core/widgets/home_widget_service.dart';
 import 'package:motivation_app/features/goal/presentation/bloc/goal_cubit.dart';
-import 'package:motivation_app/features/goal/presentation/bloc/goal_state.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 
@@ -184,16 +183,6 @@ class _AffirmationPageState extends State<AffirmationPage>
                 text: resolvedText,
                 category: state.affirmation.category.label.toLowerCase(),
               );
-              // Update goal widget with real data from GoalCubit
-              final goalState = context.read<GoalCubit>().state;
-              if (goalState is GoalLoaded) {
-                final data = goalState.data;
-                HomeWidgetService.updateGoal(
-                  current: data.current,
-                  target: data.target,
-                  changePct: data.changePct,
-                );
-              }
             }
           },
           builder: (context, state) {
