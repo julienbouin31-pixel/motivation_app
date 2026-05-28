@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+enum ThemeCategory { tous, nature, sombre, clair }
+
 enum CardVisualTheme {
   pur,
   minuit,
@@ -23,6 +25,7 @@ class CardVisualThemeData {
   final AlignmentGeometry end;
   final bool isAdaptive;
   final String? assetImage;
+  final ThemeCategory category;
 
   const CardVisualThemeData({
     required this.name,
@@ -36,6 +39,7 @@ class CardVisualThemeData {
     this.end = Alignment.bottomCenter,
     this.isAdaptive = false,
     this.assetImage,
+    this.category = ThemeCategory.tous,
   });
 }
 
@@ -54,9 +58,10 @@ extension CardVisualThemeExt on CardVisualTheme {
       uiOverlayBg: Color(0xFF1A1A1A),
       uiOverlayFg: Colors.white,
       isAdaptive: true,
+      category: ThemeCategory.clair,
     ),
 
-    // ── Minuit — focus nocturne ───────────────────────────────────────────────
+    // ── Minuit — ciel étoilé ──────────────────────────────────────────────────
     CardVisualTheme.minuit: CardVisualThemeData(
       name: 'Minuit',
       gradientColors: [Color(0xFF080812), Color(0xFF0F1128), Color(0xFF080E1E)],
@@ -65,6 +70,8 @@ extension CardVisualThemeExt on CardVisualTheme {
       buttonIconColor: _glassText,
       uiOverlayBg: _glass,
       uiOverlayFg: _glassText,
+      assetImage: 'assets/images/themes/night.jpg',
+      category: ThemeCategory.nature,
     ),
 
     // ── Flamme — énergie et action ────────────────────────────────────────────
@@ -76,6 +83,7 @@ extension CardVisualThemeExt on CardVisualTheme {
       buttonIconColor: _glassText,
       uiOverlayBg: _glass,
       uiOverlayFg: _glassText,
+      category: ThemeCategory.sombre,
     ),
 
     // ── Prisme — vision et ambition ───────────────────────────────────────────
@@ -87,6 +95,7 @@ extension CardVisualThemeExt on CardVisualTheme {
       buttonIconColor: _glassText,
       uiOverlayBg: _glass,
       uiOverlayFg: _glassText,
+      category: ThemeCategory.sombre,
     ),
 
     // ── Aube — coucher de soleil ──────────────────────────────────────────────
@@ -98,7 +107,8 @@ extension CardVisualThemeExt on CardVisualTheme {
       buttonIconColor: _glassText,
       uiOverlayBg: _glass,
       uiOverlayFg: _glassText,
-      assetImage: 'assets/images/themes/coucher_de_soleil.webp',
+      assetImage: 'assets/images/themes/sunset.jpg',
+      category: ThemeCategory.nature,
     ),
 
     // ── Océan — vagues ────────────────────────────────────────────────────────
@@ -110,10 +120,11 @@ extension CardVisualThemeExt on CardVisualTheme {
       buttonIconColor: _glassText,
       uiOverlayBg: _glass,
       uiOverlayFg: _glassText,
-      assetImage: 'assets/images/themes/ocean.webp',
+      assetImage: 'assets/images/themes/ocean.jpg',
+      category: ThemeCategory.nature,
     ),
 
-    // ── Ardoise — forêt ───────────────────────────────────────────────────────
+    // ── Forêt ─────────────────────────────────────────────────────────────────
     CardVisualTheme.ardoise: CardVisualThemeData(
       name: 'Forêt',
       gradientColors: [Color(0xFF0A1A0E), Color(0xFF1A3A21), Color(0xFF0F2B16)],
@@ -122,7 +133,8 @@ extension CardVisualThemeExt on CardVisualTheme {
       buttonIconColor: _glassText,
       uiOverlayBg: _glass,
       uiOverlayFg: _glassText,
-      assetImage: 'assets/images/themes/forets.webp',
+      assetImage: 'assets/images/themes/forest.jpg',
+      category: ThemeCategory.nature,
     ),
 
     // ── Craie — éditorial et épuré ────────────────────────────────────────────
@@ -134,6 +146,7 @@ extension CardVisualThemeExt on CardVisualTheme {
       buttonIconColor: Color(0xFF555555),
       uiOverlayBg: Color(0xFF1A1A1A),
       uiOverlayFg: Colors.white,
+      category: ThemeCategory.clair,
     ),
   };
 
