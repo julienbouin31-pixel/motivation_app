@@ -253,8 +253,7 @@ class _FavoriteCard extends StatelessWidget {
       _ => null,
     };
     final displayText = affirmation.text
-        .replaceAll('{name}', profile?.name ?? 'toi')
-        .replaceAll('{target}', profile?.mrrTarget ?? '10K€');
+        .replaceAll('{name}', profile?.name ?? 'toi');
 
     return Container(
       padding: const EdgeInsets.all(16),

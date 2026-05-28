@@ -7,10 +7,7 @@ import 'package:motivation_app/features/affirmation/presentation/pages/category_
 import 'package:motivation_app/features/affirmation/presentation/pages/favorites_page.dart';
 import 'package:motivation_app/features/home/presentation/pages/home_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_age_page.dart';
-import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_mrr_target_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_name_page.dart';
-import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_stripe_connected_page.dart';
-import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_stripe_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_transition_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/appearance_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/edit_profile_page.dart';
@@ -27,9 +24,6 @@ class AppRouter {
   static const String onboardingName = '/onboarding/name';
   static const String onboardingTransition = '/onboarding/transition';
   static const String onboardingAge = '/onboarding/age';
-  static const String onboardingStripe = '/onboarding/stripe';
-  static const String onboardingStripeConnected = '/onboarding/stripe-connected';
-  static const String onboardingMrrTarget = '/onboarding/mrr-target';
   static const String onboardingNotifications = '/onboarding/notifications';
   static const String affirmation = '/affirmation';
   static const String affirmationCategories = '/affirmation/categories';
@@ -39,7 +33,6 @@ class AppRouter {
   static const String appearance = '/profile/appearance';
   static const String widgets = '/profile/widgets';
   static const String notifications = '/profile/notifications';
-  static const String revenue = '/revenue';
 }
 
 /// [initialLocation] est calculé dans main.dart selon le profil chargé.
@@ -70,24 +63,6 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
       path: AppRouter.onboardingAge,
       pageBuilder: (context, state) => const MaterialPage(
         child: OnboardingAgePage(),
-      ),
-    ),
-    GoRoute(
-      path: AppRouter.onboardingStripe,
-      pageBuilder: (context, state) => const MaterialPage(
-        child: OnboardingStripePage(),
-      ),
-    ),
-    GoRoute(
-      path: AppRouter.onboardingStripeConnected,
-      pageBuilder: (context, state) => const MaterialPage(
-        child: OnboardingStripeConnectedPage(),
-      ),
-    ),
-    GoRoute(
-      path: AppRouter.onboardingMrrTarget,
-      pageBuilder: (context, state) => const MaterialPage(
-        child: OnboardingMrrTargetPage(),
       ),
     ),
     GoRoute(

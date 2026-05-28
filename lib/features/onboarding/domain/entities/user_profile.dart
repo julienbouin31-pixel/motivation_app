@@ -6,7 +6,5 @@ part 'user_profile.freezed.dart';
 abstract class UserProfile with _$UserProfile {
   const factory UserProfile({
     String? name,
-    String? stripeApiKey,
-    String? mrrTarget,
   }) = _UserProfile;
 }

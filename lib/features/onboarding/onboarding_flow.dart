@@ -7,9 +7,6 @@ class OnboardingFlow {
     AppRouter.onboardingName,
     AppRouter.onboardingTransition,
     AppRouter.onboardingAge,
-    AppRouter.onboardingStripe,
-    AppRouter.onboardingStripeConnected,
-    AppRouter.onboardingMrrTarget,
     AppRouter.onboardingNotifications,
   ];
 

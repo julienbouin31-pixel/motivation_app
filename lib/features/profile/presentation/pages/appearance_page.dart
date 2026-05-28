@@ -18,6 +18,8 @@ class _AppearancePageState extends State<AppearancePage> {
   static const _filterLabels = {
     ThemeCategory.tous: 'Tous',
     ThemeCategory.nature: 'Nature',
+    ThemeCategory.urbain: 'Urbain',
+    ThemeCategory.cosmos: 'Cosmos',
     ThemeCategory.sombre: 'Sombre',
     ThemeCategory.clair: 'Clair',
   };

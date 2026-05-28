@@ -6,7 +6,6 @@ abstract class AffirmationRemoteDataSource {
   /// À remplacer par un vrai appel API — ne doit retourner que du contenu
   /// non encore présent en DB (la déduplication est faite côté repository).
   Future<List<AffirmationModel>> fetchAffirmations({
-    String? mrrTarget,
     String? name,
     String? category,
   });
@@ -17,7 +16,6 @@ abstract class AffirmationRemoteDataSource {
 class AffirmationRemoteDataSourceImpl implements AffirmationRemoteDataSource {
   @override
   Future<List<AffirmationModel>> fetchAffirmations({
-    String? mrrTarget,
     String? name,
     String? category,
   }) async {
@@ -53,14 +51,6 @@ class AffirmationRemoteDataSourceImpl implements AffirmationRemoteDataSource {
       {'text': 'Qui contrôle son attention contrôle sa vie.', 'category': 'focus'},
       {'text': 'Identifie la tâche à fort levier et fais-la en premier.', 'category': 'focus'},
 
-      // MRR — nouvelles
-      {'text': 'Chaque client satisfait est un ambassadeur potentiel.', 'category': 'mrr'},
-      {'text': '{name}, le MRR est la preuve que tu crées de la valeur réelle.', 'category': 'mrr'},
-      {'text': 'Parle à tes clients aujourd\'hui — ils te diront où creuser.', 'category': 'mrr'},
-      {'text': 'Réduis le churn et le MRR monte mécaniquement.', 'category': 'mrr'},
-      {'text': '{target} est une étape, pas un plafond.', 'category': 'mrr'},
-      {'text': 'Un abonnement signé aujourd\'hui génère des revenus pendant des mois.', 'category': 'mrr'},
-      {'text': 'La régularité de ton effort crée la régularité de ton revenu.', 'category': 'mrr'},
     ];
 
     return raw.map((map) => AffirmationModel.fromMap(map)).toList();

@@ -25,12 +25,8 @@ class ProfilePage extends StatelessWidget {
     };
 
     final name = (profile?.name?.isNotEmpty == true) ? profile!.name! : null;
-    final mrrTarget = profile?.mrrTarget;
     final initial = (name != null && name.isNotEmpty) ? name[0].toUpperCase() : '?';
-
-    final subtitle = [
-      if (mrrTarget != null && mrrTarget.isNotEmpty) 'MRR · $mrrTarget',
-    ].join();
+    const subtitle = '';
 
     return Scaffold(
       backgroundColor: colors.scaffold,

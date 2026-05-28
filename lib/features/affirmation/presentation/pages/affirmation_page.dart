@@ -9,12 +9,10 @@ import 'package:motivation_app/features/affirmation/presentation/bloc/affirmatio
 import 'package:motivation_app/features/affirmation/presentation/widgets/affirmation_card.dart';
 import 'package:motivation_app/features/affirmation/presentation/widgets/affirmation_header.dart';
 import 'package:motivation_app/features/affirmation/presentation/widgets/category_tabs.dart';
-import 'package:motivation_app/features/affirmation/presentation/widgets/revenue_bar.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/theme/card_theme_cubit.dart';
 import 'package:motivation_app/core/theme/card_visual_theme.dart';
 import 'package:motivation_app/core/widgets/home_widget_service.dart';
-import 'package:motivation_app/features/goal/presentation/bloc/goal_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 
@@ -58,21 +56,6 @@ class _AffirmationPageState extends State<AffirmationPage>
         }
       }
     });
-
-    // Fetch goal data on page init
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _fetchGoalData();
-    });
-  }
-
-  void _fetchGoalData() {
-    final onboardingState = context.read<OnboardingCubit>().state;
-    final profile = switch (onboardingState) {
-      OnboardingDataSaved(:final profile) => profile,
-      OnboardingProfileLoaded(:final profile) => profile,
-      _ => null,
-    };
-    context.read<GoalCubit>().fetchGoal(profile);
   }
 
   @override
@@ -156,7 +139,6 @@ class _AffirmationPageState extends State<AffirmationPage>
       _ => null,
     };
     final userName = profile?.name ?? 'toi';
-    final mrrTarget = profile?.mrrTarget ?? '10K€';
 
     final colors = Theme.of(context).extension<AppColors>()!;
     final cardTheme = context.watch<CardThemeCubit>().state;
@@ -177,8 +159,7 @@ class _AffirmationPageState extends State<AffirmationPage>
             _resetForNewCard();
             if (state is AffirmationLoaded) {
               final resolvedText = state.affirmation.text
-                  .replaceAll('{name}', userName)
-                  .replaceAll('{target}', mrrTarget);
+                  .replaceAll('{name}', userName);
               HomeWidgetService.updateAffirmation(
                 text: resolvedText,
                 category: state.affirmation.category.label.toLowerCase(),
@@ -251,7 +232,6 @@ class _AffirmationPageState extends State<AffirmationPage>
                           child: AffirmationCard(
                             affirmation: affirmation,
                             userName: userName,
-                            mrrTarget: mrrTarget,
                             textColor: themed ? themeData.textColor : null,
                             buttonBg: themed ? themeData.buttonBg : null,
                             buttonIconColor: themed ? themeData.buttonIconColor : null,
@@ -259,8 +239,7 @@ class _AffirmationPageState extends State<AffirmationPage>
                                 cubit.toggleFavoriteAction(affirmation.id),
                             onShare: () {
                               final text = affirmation.text
-                                  .replaceAll('{name}', userName)
-                                  .replaceAll('{target}', mrrTarget);
+                                  .replaceAll('{name}', userName);
                               showAffirmationShareSheet(
                                 context,
                                 text: text,
@@ -302,7 +281,7 @@ class _AffirmationPageState extends State<AffirmationPage>
                           child: Icon(
                             Icons.favorite,
                             color: themed
-                                ? themeData.textColor.withValues(alpha: 0.8)
+                                ? themeData.uiOverlayFg.withValues(alpha: 0.8)
                                 : Colors.red,
                             size: 20,
                           ),
@@ -311,7 +290,6 @@ class _AffirmationPageState extends State<AffirmationPage>
                     ],
                   ),
                 ),
-                const GoalProgressBar(),
               ],
             );
           },

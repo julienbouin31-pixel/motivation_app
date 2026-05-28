@@ -58,12 +58,6 @@ class _CategoryPageState extends State<CategoryPage> {
       description: 'Reste dans le flow',
       accent: const Color(0xFF45C4B0),
     ),
-    (
-      category: AffirmationCategory.mrr,
-      icon: Icons.trending_up_rounded,
-      description: 'Scale ton CA',
-      accent: const Color(0xFF4CAF50),
-    ),
   ];
 
   static final _growthItems = <_Item>[

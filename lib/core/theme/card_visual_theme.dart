@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum ThemeCategory { tous, nature, sombre, clair }
+enum ThemeCategory { tous, nature, urbain, cosmos, sombre, clair }
 
 enum CardVisualTheme {
   // Clair
@@ -9,6 +9,10 @@ enum CardVisualTheme {
   flamme, prisme, charbon, indigo, emeraude, bordeaux,
   // Nature
   minuit, aube, ocean, ardoise, desert, brume, aurore, tempete,
+  // Urbain
+  metropole, beton, acier,
+  // Cosmos
+  galaxie, nebuleuse, void_,
 }
 
 class CardVisualThemeData {
@@ -42,9 +46,15 @@ class CardVisualThemeData {
 }
 
 extension CardVisualThemeExt on CardVisualTheme {
-  static const _glass    = Color(0x38FFFFFF);
-  static const _glassText = Colors.white;
-  static const _darkText  = Color(0xFF1A1A1A);
+  // Verre blanc — pour fonds sombres (gradients sombres)
+  static const _glassWhite    = Color(0x38FFFFFF);
+  static const _glassWhiteText = Colors.white;
+
+  // Verre sombre — pour photos (garantit contraste quel que soit le clair/sombre de la photo)
+  static const _glassDark      = Color(0x55000000);
+  static const _glassDarkText  = Colors.white;
+
+  static const _darkText = Color(0xFF1A1A1A);
 
   static const Map<CardVisualTheme, CardVisualThemeData> _data = {
 
@@ -127,10 +137,10 @@ extension CardVisualThemeExt on CardVisualTheme {
       name: 'Flamme',
       gradientColors: [Color(0xFF1A0400), Color(0xFF7A1A08), Color(0xFFB84020)],
       textColor: Colors.white,
-      buttonBg: _glass,
-      buttonIconColor: _glassText,
-      uiOverlayBg: _glass,
-      uiOverlayFg: _glassText,
+      buttonBg: _glassWhite,
+      buttonIconColor: _glassWhiteText,
+      uiOverlayBg: _glassWhite,
+      uiOverlayFg: _glassWhiteText,
       category: ThemeCategory.sombre,
     ),
 
@@ -138,10 +148,10 @@ extension CardVisualThemeExt on CardVisualTheme {
       name: 'Prisme',
       gradientColors: [Color(0xFF0E0620), Color(0xFF261255), Color(0xFF3D1A7A)],
       textColor: Colors.white,
-      buttonBg: _glass,
-      buttonIconColor: _glassText,
-      uiOverlayBg: _glass,
-      uiOverlayFg: _glassText,
+      buttonBg: _glassWhite,
+      buttonIconColor: _glassWhiteText,
+      uiOverlayBg: _glassWhite,
+      uiOverlayFg: _glassWhiteText,
       category: ThemeCategory.sombre,
     ),
 
@@ -149,10 +159,10 @@ extension CardVisualThemeExt on CardVisualTheme {
       name: 'Charbon',
       gradientColors: [Color(0xFF0A0A0A), Color(0xFF181818), Color(0xFF111114)],
       textColor: Colors.white,
-      buttonBg: _glass,
-      buttonIconColor: _glassText,
-      uiOverlayBg: _glass,
-      uiOverlayFg: _glassText,
+      buttonBg: _glassWhite,
+      buttonIconColor: _glassWhiteText,
+      uiOverlayBg: _glassWhite,
+      uiOverlayFg: _glassWhiteText,
       category: ThemeCategory.sombre,
     ),
 
@@ -160,10 +170,10 @@ extension CardVisualThemeExt on CardVisualTheme {
       name: 'Indigo',
       gradientColors: [Color(0xFF04091E), Color(0xFF0D1840), Color(0xFF141F55)],
       textColor: Colors.white,
-      buttonBg: _glass,
-      buttonIconColor: _glassText,
-      uiOverlayBg: _glass,
-      uiOverlayFg: _glassText,
+      buttonBg: _glassWhite,
+      buttonIconColor: _glassWhiteText,
+      uiOverlayBg: _glassWhite,
+      uiOverlayFg: _glassWhiteText,
       category: ThemeCategory.sombre,
     ),
 
@@ -171,10 +181,10 @@ extension CardVisualThemeExt on CardVisualTheme {
       name: 'Émeraude',
       gradientColors: [Color(0xFF011A0C), Color(0xFF063322), Color(0xFF094430)],
       textColor: Colors.white,
-      buttonBg: _glass,
-      buttonIconColor: _glassText,
-      uiOverlayBg: _glass,
-      uiOverlayFg: _glassText,
+      buttonBg: _glassWhite,
+      buttonIconColor: _glassWhiteText,
+      uiOverlayBg: _glassWhite,
+      uiOverlayFg: _glassWhiteText,
       category: ThemeCategory.sombre,
     ),
 
@@ -182,25 +192,25 @@ extension CardVisualThemeExt on CardVisualTheme {
       name: 'Bordeaux',
       gradientColors: [Color(0xFF160004), Color(0xFF500012), Color(0xFF7A001E)],
       textColor: Colors.white,
-      buttonBg: _glass,
-      buttonIconColor: _glassText,
-      uiOverlayBg: _glass,
-      uiOverlayFg: _glassText,
+      buttonBg: _glassWhite,
+      buttonIconColor: _glassWhiteText,
+      uiOverlayBg: _glassWhite,
+      uiOverlayFg: _glassWhiteText,
       category: ThemeCategory.sombre,
     ),
 
     // ════════════════════════════════════════════════════════════════
-    // NATURE
+    // NATURE  — verre sombre pour boutons (contraste garanti sur photo)
     // ════════════════════════════════════════════════════════════════
 
     CardVisualTheme.minuit: CardVisualThemeData(
       name: 'Minuit',
       gradientColors: [Color(0xFF080812), Color(0xFF0F1128), Color(0xFF080E1E)],
       textColor: Colors.white,
-      buttonBg: _glass,
-      buttonIconColor: _glassText,
-      uiOverlayBg: _glass,
-      uiOverlayFg: _glassText,
+      buttonBg: _glassDark,
+      buttonIconColor: _glassDarkText,
+      uiOverlayBg: _glassDark,
+      uiOverlayFg: _glassDarkText,
       assetImage: 'assets/images/themes/night.jpg',
       category: ThemeCategory.nature,
     ),
@@ -209,10 +219,10 @@ extension CardVisualThemeExt on CardVisualTheme {
       name: 'Aube',
       gradientColors: [Color(0xFF1C0A00), Color(0xFF7A3010), Color(0xFFD4821A)],
       textColor: Colors.white,
-      buttonBg: _glass,
-      buttonIconColor: _glassText,
-      uiOverlayBg: _glass,
-      uiOverlayFg: _glassText,
+      buttonBg: _glassDark,
+      buttonIconColor: _glassDarkText,
+      uiOverlayBg: _glassDark,
+      uiOverlayFg: _glassDarkText,
       assetImage: 'assets/images/themes/sunset.jpg',
       category: ThemeCategory.nature,
     ),
@@ -221,10 +231,10 @@ extension CardVisualThemeExt on CardVisualTheme {
       name: 'Océan',
       gradientColors: [Color(0xFF020C18), Color(0xFF062540), Color(0xFF083060)],
       textColor: Colors.white,
-      buttonBg: _glass,
-      buttonIconColor: _glassText,
-      uiOverlayBg: _glass,
-      uiOverlayFg: _glassText,
+      buttonBg: _glassDark,
+      buttonIconColor: _glassDarkText,
+      uiOverlayBg: _glassDark,
+      uiOverlayFg: _glassDarkText,
       assetImage: 'assets/images/themes/ocean.jpg',
       category: ThemeCategory.nature,
     ),
@@ -233,10 +243,10 @@ extension CardVisualThemeExt on CardVisualTheme {
       name: 'Forêt',
       gradientColors: [Color(0xFF0A1A0E), Color(0xFF1A3A21), Color(0xFF0F2B16)],
       textColor: Colors.white,
-      buttonBg: _glass,
-      buttonIconColor: _glassText,
-      uiOverlayBg: _glass,
-      uiOverlayFg: _glassText,
+      buttonBg: _glassDark,
+      buttonIconColor: _glassDarkText,
+      uiOverlayBg: _glassDark,
+      uiOverlayFg: _glassDarkText,
       assetImage: 'assets/images/themes/forest.jpg',
       category: ThemeCategory.nature,
     ),
@@ -245,10 +255,10 @@ extension CardVisualThemeExt on CardVisualTheme {
       name: 'Désert',
       gradientColors: [Color(0xFF2A1500), Color(0xFF8B4A0A), Color(0xFFD4820A)],
       textColor: Colors.white,
-      buttonBg: _glass,
-      buttonIconColor: _glassText,
-      uiOverlayBg: _glass,
-      uiOverlayFg: _glassText,
+      buttonBg: _glassDark,
+      buttonIconColor: _glassDarkText,
+      uiOverlayBg: _glassDark,
+      uiOverlayFg: _glassDarkText,
       assetImage: 'assets/images/themes/desert.jpg',
       category: ThemeCategory.nature,
     ),
@@ -257,10 +267,10 @@ extension CardVisualThemeExt on CardVisualTheme {
       name: 'Brume',
       gradientColors: [Color(0xFF0E1520), Color(0xFF1E2E40), Color(0xFF162535)],
       textColor: Colors.white,
-      buttonBg: _glass,
-      buttonIconColor: _glassText,
-      uiOverlayBg: _glass,
-      uiOverlayFg: _glassText,
+      buttonBg: _glassDark,
+      buttonIconColor: _glassDarkText,
+      uiOverlayBg: _glassDark,
+      uiOverlayFg: _glassDarkText,
       assetImage: 'assets/images/themes/brume.jpg',
       category: ThemeCategory.nature,
     ),
@@ -269,10 +279,10 @@ extension CardVisualThemeExt on CardVisualTheme {
       name: 'Aurore',
       gradientColors: [Color(0xFF001A0A), Color(0xFF003A1A), Color(0xFF004A22)],
       textColor: Colors.white,
-      buttonBg: _glass,
-      buttonIconColor: _glassText,
-      uiOverlayBg: _glass,
-      uiOverlayFg: _glassText,
+      buttonBg: _glassDark,
+      buttonIconColor: _glassDarkText,
+      uiOverlayBg: _glassDark,
+      uiOverlayFg: _glassDarkText,
       assetImage: 'assets/images/themes/aurore.jpg',
       category: ThemeCategory.nature,
     ),
@@ -281,12 +291,90 @@ extension CardVisualThemeExt on CardVisualTheme {
       name: 'Tempête',
       gradientColors: [Color(0xFF0A0E14), Color(0xFF1A2030), Color(0xFF121820)],
       textColor: Colors.white,
-      buttonBg: _glass,
-      buttonIconColor: _glassText,
-      uiOverlayBg: _glass,
-      uiOverlayFg: _glassText,
+      buttonBg: _glassDark,
+      buttonIconColor: _glassDarkText,
+      uiOverlayBg: _glassDark,
+      uiOverlayFg: _glassDarkText,
       assetImage: 'assets/images/themes/tempete.jpg',
       category: ThemeCategory.nature,
+    ),
+
+    // ════════════════════════════════════════════════════════════════
+    // URBAIN
+    // ════════════════════════════════════════════════════════════════
+
+    CardVisualTheme.metropole: CardVisualThemeData(
+      name: 'Métropole',
+      gradientColors: [Color(0xFF050810), Color(0xFF0E1525), Color(0xFF080F1C)],
+      textColor: Colors.white,
+      buttonBg: _glassDark,
+      buttonIconColor: _glassDarkText,
+      uiOverlayBg: _glassDark,
+      uiOverlayFg: _glassDarkText,
+      assetImage: 'assets/images/themes/city.jpg',
+      category: ThemeCategory.urbain,
+    ),
+
+    CardVisualTheme.beton: CardVisualThemeData(
+      name: 'Béton',
+      gradientColors: [Color(0xFF111214), Color(0xFF1E2025), Color(0xFF16181C)],
+      textColor: Colors.white,
+      buttonBg: _glassDark,
+      buttonIconColor: _glassDarkText,
+      uiOverlayBg: _glassDark,
+      uiOverlayFg: _glassDarkText,
+      assetImage: 'assets/images/themes/architecture.jpg',
+      category: ThemeCategory.urbain,
+    ),
+
+    CardVisualTheme.acier: CardVisualThemeData(
+      name: 'Acier',
+      gradientColors: [Color(0xFF0C1018), Color(0xFF1A2235), Color(0xFF111825)],
+      textColor: Colors.white,
+      buttonBg: _glassWhite,
+      buttonIconColor: _glassWhiteText,
+      uiOverlayBg: _glassWhite,
+      uiOverlayFg: _glassWhiteText,
+      category: ThemeCategory.urbain,
+    ),
+
+    // ════════════════════════════════════════════════════════════════
+    // COSMOS
+    // ════════════════════════════════════════════════════════════════
+
+    CardVisualTheme.galaxie: CardVisualThemeData(
+      name: 'Galaxie',
+      gradientColors: [Color(0xFF040210), Color(0xFF0A0525), Color(0xFF070318)],
+      textColor: Colors.white,
+      buttonBg: _glassDark,
+      buttonIconColor: _glassDarkText,
+      uiOverlayBg: _glassDark,
+      uiOverlayFg: _glassDarkText,
+      assetImage: 'assets/images/themes/galaxy.jpg',
+      category: ThemeCategory.cosmos,
+    ),
+
+    CardVisualTheme.nebuleuse: CardVisualThemeData(
+      name: 'Nébuleuse',
+      gradientColors: [Color(0xFF060310), Color(0xFF120830), Color(0xFF0A0520)],
+      textColor: Colors.white,
+      buttonBg: _glassDark,
+      buttonIconColor: _glassDarkText,
+      uiOverlayBg: _glassDark,
+      uiOverlayFg: _glassDarkText,
+      assetImage: 'assets/images/themes/space.jpg',
+      category: ThemeCategory.cosmos,
+    ),
+
+    CardVisualTheme.void_: CardVisualThemeData(
+      name: 'Vide',
+      gradientColors: [Color(0xFF020205), Color(0xFF06060F), Color(0xFF030308)],
+      textColor: Colors.white,
+      buttonBg: _glassWhite,
+      buttonIconColor: _glassWhiteText,
+      uiOverlayBg: _glassWhite,
+      uiOverlayFg: _glassWhiteText,
+      category: ThemeCategory.cosmos,
     ),
   };
 

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
-import 'package:motivation_app/features/goal/presentation/bloc/goal_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 
@@ -16,7 +14,6 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   late final TextEditingController _nameController;
-  late String? _initialStripeKey;
   bool _saving = false;
 
   @override
@@ -29,7 +26,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       _ => null,
     };
     _nameController = TextEditingController(text: profile?.name ?? '');
-    _initialStripeKey = profile?.stripeApiKey;
   }
 
   @override
@@ -47,21 +43,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     if (!mounted) return;
     setState(() => _saving = false);
-
-    final updatedState = context.read<OnboardingCubit>().state;
-    final updatedProfile = switch (updatedState) {
-      OnboardingDataSaved(:final profile) => profile,
-      OnboardingProfileLoaded(:final profile) => profile,
-      _ => null,
-    };
-    context.read<GoalCubit>().fetchGoal(updatedProfile);
-
-    if (_initialStripeKey == null) {
-      context.pop();
-      context.push(AppRouter.onboardingStripe);
-    } else {
-      context.pop();
-    }
+    context.pop();
   }
 
   @override

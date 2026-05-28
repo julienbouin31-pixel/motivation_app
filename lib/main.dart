@@ -10,7 +10,6 @@ import 'package:motivation_app/core/widgets/home_widget_service.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_seed.dart';
 import 'package:motivation_app/features/affirmation/domain/repositories/affirmation_repository.dart';
-import 'package:motivation_app/features/goal/presentation/bloc/goal_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 import 'package:motivation_app/injection_container.dart' as di;
@@ -43,9 +42,8 @@ void main() async {
   if (await storage.readNotificationEnabled()) {
     final rawTexts = await local.getAllTexts();
     final userName = profile?.name ?? '';
-    final target = profile?.mrrTarget ?? '';
     final resolved = rawTexts
-        .map((t) => t.replaceAll('{name}', userName).replaceAll('{target}', target))
+        .map((t) => t.replaceAll('{name}', userName))
         .toList()
       ..shuffle();
     await NotificationService.schedule(
@@ -98,25 +96,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      final onboardingState = widget.onboardingCubit.state;
-      final profile = switch (onboardingState) {
-        OnboardingDataSaved(:final profile) => profile,
-        OnboardingProfileLoaded(:final profile) => profile,
-        _ => null,
-      };
-      di.sl<GoalCubit>().fetchGoal(profile);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: widget.onboardingCubit),
         BlocProvider.value(value: widget.cardThemeCubit),
-        BlocProvider.value(value: di.sl<GoalCubit>()),
       ],
       child: MaterialApp.router(
         title: 'Motivation App',

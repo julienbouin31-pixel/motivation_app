@@ -42,14 +42,6 @@ import 'package:motivation_app/features/affirmation/presentation/bloc/affirmatio
     as _i1059;
 import 'package:motivation_app/features/affirmation/presentation/bloc/favorites_cubit.dart'
     as _i841;
-import 'package:motivation_app/features/goal/data/datasources/stripe_remote_data_source.dart'
-    as _i23;
-import 'package:motivation_app/features/goal/data/repositories/goal_repository_impl.dart'
-    as _i381;
-import 'package:motivation_app/features/goal/domain/repositories/goal_repository.dart'
-    as _i192;
-import 'package:motivation_app/features/goal/presentation/bloc/goal_cubit.dart'
-    as _i658;
 import 'package:motivation_app/features/onboarding/data/datasources/onboarding_local_data_source.dart'
     as _i576;
 import 'package:motivation_app/features/onboarding/data/repositories/onboarding_repository_impl.dart'
@@ -85,17 +77,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i631.AffirmationRemoteDataSource>(
       () => _i631.AffirmationRemoteDataSourceImpl(),
     );
-    gh.lazySingleton<_i23.StripeRemoteDataSource>(
-      () => _i23.StripeRemoteDataSource(gh<_i361.Dio>()),
-    );
     gh.lazySingleton<_i987.AffirmationLocalDataSource>(
       () => _i987.AffirmationLocalDataSourceImpl(
         db: gh<_i55.AppDatabase>(),
         secureStorage: gh<_i35.SecureStorage>(),
       ),
-    );
-    gh.lazySingleton<_i192.GoalRepository>(
-      () => _i381.GoalRepositoryImpl(gh<_i23.StripeRemoteDataSource>()),
     );
     gh.lazySingleton<_i576.OnboardingLocalDataSource>(
       () => _i576.OnboardingLocalDataSourceImpl(
@@ -106,10 +92,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i10.OnboardingRepositoryImpl(
         localDataSource: gh<_i576.OnboardingLocalDataSource>(),
       ),
-    );
-    gh.lazySingleton<_i658.GoalCubit>(
-      () =>
-          _i658.GoalCubit(gh<_i192.GoalRepository>(), gh<_i35.SecureStorage>()),
     );
     gh.lazySingleton<_i178.GetUserProfileUseCase>(
       () => _i178.GetUserProfileUseCase(gh<_i829.OnboardingRepository>()),

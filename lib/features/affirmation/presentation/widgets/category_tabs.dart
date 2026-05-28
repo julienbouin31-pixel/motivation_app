@@ -17,7 +17,6 @@ class CategoryPanel extends StatelessWidget {
     (Icons.psychology_outlined, AffirmationCategory.mindset),
     (Icons.rocket_launch_outlined, AffirmationCategory.action),
     (Icons.center_focus_strong_outlined, AffirmationCategory.focus),
-    (Icons.trending_up, AffirmationCategory.mrr),
     (Icons.shield_outlined, AffirmationCategory.resilience),
     (Icons.bolt_outlined, AffirmationCategory.confidence),
     (Icons.explore_outlined, AffirmationCategory.vision),

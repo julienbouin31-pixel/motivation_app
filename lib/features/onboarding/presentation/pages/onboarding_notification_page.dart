@@ -54,14 +54,11 @@ class _OnboardingNotificationPageState
         _ => null,
       };
       final userName = profile?.name ?? '';
-      final target = profile?.mrrTarget ?? '';
 
       final rawTexts =
           await di.sl<AffirmationLocalDataSource>().getAllTexts();
       final resolved = rawTexts
-          .map((t) => t
-              .replaceAll('{name}', userName)
-              .replaceAll('{target}', target))
+          .map((t) => t.replaceAll('{name}', userName))
           .toList()
         ..shuffle();
 

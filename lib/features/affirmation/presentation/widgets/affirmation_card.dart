@@ -6,7 +6,6 @@ import 'package:motivation_app/features/affirmation/domain/entities/affirmation.
 class AffirmationCard extends StatelessWidget {
   final Affirmation affirmation;
   final String userName;
-  final String mrrTarget;
   final VoidCallback onFavorite;
   final VoidCallback onShare;
   final Color? textColor;
@@ -17,7 +16,6 @@ class AffirmationCard extends StatelessWidget {
     super.key,
     required this.affirmation,
     required this.userName,
-    required this.mrrTarget,
     required this.onFavorite,
     required this.onShare,
     this.textColor,
@@ -32,8 +30,7 @@ class AffirmationCard extends StatelessWidget {
     final effectiveButtonBg = buttonBg ?? colors.surface;
     final effectiveButtonIconColor = buttonIconColor ?? colors.secondary;
     final displayText = affirmation.text
-        .replaceAll('{name}', userName)
-        .replaceAll('{target}', mrrTarget);
+        .replaceAll('{name}', userName);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

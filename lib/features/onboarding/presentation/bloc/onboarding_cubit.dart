@@ -44,20 +44,5 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   Future<void> saveName(String name) =>
       _save(_currentProfile().copyWith(name: name));
 
-  Future<void> saveStripeApiKey(String key) =>
-      _save(_currentProfile().copyWith(stripeApiKey: key));
-
   void reset() => emit(const OnboardingState.initial());
-
-  Future<void> saveMrrTarget(String target) async {
-    final profile = _currentProfile().copyWith(mrrTarget: target);
-    final result = await saveUserProfile(profile);
-    result.fold(
-      (_) => emit(const OnboardingState.error("Impossible de sauvegarder l'objectif MRR")),
-      (_) {
-        emit(OnboardingState.dataSaved(profile));
-        print('[OnboardingCubit] Onboarding terminé ! UserProfile: $profile');
-      },
-    );
-  }
 }

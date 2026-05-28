@@ -81,13 +81,10 @@ class _NotificationPageState extends State<NotificationPage> {
       _ => null,
     };
     final userName = profile?.name ?? '';
-    final target = profile?.mrrTarget ?? '';
 
     final rawTexts = await di.sl<AffirmationLocalDataSource>().getAllTexts();
     final resolved = rawTexts
-        .map((t) => t
-            .replaceAll('{name}', userName)
-            .replaceAll('{target}', target))
+        .map((t) => t.replaceAll('{name}', userName))
         .toList()
       ..shuffle();
 
@@ -393,14 +390,11 @@ class _TestButtonState extends State<_TestButton> {
                 _ => null,
               };
               final userName = profile?.name ?? '';
-              final target =
-                  profile?.mrrTarget ?? '';
               final texts =
                   await di.sl<AffirmationLocalDataSource>().getAllTexts();
               texts.shuffle();
               final text = (texts.isNotEmpty ? texts.first : 'Continue, tu es plus proche que tu ne le crois.')
-                  .replaceAll('{name}', userName)
-                  .replaceAll('{target}', target);
+                  .replaceAll('{name}', userName);
               await NotificationService.scheduleTestIn5Seconds(text);
               setState(() => _sent = true);
               Future.delayed(const Duration(seconds: 8),
