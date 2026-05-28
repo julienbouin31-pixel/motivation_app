@@ -13,7 +13,7 @@ import 'package:share_plus/share_plus.dart';
 void showAffirmationShareSheet(
   BuildContext context, {
   required String text,
-  required String category,
+  String? category,
 }) {
   showModalBottomSheet(
     context: context,
@@ -25,12 +25,12 @@ void showAffirmationShareSheet(
 
 class AffirmationShareSheet extends StatefulWidget {
   final String text;
-  final String category;
+  final String? category;
 
   const AffirmationShareSheet({
     super.key,
     required this.text,
-    required this.category,
+    this.category,
   });
 
   @override
@@ -186,7 +186,7 @@ class _AffirmationShareSheetState extends State<AffirmationShareSheet> {
                   onTap: () {
                     HomeWidgetService.updateAffirmation(
                       text: widget.text,
-                      category: widget.category.toLowerCase(),
+                      category: widget.category?.toLowerCase() ?? '',
                     );
                     final messenger = ScaffoldMessenger.of(context);
                     Navigator.pop(context);
@@ -208,9 +208,9 @@ class _AffirmationShareSheetState extends State<AffirmationShareSheet> {
 
 class _PreviewCard extends StatelessWidget {
   final String text;
-  final String category;
+  final String? category;
 
-  const _PreviewCard({required this.text, required this.category});
+  const _PreviewCard({required this.text, this.category});
 
   @override
   Widget build(BuildContext context) {
@@ -260,30 +260,27 @@ class _PreviewCard extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 16),
-
-            // Séparateur
-            Container(
-              width: 32,
-              height: 2,
-              decoration: BoxDecoration(
-                color: muted,
-                borderRadius: BorderRadius.circular(1),
+            if (category != null) ...[
+              const SizedBox(height: 16),
+              Container(
+                width: 32,
+                height: 2,
+                decoration: BoxDecoration(
+                  color: muted,
+                  borderRadius: BorderRadius.circular(1),
+                ),
               ),
-            ),
-
-            const SizedBox(height: 12),
-
-            // Catégorie
-            Text(
-              category.toUpperCase(),
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.5,
-                color: secondary,
+              const SizedBox(height: 12),
+              Text(
+                category!.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.5,
+                  color: secondary,
+                ),
               ),
-            ),
+            ],
 
             const Spacer(),
 
