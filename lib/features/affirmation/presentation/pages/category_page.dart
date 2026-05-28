@@ -7,7 +7,7 @@ import 'package:motivation_app/features/affirmation/presentation/bloc/affirmatio
 
 typedef _Item = ({
   AffirmationCategory category,
-  String emoji,
+  IconData icon,
   String description,
   Color accent,
 });
@@ -27,13 +27,13 @@ class _CategoryPageState extends State<CategoryPage> {
   static final _specialItems = <_Item>[
     (
       category: AffirmationCategory.general,
-      emoji: '💬',
+      icon: Icons.format_quote_rounded,
       description: 'Du quotidien',
       accent: const Color(0xFF6C8EF5),
     ),
     (
       category: AffirmationCategory.confidence,
-      emoji: '⚡',
+      icon: Icons.bolt_rounded,
       description: 'Croire en toi',
       accent: const Color(0xFFE8C84A),
     ),
@@ -42,25 +42,25 @@ class _CategoryPageState extends State<CategoryPage> {
   static final _popularItems = <_Item>[
     (
       category: AffirmationCategory.mindset,
-      emoji: '🧠',
+      icon: Icons.psychology_rounded,
       description: 'Tes croyances',
       accent: const Color(0xFFB06EF5),
     ),
     (
       category: AffirmationCategory.action,
-      emoji: '🚀',
+      icon: Icons.rocket_launch_rounded,
       description: "Passe à l'acte",
       accent: const Color(0xFFF57C45),
     ),
     (
       category: AffirmationCategory.focus,
-      emoji: '🎯',
+      icon: Icons.center_focus_strong_rounded,
       description: 'Reste dans le flow',
       accent: const Color(0xFF45C4B0),
     ),
     (
       category: AffirmationCategory.mrr,
-      emoji: '📈',
+      icon: Icons.trending_up_rounded,
       description: 'Scale ton CA',
       accent: const Color(0xFF4CAF50),
     ),
@@ -69,13 +69,13 @@ class _CategoryPageState extends State<CategoryPage> {
   static final _growthItems = <_Item>[
     (
       category: AffirmationCategory.resilience,
-      emoji: '🛡️',
+      icon: Icons.shield_rounded,
       description: 'Rebondir toujours',
       accent: const Color(0xFFF5A623),
     ),
     (
       category: AffirmationCategory.vision,
-      emoji: '🔭',
+      icon: Icons.explore_rounded,
       description: 'Voir grand',
       accent: const Color(0xFF5EC4F5),
     ),
@@ -404,9 +404,10 @@ class _CategoryCard extends StatelessWidget {
                   child: Stack(
                     children: [
                       Center(
-                        child: Text(
-                          item.emoji,
-                          style: const TextStyle(fontSize: 50),
+                        child: Icon(
+                          item.icon,
+                          size: 44,
+                          color: Colors.white.withValues(alpha: 0.92),
                         ),
                       ),
                       if (isSelected)
