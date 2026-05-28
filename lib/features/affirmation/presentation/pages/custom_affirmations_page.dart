@@ -3,9 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
+import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/custom_affirmations_cubit.dart';
 import 'package:motivation_app/injection_container.dart' as di;
-import 'package:share_plus/share_plus.dart';
+import 'package:motivation_app/features/affirmation/presentation/widgets/affirmation_share_sheet.dart';
 
 class CustomAffirmationsPage extends StatelessWidget {
   const CustomAffirmationsPage({super.key});
@@ -146,14 +147,12 @@ class _AffirmationTile extends StatefulWidget {
 }
 
 class _AffirmationTileState extends State<_AffirmationTile> {
-  final _shareKey = GlobalKey();
-
-  void _share() {
-    final box = _shareKey.currentContext?.findRenderObject() as RenderBox?;
-    final origin = box != null
-        ? box.localToGlobal(Offset.zero) & box.size
-        : Rect.fromLTWH(0, 0, 1, 1);
-    Share.share(widget.affirmation.text, sharePositionOrigin: origin);
+  void _share(BuildContext context) {
+    showAffirmationShareSheet(
+      context,
+      text: widget.affirmation.text,
+      category: widget.affirmation.category.label,
+    );
   }
 
   @override
@@ -221,8 +220,7 @@ class _AffirmationTileState extends State<_AffirmationTile> {
                 ),
                 const SizedBox(width: 4),
                 GestureDetector(
-                  key: _shareKey,
-                  onTap: _share,
+                  onTap: () => _share(context),
                   child: Padding(
                     padding: const EdgeInsets.all(4),
                     child: Icon(Icons.ios_share_outlined, size: 18, color: colors.secondary),
