@@ -136,17 +136,32 @@ class _CustomAffirmationsView extends StatelessWidget {
 
 // ─── Tuile affirmation ────────────────────────────────────────────────────────
 
-class _AffirmationTile extends StatelessWidget {
+class _AffirmationTile extends StatefulWidget {
   final Affirmation affirmation;
   final VoidCallback onEdit;
   const _AffirmationTile({required this.affirmation, required this.onEdit});
+
+  @override
+  State<_AffirmationTile> createState() => _AffirmationTileState();
+}
+
+class _AffirmationTileState extends State<_AffirmationTile> {
+  final _shareKey = GlobalKey();
+
+  void _share() {
+    final box = _shareKey.currentContext?.findRenderObject() as RenderBox?;
+    final origin = box != null
+        ? box.localToGlobal(Offset.zero) & box.size
+        : Rect.fromLTWH(0, 0, 1, 1);
+    Share.share(widget.affirmation.text, sharePositionOrigin: origin);
+  }
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
 
     return Dismissible(
-      key: ValueKey(affirmation.id),
+      key: ValueKey(widget.affirmation.id),
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
@@ -158,7 +173,7 @@ class _AffirmationTile extends StatelessWidget {
         child: const Icon(Icons.delete_outline, color: Colors.white, size: 22),
       ),
       onDismissed: (_) =>
-          context.read<CustomAffirmationsCubit>().delete(affirmation.id),
+          context.read<CustomAffirmationsCubit>().delete(widget.affirmation.id),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
@@ -173,7 +188,7 @@ class _AffirmationTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    affirmation.text,
+                    widget.affirmation.text,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -183,7 +198,7 @@ class _AffirmationTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    _formatDate(affirmation.createdAt),
+                    _formatDate(widget.affirmation.createdAt),
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
@@ -198,7 +213,7 @@ class _AffirmationTile extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 GestureDetector(
-                  onTap: onEdit,
+                  onTap: widget.onEdit,
                   child: Padding(
                     padding: const EdgeInsets.all(4),
                     child: Icon(Icons.edit_outlined, size: 18, color: colors.secondary),
@@ -206,7 +221,8 @@ class _AffirmationTile extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 GestureDetector(
-                  onTap: () => Share.share(affirmation.text),
+                  key: _shareKey,
+                  onTap: _share,
                   child: Padding(
                     padding: const EdgeInsets.all(4),
                     child: Icon(Icons.ios_share_outlined, size: 18, color: colors.secondary),
