@@ -145,6 +145,12 @@ class ProfilePage extends StatelessWidget {
                         subtitle: 'Affirmations sauvegardées',
                         onTap: () => context.push(AppRouter.affirmationFavorites),
                       ),
+                      _SettingsItem(
+                        icon: Icons.edit_note_rounded,
+                        title: 'Mes affirmations',
+                        subtitle: 'Créer des affirmations perso',
+                        onTap: () => context.push(AppRouter.affirmationCustom),
+                      ),
                     ],
                   ),
 

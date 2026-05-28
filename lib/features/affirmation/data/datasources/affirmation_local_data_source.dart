@@ -19,6 +19,9 @@ abstract class AffirmationLocalDataSource {
   Future<void> saveCategories(List<AffirmationCategory> categories);
   Future<DateTime?> getLastFetchDate();
   Future<void> setLastFetchDate(DateTime date);
+  Future<List<AffirmationModel>> getCustomAffirmations();
+  Future<void> saveCustomAffirmation(String text);
+  Future<void> deleteAffirmation(int id);
 }
 
 @LazySingleton(as: AffirmationLocalDataSource)
@@ -157,6 +160,31 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
     } catch (e) {
       debugPrint('[setLastFetchDate] Erreur: $e');
     }
+  }
+
+  @override
+  Future<List<AffirmationModel>> getCustomAffirmations() async {
+    final rows = await (db.select(db.affirmationItems)
+          ..where((t) => t.isCustom.equals(true))
+          ..orderBy([(t) => OrderingTerm.desc(t.id)]))
+        .get();
+    return rows.map(_fromRow).toList();
+  }
+
+  @override
+  Future<void> saveCustomAffirmation(String text) async {
+    await db.into(db.affirmationItems).insertOnConflictUpdate(
+      AffirmationItemsCompanion.insert(
+        content: text,
+        category: AffirmationCategory.custom.name,
+        isCustom: const Value(true),
+      ),
+    );
+  }
+
+  @override
+  Future<void> deleteAffirmation(int id) async {
+    await (db.delete(db.affirmationItems)..where((t) => t.id.equals(id))).go();
   }
 
   AffirmationModel _fromRow(AffirmationItem row) => AffirmationModel(

@@ -13,6 +13,7 @@ class AffirmationItems extends Table {
   TextColumn get category => text()();
   DateTimeColumn get lastViewedAt => dateTime().nullable()();
   BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
+  BoolColumn get isCustom => boolean().withDefault(const Constant(false))();
 }
 
 @DriftDatabase(tables: [AffirmationItems])
@@ -20,26 +21,26 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
         onUpgrade: (m, from, to) async {
           if (from < 2) {
-            // v2 : isViewed → lastViewedAt (nullable), UNIQUE sur content
             await m.drop(affirmationItems);
             await m.createTable(affirmationItems);
           }
           if (from < 3) {
-            // v3 : les placeholders {name}/{target} sont désormais stockés en DB
             await m.drop(affirmationItems);
             await m.createTable(affirmationItems);
           }
           if (from < 4) {
-            // v4 : nettoyage des entrées avec noms baked-in (anciens onboardings)
-            //      → toutes les entrées doivent utiliser {name}/{target} comme placeholders
             await m.drop(affirmationItems);
             await m.createTable(affirmationItems);
+          }
+          if (from < 5) {
+            // v5 : ajout de isCustom pour les affirmations créées par l'utilisateur
+            await m.addColumn(affirmationItems, affirmationItems.isCustom);
           }
         },
       );

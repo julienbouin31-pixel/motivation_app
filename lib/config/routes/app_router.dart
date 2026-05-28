@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/affirmation_page.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/category_page.dart';
+import 'package:motivation_app/features/affirmation/presentation/pages/custom_affirmations_page.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/favorites_page.dart';
 import 'package:motivation_app/features/home/presentation/pages/home_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_age_page.dart';
@@ -28,6 +29,7 @@ class AppRouter {
   static const String affirmation = '/affirmation';
   static const String affirmationCategories = '/affirmation/categories';
   static const String affirmationFavorites = '/affirmation/favorites';
+  static const String affirmationCustom = '/affirmation/custom';
   static const String profile = '/profile';
   static const String editProfile = '/profile/edit';
   static const String appearance = '/profile/appearance';
@@ -127,6 +129,12 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
       path: AppRouter.affirmationFavorites,
       pageBuilder: (context, state) => const MaterialPage(
         child: FavoritesPage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.affirmationCustom,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: CustomAffirmationsPage(),
       ),
     ),
   ],

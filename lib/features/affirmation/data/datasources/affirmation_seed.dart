@@ -6,7 +6,7 @@ import 'package:motivation_app/features/affirmation/data/models/affirmation_mode
 
 /// Peuple la DB au premier lancement depuis le JSON local.
 /// Appelé dans main.dart avant runApp() — complètement hors ligne.
-/// Les placeholders {name} et {target} sont conservés en DB,
+/// Le placeholder {name} est conservé en DB,
 /// le remplacement se fait à l'affichage dans AffirmationCard.
 Future<void> seedAffirmationsIfEmpty(AffirmationLocalDataSource local) async {
   final jsonStr = await rootBundle.loadString('assets/data/affirmations.json');

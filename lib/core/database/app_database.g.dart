@@ -71,6 +71,21 @@ class $AffirmationItemsTable extends AffirmationItems
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _isCustomMeta = const VerificationMeta(
+    'isCustom',
+  );
+  @override
+  late final GeneratedColumn<bool> isCustom = GeneratedColumn<bool>(
+    'is_custom',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_custom" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -78,6 +93,7 @@ class $AffirmationItemsTable extends AffirmationItems
     category,
     lastViewedAt,
     isFavorite,
+    isCustom,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -125,6 +141,12 @@ class $AffirmationItemsTable extends AffirmationItems
         isFavorite.isAcceptableOrUnknown(data['is_favorite']!, _isFavoriteMeta),
       );
     }
+    if (data.containsKey('is_custom')) {
+      context.handle(
+        _isCustomMeta,
+        isCustom.isAcceptableOrUnknown(data['is_custom']!, _isCustomMeta),
+      );
+    }
     return context;
   }
 
@@ -154,6 +176,10 @@ class $AffirmationItemsTable extends AffirmationItems
         DriftSqlType.bool,
         data['${effectivePrefix}is_favorite'],
       )!,
+      isCustom: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_custom'],
+      )!,
     );
   }
 
@@ -169,12 +195,14 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
   final String category;
   final DateTime? lastViewedAt;
   final bool isFavorite;
+  final bool isCustom;
   const AffirmationItem({
     required this.id,
     required this.content,
     required this.category,
     this.lastViewedAt,
     required this.isFavorite,
+    required this.isCustom,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -186,6 +214,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
       map['last_viewed_at'] = Variable<DateTime>(lastViewedAt);
     }
     map['is_favorite'] = Variable<bool>(isFavorite);
+    map['is_custom'] = Variable<bool>(isCustom);
     return map;
   }
 
@@ -198,6 +227,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
           ? const Value.absent()
           : Value(lastViewedAt),
       isFavorite: Value(isFavorite),
+      isCustom: Value(isCustom),
     );
   }
 
@@ -212,6 +242,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
       category: serializer.fromJson<String>(json['category']),
       lastViewedAt: serializer.fromJson<DateTime?>(json['lastViewedAt']),
       isFavorite: serializer.fromJson<bool>(json['isFavorite']),
+      isCustom: serializer.fromJson<bool>(json['isCustom']),
     );
   }
   @override
@@ -223,6 +254,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
       'category': serializer.toJson<String>(category),
       'lastViewedAt': serializer.toJson<DateTime?>(lastViewedAt),
       'isFavorite': serializer.toJson<bool>(isFavorite),
+      'isCustom': serializer.toJson<bool>(isCustom),
     };
   }
 
@@ -232,12 +264,14 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
     String? category,
     Value<DateTime?> lastViewedAt = const Value.absent(),
     bool? isFavorite,
+    bool? isCustom,
   }) => AffirmationItem(
     id: id ?? this.id,
     content: content ?? this.content,
     category: category ?? this.category,
     lastViewedAt: lastViewedAt.present ? lastViewedAt.value : this.lastViewedAt,
     isFavorite: isFavorite ?? this.isFavorite,
+    isCustom: isCustom ?? this.isCustom,
   );
   AffirmationItem copyWithCompanion(AffirmationItemsCompanion data) {
     return AffirmationItem(
@@ -250,6 +284,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
       isFavorite: data.isFavorite.present
           ? data.isFavorite.value
           : this.isFavorite,
+      isCustom: data.isCustom.present ? data.isCustom.value : this.isCustom,
     );
   }
 
@@ -260,14 +295,15 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
           ..write('content: $content, ')
           ..write('category: $category, ')
           ..write('lastViewedAt: $lastViewedAt, ')
-          ..write('isFavorite: $isFavorite')
+          ..write('isFavorite: $isFavorite, ')
+          ..write('isCustom: $isCustom')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode =>
-      Object.hash(id, content, category, lastViewedAt, isFavorite);
+      Object.hash(id, content, category, lastViewedAt, isFavorite, isCustom);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -276,7 +312,8 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
           other.content == this.content &&
           other.category == this.category &&
           other.lastViewedAt == this.lastViewedAt &&
-          other.isFavorite == this.isFavorite);
+          other.isFavorite == this.isFavorite &&
+          other.isCustom == this.isCustom);
 }
 
 class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
@@ -285,12 +322,14 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
   final Value<String> category;
   final Value<DateTime?> lastViewedAt;
   final Value<bool> isFavorite;
+  final Value<bool> isCustom;
   const AffirmationItemsCompanion({
     this.id = const Value.absent(),
     this.content = const Value.absent(),
     this.category = const Value.absent(),
     this.lastViewedAt = const Value.absent(),
     this.isFavorite = const Value.absent(),
+    this.isCustom = const Value.absent(),
   });
   AffirmationItemsCompanion.insert({
     this.id = const Value.absent(),
@@ -298,6 +337,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
     required String category,
     this.lastViewedAt = const Value.absent(),
     this.isFavorite = const Value.absent(),
+    this.isCustom = const Value.absent(),
   }) : content = Value(content),
        category = Value(category);
   static Insertable<AffirmationItem> custom({
@@ -306,6 +346,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
     Expression<String>? category,
     Expression<DateTime>? lastViewedAt,
     Expression<bool>? isFavorite,
+    Expression<bool>? isCustom,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -313,6 +354,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
       if (category != null) 'category': category,
       if (lastViewedAt != null) 'last_viewed_at': lastViewedAt,
       if (isFavorite != null) 'is_favorite': isFavorite,
+      if (isCustom != null) 'is_custom': isCustom,
     });
   }
 
@@ -322,6 +364,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
     Value<String>? category,
     Value<DateTime?>? lastViewedAt,
     Value<bool>? isFavorite,
+    Value<bool>? isCustom,
   }) {
     return AffirmationItemsCompanion(
       id: id ?? this.id,
@@ -329,6 +372,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
       category: category ?? this.category,
       lastViewedAt: lastViewedAt ?? this.lastViewedAt,
       isFavorite: isFavorite ?? this.isFavorite,
+      isCustom: isCustom ?? this.isCustom,
     );
   }
 
@@ -350,6 +394,9 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
     if (isFavorite.present) {
       map['is_favorite'] = Variable<bool>(isFavorite.value);
     }
+    if (isCustom.present) {
+      map['is_custom'] = Variable<bool>(isCustom.value);
+    }
     return map;
   }
 
@@ -360,7 +407,8 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
           ..write('content: $content, ')
           ..write('category: $category, ')
           ..write('lastViewedAt: $lastViewedAt, ')
-          ..write('isFavorite: $isFavorite')
+          ..write('isFavorite: $isFavorite, ')
+          ..write('isCustom: $isCustom')
           ..write(')'))
         .toString();
   }
@@ -386,6 +434,7 @@ typedef $$AffirmationItemsTableCreateCompanionBuilder =
       required String category,
       Value<DateTime?> lastViewedAt,
       Value<bool> isFavorite,
+      Value<bool> isCustom,
     });
 typedef $$AffirmationItemsTableUpdateCompanionBuilder =
     AffirmationItemsCompanion Function({
@@ -394,6 +443,7 @@ typedef $$AffirmationItemsTableUpdateCompanionBuilder =
       Value<String> category,
       Value<DateTime?> lastViewedAt,
       Value<bool> isFavorite,
+      Value<bool> isCustom,
     });
 
 class $$AffirmationItemsTableFilterComposer
@@ -427,6 +477,11 @@ class $$AffirmationItemsTableFilterComposer
 
   ColumnFilters<bool> get isFavorite => $composableBuilder(
     column: $table.isFavorite,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isCustom => $composableBuilder(
+    column: $table.isCustom,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -464,6 +519,11 @@ class $$AffirmationItemsTableOrderingComposer
     column: $table.isFavorite,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get isCustom => $composableBuilder(
+    column: $table.isCustom,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$AffirmationItemsTableAnnotationComposer
@@ -493,6 +553,9 @@ class $$AffirmationItemsTableAnnotationComposer
     column: $table.isFavorite,
     builder: (column) => column,
   );
+
+  GeneratedColumn<bool> get isCustom =>
+      $composableBuilder(column: $table.isCustom, builder: (column) => column);
 }
 
 class $$AffirmationItemsTableTableManager
@@ -537,12 +600,14 @@ class $$AffirmationItemsTableTableManager
                 Value<String> category = const Value.absent(),
                 Value<DateTime?> lastViewedAt = const Value.absent(),
                 Value<bool> isFavorite = const Value.absent(),
+                Value<bool> isCustom = const Value.absent(),
               }) => AffirmationItemsCompanion(
                 id: id,
                 content: content,
                 category: category,
                 lastViewedAt: lastViewedAt,
                 isFavorite: isFavorite,
+                isCustom: isCustom,
               ),
           createCompanionCallback:
               ({
@@ -551,12 +616,14 @@ class $$AffirmationItemsTableTableManager
                 required String category,
                 Value<DateTime?> lastViewedAt = const Value.absent(),
                 Value<bool> isFavorite = const Value.absent(),
+                Value<bool> isCustom = const Value.absent(),
               }) => AffirmationItemsCompanion.insert(
                 id: id,
                 content: content,
                 category: category,
                 lastViewedAt: lastViewedAt,
                 isFavorite: isFavorite,
+                isCustom: isCustom,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
