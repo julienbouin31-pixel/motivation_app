@@ -321,6 +321,26 @@ class _AffirmationPageState extends State<AffirmationPage>
 
     if (themeData.isAdaptive) return body;
 
+    if (themeData.assetImage != null) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(themeData.assetImage!, fit: BoxFit.cover),
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0x88000000), Color(0x33000000), Color(0x66000000)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [0.0, 0.45, 1.0],
+              ),
+            ),
+          ),
+          body,
+        ],
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(

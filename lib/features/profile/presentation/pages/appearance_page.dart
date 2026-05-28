@@ -86,7 +86,24 @@ class AppearancePage extends StatelessWidget {
                                 // Fond
                                 if (data.isAdaptive)
                                   Container(color: colors.card)
-                                else
+                                else if (data.assetImage != null) ...[
+                                  Image.asset(
+                                    data.assetImage!,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  ),
+                                  Container(
+                                    decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [Color(0x77000000), Color(0x22000000), Color(0x55000000)],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        stops: [0.0, 0.45, 1.0],
+                                      ),
+                                    ),
+                                  ),
+                                ] else
                                   Container(
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(

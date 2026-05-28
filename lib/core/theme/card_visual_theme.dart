@@ -22,6 +22,7 @@ class CardVisualThemeData {
   final AlignmentGeometry begin;
   final AlignmentGeometry end;
   final bool isAdaptive;
+  final String? assetImage;
 
   const CardVisualThemeData({
     required this.name,
@@ -34,6 +35,7 @@ class CardVisualThemeData {
     this.begin = Alignment.topCenter,
     this.end = Alignment.bottomCenter,
     this.isAdaptive = false,
+    this.assetImage,
   });
 }
 
@@ -87,7 +89,7 @@ extension CardVisualThemeExt on CardVisualTheme {
       uiOverlayFg: _glassText,
     ),
 
-    // ── Aube — nouvelle journée ───────────────────────────────────────────────
+    // ── Aube — coucher de soleil ──────────────────────────────────────────────
     CardVisualTheme.aube: CardVisualThemeData(
       name: 'Aube',
       gradientColors: [Color(0xFF1C0A00), Color(0xFF7A3010), Color(0xFFD4821A)],
@@ -96,9 +98,10 @@ extension CardVisualThemeExt on CardVisualTheme {
       buttonIconColor: _glassText,
       uiOverlayBg: _glass,
       uiOverlayFg: _glassText,
+      assetImage: 'assets/images/themes/coucher_de_soleil.webp',
     ),
 
-    // ── Océan — profondeur et calme ───────────────────────────────────────────
+    // ── Océan — vagues ────────────────────────────────────────────────────────
     CardVisualTheme.ocean: CardVisualThemeData(
       name: 'Océan',
       gradientColors: [Color(0xFF020C18), Color(0xFF062540), Color(0xFF083060)],
@@ -107,17 +110,19 @@ extension CardVisualThemeExt on CardVisualTheme {
       buttonIconColor: _glassText,
       uiOverlayBg: _glass,
       uiOverlayFg: _glassText,
+      assetImage: 'assets/images/themes/ocean.webp',
     ),
 
-    // ── Ardoise — sobriété et sérieux ─────────────────────────────────────────
+    // ── Ardoise — forêt ───────────────────────────────────────────────────────
     CardVisualTheme.ardoise: CardVisualThemeData(
-      name: 'Ardoise',
-      gradientColors: [Color(0xFF111418), Color(0xFF1E252E), Color(0xFF161C24)],
+      name: 'Forêt',
+      gradientColors: [Color(0xFF0A1A0E), Color(0xFF1A3A21), Color(0xFF0F2B16)],
       textColor: Colors.white,
       buttonBg: _glass,
       buttonIconColor: _glassText,
       uiOverlayBg: _glass,
       uiOverlayFg: _glassText,
+      assetImage: 'assets/images/themes/forets.webp',
     ),
 
     // ── Craie — éditorial et épuré ────────────────────────────────────────────
