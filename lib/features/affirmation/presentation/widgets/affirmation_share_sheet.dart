@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
+import 'package:motivation_app/core/theme/card_visual_theme.dart';
 import 'package:motivation_app/core/widgets/home_widget_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -14,23 +15,30 @@ void showAffirmationShareSheet(
   BuildContext context, {
   required String text,
   String? category,
+  CardVisualThemeData? themeData,
 }) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (_) => AffirmationShareSheet(text: text, category: category),
+    builder: (_) => AffirmationShareSheet(
+      text: text,
+      category: category,
+      themeData: themeData,
+    ),
   );
 }
 
 class AffirmationShareSheet extends StatefulWidget {
   final String text;
   final String? category;
+  final CardVisualThemeData? themeData;
 
   const AffirmationShareSheet({
     super.key,
     required this.text,
     this.category,
+    this.themeData,
   });
 
   @override
@@ -126,6 +134,7 @@ class _AffirmationShareSheetState extends State<AffirmationShareSheet> {
               child: _PreviewCard(
                 text: widget.text,
                 category: widget.category,
+                themeData: widget.themeData,
               ),
             ),
           ),
@@ -209,96 +218,139 @@ class _AffirmationShareSheetState extends State<AffirmationShareSheet> {
 class _PreviewCard extends StatelessWidget {
   final String text;
   final String? category;
+  final CardVisualThemeData? themeData;
 
-  const _PreviewCard({required this.text, this.category});
+  const _PreviewCard({required this.text, this.category, this.themeData});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF0EDE7);
-    final primary = isDark ? Colors.white : const Color(0xFF111111);
-    final muted = isDark
-        ? Colors.white.withValues(alpha: 0.18)
-        : const Color(0xFF111111).withValues(alpha: 0.1);
-    final secondary = isDark
-        ? Colors.white.withValues(alpha: 0.38)
-        : const Color(0xFFAAAAAA);
+    final td = themeData;
+
+    final Color textColor;
+    final Color muted;
+    final Color secondary;
+    BoxDecoration bgDecoration;
+
+    if (td != null && !td.isAdaptive) {
+      textColor = td.textColor;
+      muted = td.textColor.withValues(alpha: 0.18);
+      secondary = td.textColor.withValues(alpha: 0.45);
+      bgDecoration = td.assetImage != null
+          ? const BoxDecoration(color: Colors.transparent)
+          : BoxDecoration(
+              gradient: LinearGradient(
+                colors: td.gradientColors,
+                begin: td.begin,
+                end: td.end,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            );
+    } else {
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      final base = isDark ? Colors.white : const Color(0xFF111111);
+      textColor = base;
+      muted = base.withValues(alpha: isDark ? 0.18 : 0.1);
+      secondary = base.withValues(alpha: isDark ? 0.38 : 0.4);
+      bgDecoration = BoxDecoration(
+        color: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF0EDE7),
+        borderRadius: BorderRadius.circular(20),
+      );
+    }
+
+    final content = Container(
+      padding: const EdgeInsets.all(28),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '“',
+            style: TextStyle(
+              fontSize: 72,
+              height: 0.85,
+              fontWeight: FontWeight.w900,
+              color: muted,
+            ),
+          ),
+          const Spacer(),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              height: 1.45,
+              color: textColor,
+              letterSpacing: -0.3,
+            ),
+          ),
+          if (category != null) ...[
+            const SizedBox(height: 16),
+            Container(
+              width: 32,
+              height: 2,
+              decoration: BoxDecoration(
+                color: muted,
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              category!.toUpperCase(),
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.5,
+                color: secondary,
+              ),
+            ),
+          ],
+          const Spacer(),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              'curves',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: secondary,
+                letterSpacing: -0.2,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (td != null && !td.isAdaptive && td.assetImage != null) {
+      return AspectRatio(
+        aspectRatio: 4 / 5,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.asset(td.assetImage!, fit: BoxFit.cover),
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0x88000000), Color(0x33000000), Color(0x66000000)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: [0.0, 0.45, 1.0],
+                  ),
+                ),
+              ),
+              content,
+            ],
+          ),
+        ),
+      );
+    }
 
     return AspectRatio(
       aspectRatio: 4 / 5,
       child: Container(
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        padding: const EdgeInsets.all(28),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Quote mark décoratif
-            Text(
-              '\u201C',
-              style: TextStyle(
-                fontSize: 72,
-                height: 0.85,
-                fontWeight: FontWeight.w900,
-                color: muted,
-              ),
-            ),
-
-            const Spacer(),
-
-            // Texte de l'affirmation
-            Text(
-              text,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                height: 1.45,
-                color: primary,
-                letterSpacing: -0.3,
-              ),
-            ),
-
-            if (category != null) ...[
-              const SizedBox(height: 16),
-              Container(
-                width: 32,
-                height: 2,
-                decoration: BoxDecoration(
-                  color: muted,
-                  borderRadius: BorderRadius.circular(1),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                category!.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.5,
-                  color: secondary,
-                ),
-              ),
-            ],
-
-            const Spacer(),
-
-            // Branding
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                'curves',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: secondary,
-                  letterSpacing: -0.2,
-                ),
-              ),
-            ),
-          ],
-        ),
+        decoration: bgDecoration,
+        child: content,
       ),
     );
   }

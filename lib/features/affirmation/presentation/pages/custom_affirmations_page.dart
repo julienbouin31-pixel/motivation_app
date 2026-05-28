@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
+import 'package:motivation_app/core/theme/card_visual_theme.dart';
+import 'package:motivation_app/core/theme/card_theme_cubit.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/custom_affirmations_cubit.dart';
-import 'package:motivation_app/injection_container.dart' as di;
 import 'package:motivation_app/features/affirmation/presentation/widgets/affirmation_share_sheet.dart';
+import 'package:motivation_app/injection_container.dart' as di;
 
 class CustomAffirmationsPage extends StatelessWidget {
   const CustomAffirmationsPage({super.key});
@@ -147,9 +149,11 @@ class _AffirmationTile extends StatefulWidget {
 
 class _AffirmationTileState extends State<_AffirmationTile> {
   void _share(BuildContext context) {
+    final themeData = context.read<CardThemeCubit>().state.data;
     showAffirmationShareSheet(
       context,
       text: widget.affirmation.text,
+      themeData: themeData.isAdaptive ? null : themeData,
     );
   }
 

@@ -244,6 +244,7 @@ class _AffirmationPageState extends State<AffirmationPage>
                                 context,
                                 text: text,
                                 category: affirmation.category.label,
+                                themeData: themed ? themeData : null,
                               );
                             },
                           ),
