@@ -6,6 +6,7 @@ class AffirmationModel {
   final String text;
   final String category;
   final DateTime? lastViewedAt;
+  final DateTime? createdAt;
   final bool isFavorite;
 
   const AffirmationModel({
@@ -13,6 +14,7 @@ class AffirmationModel {
     required this.text,
     required this.category,
     this.lastViewedAt,
+    this.createdAt,
     this.isFavorite = false,
   });
 
@@ -28,6 +30,7 @@ class AffirmationModel {
         text: text,
         category: AffirmationCategory.values.byName(category),
         lastViewedAt: lastViewedAt,
+        createdAt: createdAt,
         isFavorite: isFavorite,
       );
 }

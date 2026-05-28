@@ -21,6 +21,7 @@ abstract class AffirmationLocalDataSource {
   Future<void> setLastFetchDate(DateTime date);
   Future<List<AffirmationModel>> getCustomAffirmations();
   Future<void> saveCustomAffirmation(String text);
+  Future<void> updateCustomAffirmation(int id, String text);
   Future<void> deleteAffirmation(int id);
 }
 
@@ -173,13 +174,20 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
 
   @override
   Future<void> saveCustomAffirmation(String text) async {
-    await db.into(db.affirmationItems).insertOnConflictUpdate(
+    await db.into(db.affirmationItems).insert(
       AffirmationItemsCompanion.insert(
         content: text,
         category: AffirmationCategory.custom.name,
         isCustom: const Value(true),
+        createdAt: Value(DateTime.now()),
       ),
     );
+  }
+
+  @override
+  Future<void> updateCustomAffirmation(int id, String text) async {
+    await (db.update(db.affirmationItems)..where((t) => t.id.equals(id)))
+        .write(AffirmationItemsCompanion(content: Value(text)));
   }
 
   @override
@@ -192,6 +200,7 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
         text: row.content,
         category: row.category,
         lastViewedAt: row.lastViewedAt,
+        createdAt: row.createdAt,
         isFavorite: row.isFavorite,
       );
 }

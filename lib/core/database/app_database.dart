@@ -14,6 +14,7 @@ class AffirmationItems extends Table {
   DateTimeColumn get lastViewedAt => dateTime().nullable()();
   BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
   BoolColumn get isCustom => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get createdAt => dateTime().nullable()();
 }
 
 @DriftDatabase(tables: [AffirmationItems])
@@ -21,7 +22,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -39,8 +40,10 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(affirmationItems);
           }
           if (from < 5) {
-            // v5 : ajout de isCustom pour les affirmations créées par l'utilisateur
             await m.addColumn(affirmationItems, affirmationItems.isCustom);
+          }
+          if (from < 6) {
+            await m.addColumn(affirmationItems, affirmationItems.createdAt);
           }
         },
       );

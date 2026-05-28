@@ -86,6 +86,17 @@ class $AffirmationItemsTable extends AffirmationItems
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -94,6 +105,7 @@ class $AffirmationItemsTable extends AffirmationItems
     lastViewedAt,
     isFavorite,
     isCustom,
+    createdAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -147,6 +159,12 @@ class $AffirmationItemsTable extends AffirmationItems
         isCustom.isAcceptableOrUnknown(data['is_custom']!, _isCustomMeta),
       );
     }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
     return context;
   }
 
@@ -180,6 +198,10 @@ class $AffirmationItemsTable extends AffirmationItems
         DriftSqlType.bool,
         data['${effectivePrefix}is_custom'],
       )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      ),
     );
   }
 
@@ -196,6 +218,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
   final DateTime? lastViewedAt;
   final bool isFavorite;
   final bool isCustom;
+  final DateTime? createdAt;
   const AffirmationItem({
     required this.id,
     required this.content,
@@ -203,6 +226,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
     this.lastViewedAt,
     required this.isFavorite,
     required this.isCustom,
+    this.createdAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -215,6 +239,9 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
     }
     map['is_favorite'] = Variable<bool>(isFavorite);
     map['is_custom'] = Variable<bool>(isCustom);
+    if (!nullToAbsent || createdAt != null) {
+      map['created_at'] = Variable<DateTime>(createdAt);
+    }
     return map;
   }
 
@@ -228,6 +255,9 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
           : Value(lastViewedAt),
       isFavorite: Value(isFavorite),
       isCustom: Value(isCustom),
+      createdAt: createdAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdAt),
     );
   }
 
@@ -243,6 +273,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
       lastViewedAt: serializer.fromJson<DateTime?>(json['lastViewedAt']),
       isFavorite: serializer.fromJson<bool>(json['isFavorite']),
       isCustom: serializer.fromJson<bool>(json['isCustom']),
+      createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
     );
   }
   @override
@@ -255,6 +286,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
       'lastViewedAt': serializer.toJson<DateTime?>(lastViewedAt),
       'isFavorite': serializer.toJson<bool>(isFavorite),
       'isCustom': serializer.toJson<bool>(isCustom),
+      'createdAt': serializer.toJson<DateTime?>(createdAt),
     };
   }
 
@@ -265,6 +297,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
     Value<DateTime?> lastViewedAt = const Value.absent(),
     bool? isFavorite,
     bool? isCustom,
+    Value<DateTime?> createdAt = const Value.absent(),
   }) => AffirmationItem(
     id: id ?? this.id,
     content: content ?? this.content,
@@ -272,6 +305,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
     lastViewedAt: lastViewedAt.present ? lastViewedAt.value : this.lastViewedAt,
     isFavorite: isFavorite ?? this.isFavorite,
     isCustom: isCustom ?? this.isCustom,
+    createdAt: createdAt.present ? createdAt.value : this.createdAt,
   );
   AffirmationItem copyWithCompanion(AffirmationItemsCompanion data) {
     return AffirmationItem(
@@ -285,6 +319,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
           ? data.isFavorite.value
           : this.isFavorite,
       isCustom: data.isCustom.present ? data.isCustom.value : this.isCustom,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
 
@@ -296,14 +331,22 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
           ..write('category: $category, ')
           ..write('lastViewedAt: $lastViewedAt, ')
           ..write('isFavorite: $isFavorite, ')
-          ..write('isCustom: $isCustom')
+          ..write('isCustom: $isCustom, ')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, content, category, lastViewedAt, isFavorite, isCustom);
+  int get hashCode => Object.hash(
+    id,
+    content,
+    category,
+    lastViewedAt,
+    isFavorite,
+    isCustom,
+    createdAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -313,7 +356,8 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
           other.category == this.category &&
           other.lastViewedAt == this.lastViewedAt &&
           other.isFavorite == this.isFavorite &&
-          other.isCustom == this.isCustom);
+          other.isCustom == this.isCustom &&
+          other.createdAt == this.createdAt);
 }
 
 class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
@@ -323,6 +367,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
   final Value<DateTime?> lastViewedAt;
   final Value<bool> isFavorite;
   final Value<bool> isCustom;
+  final Value<DateTime?> createdAt;
   const AffirmationItemsCompanion({
     this.id = const Value.absent(),
     this.content = const Value.absent(),
@@ -330,6 +375,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
     this.lastViewedAt = const Value.absent(),
     this.isFavorite = const Value.absent(),
     this.isCustom = const Value.absent(),
+    this.createdAt = const Value.absent(),
   });
   AffirmationItemsCompanion.insert({
     this.id = const Value.absent(),
@@ -338,6 +384,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
     this.lastViewedAt = const Value.absent(),
     this.isFavorite = const Value.absent(),
     this.isCustom = const Value.absent(),
+    this.createdAt = const Value.absent(),
   }) : content = Value(content),
        category = Value(category);
   static Insertable<AffirmationItem> custom({
@@ -347,6 +394,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
     Expression<DateTime>? lastViewedAt,
     Expression<bool>? isFavorite,
     Expression<bool>? isCustom,
+    Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -355,6 +403,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
       if (lastViewedAt != null) 'last_viewed_at': lastViewedAt,
       if (isFavorite != null) 'is_favorite': isFavorite,
       if (isCustom != null) 'is_custom': isCustom,
+      if (createdAt != null) 'created_at': createdAt,
     });
   }
 
@@ -365,6 +414,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
     Value<DateTime?>? lastViewedAt,
     Value<bool>? isFavorite,
     Value<bool>? isCustom,
+    Value<DateTime?>? createdAt,
   }) {
     return AffirmationItemsCompanion(
       id: id ?? this.id,
@@ -373,6 +423,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
       lastViewedAt: lastViewedAt ?? this.lastViewedAt,
       isFavorite: isFavorite ?? this.isFavorite,
       isCustom: isCustom ?? this.isCustom,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
@@ -397,6 +448,9 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
     if (isCustom.present) {
       map['is_custom'] = Variable<bool>(isCustom.value);
     }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
     return map;
   }
 
@@ -408,7 +462,8 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
           ..write('category: $category, ')
           ..write('lastViewedAt: $lastViewedAt, ')
           ..write('isFavorite: $isFavorite, ')
-          ..write('isCustom: $isCustom')
+          ..write('isCustom: $isCustom, ')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
@@ -435,6 +490,7 @@ typedef $$AffirmationItemsTableCreateCompanionBuilder =
       Value<DateTime?> lastViewedAt,
       Value<bool> isFavorite,
       Value<bool> isCustom,
+      Value<DateTime?> createdAt,
     });
 typedef $$AffirmationItemsTableUpdateCompanionBuilder =
     AffirmationItemsCompanion Function({
@@ -444,6 +500,7 @@ typedef $$AffirmationItemsTableUpdateCompanionBuilder =
       Value<DateTime?> lastViewedAt,
       Value<bool> isFavorite,
       Value<bool> isCustom,
+      Value<DateTime?> createdAt,
     });
 
 class $$AffirmationItemsTableFilterComposer
@@ -482,6 +539,11 @@ class $$AffirmationItemsTableFilterComposer
 
   ColumnFilters<bool> get isCustom => $composableBuilder(
     column: $table.isCustom,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -524,6 +586,11 @@ class $$AffirmationItemsTableOrderingComposer
     column: $table.isCustom,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$AffirmationItemsTableAnnotationComposer
@@ -556,6 +623,9 @@ class $$AffirmationItemsTableAnnotationComposer
 
   GeneratedColumn<bool> get isCustom =>
       $composableBuilder(column: $table.isCustom, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
 }
 
 class $$AffirmationItemsTableTableManager
@@ -601,6 +671,7 @@ class $$AffirmationItemsTableTableManager
                 Value<DateTime?> lastViewedAt = const Value.absent(),
                 Value<bool> isFavorite = const Value.absent(),
                 Value<bool> isCustom = const Value.absent(),
+                Value<DateTime?> createdAt = const Value.absent(),
               }) => AffirmationItemsCompanion(
                 id: id,
                 content: content,
@@ -608,6 +679,7 @@ class $$AffirmationItemsTableTableManager
                 lastViewedAt: lastViewedAt,
                 isFavorite: isFavorite,
                 isCustom: isCustom,
+                createdAt: createdAt,
               ),
           createCompanionCallback:
               ({
@@ -617,6 +689,7 @@ class $$AffirmationItemsTableTableManager
                 Value<DateTime?> lastViewedAt = const Value.absent(),
                 Value<bool> isFavorite = const Value.absent(),
                 Value<bool> isCustom = const Value.absent(),
+                Value<DateTime?> createdAt = const Value.absent(),
               }) => AffirmationItemsCompanion.insert(
                 id: id,
                 content: content,
@@ -624,6 +697,7 @@ class $$AffirmationItemsTableTableManager
                 lastViewedAt: lastViewedAt,
                 isFavorite: isFavorite,
                 isCustom: isCustom,
+                createdAt: createdAt,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

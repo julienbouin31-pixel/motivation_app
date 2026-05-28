@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
-import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/custom_affirmations_cubit.dart';
 import 'package:motivation_app/injection_container.dart' as di;
+import 'package:share_plus/share_plus.dart';
 
 class CustomAffirmationsPage extends StatelessWidget {
   const CustomAffirmationsPage({super.key});
@@ -33,7 +33,6 @@ class _CustomAffirmationsView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ─── Header ──────────────────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Row(
@@ -72,7 +71,7 @@ class _CustomAffirmationsView extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => _showCreateSheet(context),
+                    onTap: () => _showEditSheet(context, null),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       decoration: BoxDecoration(
@@ -100,17 +99,19 @@ class _CustomAffirmationsView extends StatelessWidget {
               ),
             ),
 
-            // ─── Contenu ─────────────────────────────────────────────────────
             Expanded(
               child: affirmations.isEmpty
-                  ? _EmptyState(onTap: () => _showCreateSheet(context))
+                  ? _EmptyState(onTap: () => _showEditSheet(context, null))
                   : ListView.separated(
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
                       itemCount: affirmations.length,
                       separatorBuilder: (context, _) => const SizedBox(height: 10),
                       itemBuilder: (context, index) {
                         final a = affirmations[index];
-                        return _AffirmationTile(affirmation: a);
+                        return _AffirmationTile(
+                          affirmation: a,
+                          onEdit: () => _showEditSheet(context, a),
+                        );
                       },
                     ),
             ),
@@ -120,14 +121,14 @@ class _CustomAffirmationsView extends StatelessWidget {
     );
   }
 
-  void _showCreateSheet(BuildContext context) {
+  void _showEditSheet(BuildContext context, Affirmation? existing) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => BlocProvider.value(
         value: context.read<CustomAffirmationsCubit>(),
-        child: const _CreateSheet(),
+        child: _EditSheet(existing: existing),
       ),
     );
   }
@@ -137,7 +138,8 @@ class _CustomAffirmationsView extends StatelessWidget {
 
 class _AffirmationTile extends StatelessWidget {
   final Affirmation affirmation;
-  const _AffirmationTile({required this.affirmation});
+  final VoidCallback onEdit;
+  const _AffirmationTile({required this.affirmation, required this.onEdit});
 
   @override
   Widget build(BuildContext context) {
@@ -180,28 +182,37 @@ class _AffirmationTile extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: colors.surface,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      affirmation.category.label,
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: colors.secondary,
-                      ),
+                  Text(
+                    _formatDate(affirmation.createdAt),
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: colors.secondary,
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(width: 8),
-            GestureDetector(
-              onTap: () => _confirmDelete(context, affirmation),
-              child: Icon(Icons.delete_outline, size: 18, color: colors.secondary),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  onTap: onEdit,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(Icons.edit_outlined, size: 18, color: colors.secondary),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                GestureDetector(
+                  onTap: () => Share.share(affirmation.text),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(Icons.ios_share_outlined, size: 18, color: colors.secondary),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -209,38 +220,15 @@ class _AffirmationTile extends StatelessWidget {
     );
   }
 
-  void _confirmDelete(BuildContext context, Affirmation affirmation) {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        final colors = Theme.of(ctx).extension<AppColors>()!;
-        return AlertDialog(
-          backgroundColor: colors.card,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text(
-            'Supprimer',
-            style: TextStyle(color: colors.primary, fontWeight: FontWeight.w700),
-          ),
-          content: Text(
-            'Supprimer cette affirmation ?',
-            style: TextStyle(color: colors.secondary),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text('Annuler', style: TextStyle(color: colors.secondary)),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                context.read<CustomAffirmationsCubit>().delete(affirmation.id);
-              },
-              child: const Text('Supprimer', style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
+  String _formatDate(DateTime? dt) {
+    if (dt == null) return '';
+    const weekdays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+    const months = ['jan', 'fév', 'mar', 'avr', 'mai', 'juin', 'juil', 'août', 'sep', 'oct', 'nov', 'déc'];
+    final day = weekdays[dt.weekday - 1];
+    final month = months[dt.month - 1];
+    final h = dt.hour.toString().padLeft(2, '0');
+    final m = dt.minute.toString().padLeft(2, '0');
+    return '$day. ${dt.day} $month · $h:$m';
   }
 }
 
@@ -306,18 +294,27 @@ class _EmptyState extends StatelessWidget {
   }
 }
 
-// ─── Sheet de création ────────────────────────────────────────────────────────
+// ─── Sheet création / édition ─────────────────────────────────────────────────
 
-class _CreateSheet extends StatefulWidget {
-  const _CreateSheet();
+class _EditSheet extends StatefulWidget {
+  final Affirmation? existing;
+  const _EditSheet({this.existing});
 
   @override
-  State<_CreateSheet> createState() => _CreateSheetState();
+  State<_EditSheet> createState() => _EditSheetState();
 }
 
-class _CreateSheetState extends State<_CreateSheet> {
-  final _controller = TextEditingController();
+class _EditSheetState extends State<_EditSheet> {
+  late final TextEditingController _controller;
   bool _saving = false;
+
+  bool get _isEdit => widget.existing != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.existing?.text ?? '');
+  }
 
   @override
   void dispose() {
@@ -329,7 +326,12 @@ class _CreateSheetState extends State<_CreateSheet> {
     final text = _controller.text.trim();
     if (text.isEmpty || _saving) return;
     setState(() => _saving = true);
-    await context.read<CustomAffirmationsCubit>().add(text);
+    final cubit = context.read<CustomAffirmationsCubit>();
+    if (_isEdit) {
+      await cubit.update(widget.existing!.id, text);
+    } else {
+      await cubit.add(text);
+    }
     if (mounted) Navigator.pop(context);
   }
 
@@ -349,7 +351,6 @@ class _CreateSheetState extends State<_CreateSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Poignée ──────────────────────────────────────────────────────
           Center(
             child: Container(
               width: 36,
@@ -363,7 +364,7 @@ class _CreateSheetState extends State<_CreateSheet> {
           const SizedBox(height: 20),
 
           Text(
-            'Nouvelle affirmation',
+            _isEdit ? 'Modifier l\'affirmation' : 'Nouvelle affirmation',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w800,
@@ -373,7 +374,6 @@ class _CreateSheetState extends State<_CreateSheet> {
           ),
           const SizedBox(height: 16),
 
-          // ── Champ texte ───────────────────────────────────────────────────
           Container(
             decoration: BoxDecoration(
               color: colors.card,
@@ -401,7 +401,6 @@ class _CreateSheetState extends State<_CreateSheet> {
           ),
           const SizedBox(height: 20),
 
-          // ── Bouton sauvegarder ────────────────────────────────────────────
           GestureDetector(
             onTap: (canSave && !_saving) ? _save : null,
             child: AnimatedContainer(
@@ -423,7 +422,7 @@ class _CreateSheetState extends State<_CreateSheet> {
                         ),
                       )
                     : Text(
-                        'Ajouter',
+                        _isEdit ? 'Enregistrer' : 'Ajouter',
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,

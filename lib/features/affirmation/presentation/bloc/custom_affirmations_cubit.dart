@@ -17,6 +17,11 @@ class CustomAffirmationsCubit extends Cubit<List<Affirmation>> {
     await load();
   }
 
+  Future<void> update(int id, String text) async {
+    await _local.updateCustomAffirmation(id, text.trim());
+    await load();
+  }
+
   Future<void> delete(int id) async {
     await _local.deleteAffirmation(id);
     await load();
