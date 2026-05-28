@@ -86,22 +86,6 @@ class AppearancePage extends StatelessWidget {
                                 // Fond
                                 if (data.isAdaptive)
                                   Container(color: colors.card)
-                                else if (data.imageUrl != null)
-                                  Image.network(
-                                    data.imageUrl!,
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                    errorBuilder: (_, _, _) => Container(
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: data.gradientColors,
-                                          begin: data.begin,
-                                          end: data.end,
-                                        ),
-                                      ),
-                                    ),
-                                  )
                                 else
                                   Container(
                                     decoration: BoxDecoration(
@@ -109,18 +93,6 @@ class AppearancePage extends StatelessWidget {
                                         colors: data.gradientColors,
                                         begin: data.begin,
                                         end: data.end,
-                                      ),
-                                    ),
-                                  ),
-                                // Overlay sombre pour les photos
-                                if (data.imageUrl != null)
-                                  Container(
-                                    decoration: const BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [Color(0x88000000), Color(0x33000000), Color(0x66000000)],
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        stops: [0.0, 0.45, 1.0],
                                       ),
                                     ),
                                   ),
