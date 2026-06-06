@@ -25,10 +25,16 @@ class _AppearancePageState extends State<AppearancePage> {
   };
 
   List<CardVisualTheme> get _filtered {
-    if (_filter == ThemeCategory.tous) return CardVisualTheme.values;
-    return CardVisualTheme.values
-        .where((t) => t.data.category == _filter)
+    final list = (_filter == ThemeCategory.tous
+            ? CardVisualTheme.values
+            : CardVisualTheme.values.where((t) => t.data.category == _filter))
         .toList();
+    list.sort((a, b) {
+      final aPhoto = a.data.assetImage != null ? 0 : 1;
+      final bPhoto = b.data.assetImage != null ? 0 : 1;
+      return aPhoto.compareTo(bPhoto);
+    });
+    return list;
   }
 
   @override
