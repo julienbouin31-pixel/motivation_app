@@ -381,27 +381,50 @@ class _StreakCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // ── Chiffre + label ────────────────────────────────────────────
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          // ── Icône + Chiffre + label ────────────────────────────────
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                '$streak',
-                style: const TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                  height: 1,
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: streak >= 2
+                      ? const Color(0xFFFF9500).withValues(alpha: 0.15)
+                      : const Color(0xFF4FC3F7).withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  streak >= 2 ? Icons.local_fire_department : Icons.ac_unit,
+                  size: 22,
+                  color: streak >= 2
+                      ? const Color(0xFFFF9500)
+                      : const Color(0xFF4FC3F7),
                 ),
               ),
-              const SizedBox(height: 4),
-              const Text(
-                'Série',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white54,
-                ),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '$streak',
+                    style: const TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      height: 1,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Série',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white54,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -414,21 +437,21 @@ class _StreakCard extends StatelessWidget {
             children: List.generate(7, (i) {
               final isToday = i == todayIndex;
               return Padding(
-                padding: const EdgeInsets.only(left: 8),
+                padding: const EdgeInsets.only(left: 6),
                 child: Column(
                   children: [
                     Text(
                       days[i],
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 10,
                         fontWeight: FontWeight.w600,
                         color: isToday ? Colors.white : Colors.white38,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 5),
                     Container(
-                      width: 30,
-                      height: 30,
+                      width: 26,
+                      height: 26,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: isToday
@@ -437,7 +460,7 @@ class _StreakCard extends StatelessWidget {
                       ),
                       child: isToday
                           ? const Icon(Icons.check_rounded,
-                              size: 16, color: Colors.white)
+                              size: 14, color: Colors.white)
                           : null,
                     ),
                   ],
