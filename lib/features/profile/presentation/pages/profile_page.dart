@@ -7,6 +7,7 @@ import 'package:motivation_app/core/notifications/notification_service.dart';
 import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_seed.dart';
+import 'package:motivation_app/core/streak/streak_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 import 'package:motivation_app/injection_container.dart' as di;
@@ -27,6 +28,7 @@ class ProfilePage extends StatelessWidget {
     final name = (profile?.name?.isNotEmpty == true) ? profile!.name! : null;
     final initial = (name != null && name.isNotEmpty) ? name[0].toUpperCase() : '?';
     const subtitle = '';
+    final streak = context.watch<StreakCubit>().state;
 
     return Scaffold(
       backgroundColor: colors.scaffold,
@@ -130,6 +132,11 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                   ),
+
+                  const SizedBox(height: 16),
+
+                  // ── Streak ────────────────────────────────────────────────
+                  _StreakCard(streak: streak),
 
                   const SizedBox(height: 28),
 
@@ -347,6 +354,98 @@ class _SettingsRow extends StatelessWidget {
             Icon(Icons.chevron_right, size: 18, color: colors.secondary),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ─── Carte Streak ─────────────────────────────────────────────────────────────
+
+class _StreakCard extends StatelessWidget {
+  final int streak;
+  const _StreakCard({required this.streak});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bg = isDark ? const Color(0xFF1A1A1A) : const Color(0xFF1C1C1E);
+    const days = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+    final todayIndex = DateTime.now().weekday - 1; // 0=Lun … 6=Dim
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // ── Chiffre + label ────────────────────────────────────────────
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '$streak',
+                style: const TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                  height: 1,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'Série',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white54,
+                ),
+              ),
+            ],
+          ),
+
+          const Spacer(),
+
+          // ── Jours de la semaine ────────────────────────────────────────
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(7, (i) {
+              final isToday = i == todayIndex;
+              return Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Column(
+                  children: [
+                    Text(
+                      days[i],
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: isToday ? Colors.white : Colors.white38,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isToday
+                            ? const Color(0xFF4CAF50)
+                            : Colors.white.withValues(alpha: 0.1),
+                      ),
+                      child: isToday
+                          ? const Icon(Icons.check_rounded,
+                              size: 16, color: Colors.white)
+                          : null,
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ),
+        ],
       ),
     );
   }

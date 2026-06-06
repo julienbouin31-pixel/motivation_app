@@ -18,6 +18,7 @@ import 'package:motivation_app/core/di/injection_module.dart' as _i82;
 import 'package:motivation_app/core/network/dio_module.dart' as _i526;
 import 'package:motivation_app/core/network/network_info.dart' as _i867;
 import 'package:motivation_app/core/storage/secure_storage.dart' as _i35;
+import 'package:motivation_app/core/streak/streak_cubit.dart' as _i179;
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart'
     as _i987;
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_remote_data_source.dart'
@@ -87,6 +88,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i576.OnboardingLocalDataSourceImpl(
         secureStorage: gh<_i35.SecureStorage>(),
       ),
+    );
+    gh.lazySingleton<_i179.StreakCubit>(
+      () => _i179.StreakCubit(gh<_i35.SecureStorage>()),
     );
     gh.lazySingleton<_i829.OnboardingRepository>(
       () => _i10.OnboardingRepositoryImpl(

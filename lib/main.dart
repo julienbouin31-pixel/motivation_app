@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/storage/secure_storage.dart';
+import 'package:motivation_app/core/streak/streak_cubit.dart';
 import 'package:motivation_app/core/theme/card_theme_cubit.dart';
 import 'package:motivation_app/core/notifications/notification_service.dart';
 import 'package:motivation_app/core/widgets/home_widget_service.dart';
@@ -59,10 +60,14 @@ void main() async {
   final cardThemeCubit = CardThemeCubit(di.sl<SecureStorage>());
   await cardThemeCubit.load();
 
+  final streakCubit = di.sl<StreakCubit>();
+  if (isDone) await streakCubit.load();
+
   runApp(MyApp(
     router: router,
     onboardingCubit: onboardingCubit,
     cardThemeCubit: cardThemeCubit,
+    streakCubit: streakCubit,
   ));
 }
 
@@ -70,12 +75,14 @@ class MyApp extends StatefulWidget {
   final GoRouter router;
   final OnboardingCubit onboardingCubit;
   final CardThemeCubit cardThemeCubit;
+  final StreakCubit streakCubit;
 
   const MyApp({
     super.key,
     required this.router,
     required this.onboardingCubit,
     required this.cardThemeCubit,
+    required this.streakCubit,
   });
 
   @override
@@ -101,6 +108,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       providers: [
         BlocProvider.value(value: widget.onboardingCubit),
         BlocProvider.value(value: widget.cardThemeCubit),
+        BlocProvider.value(value: widget.streakCubit),
       ],
       child: MaterialApp.router(
         title: 'Motivation App',

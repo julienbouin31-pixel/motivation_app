@@ -159,6 +159,23 @@ class SecureStorage {
   Future<void> saveCardTheme(String value) =>
       _storage.write(key: _keyCardTheme, value: value);
 
+  // ─── Streak ──────────────────────────────────────────────────────────────
+  static const String _keyStreak = 'streak_count';
+  static const String _keyStreakLastDate = 'streak_last_date';
+
+  Future<int> readStreak() async {
+    final raw = await _storage.read(key: _keyStreak);
+    return int.tryParse(raw ?? '') ?? 0;
+  }
+
+  Future<void> saveStreak(int count) =>
+      _storage.write(key: _keyStreak, value: count.toString());
+
+  Future<String?> readStreakLastDate() => _storage.read(key: _keyStreakLastDate);
+
+  Future<void> saveStreakLastDate(String date) =>
+      _storage.write(key: _keyStreakLastDate, value: date);
+
   // ─── Thème ───────────────────────────────────────────────────────────────
   Future<String?> readThemeMode() => _storage.read(key: _keyThemeMode);
 

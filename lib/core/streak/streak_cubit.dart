@@ -1,0 +1,38 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
+import 'package:motivation_app/core/storage/secure_storage.dart';
+
+@lazySingleton
+class StreakCubit extends Cubit<int> {
+  final SecureStorage _storage;
+
+  StreakCubit(this._storage) : super(0);
+
+  Future<void> load() async {
+    final today = _dateKey(DateTime.now());
+    final lastDate = await _storage.readStreakLastDate();
+    final current = await _storage.readStreak();
+
+    if (lastDate == today) {
+      // Déjà compté aujourd'hui
+      emit(current);
+      return;
+    }
+
+    final int next;
+    if (lastDate == _dateKey(DateTime.now().subtract(const Duration(days: 1)))) {
+      // Hier → on continue le streak
+      next = current + 1;
+    } else {
+      // Trou ou premier lancement
+      next = 1;
+    }
+
+    await _storage.saveStreak(next);
+    await _storage.saveStreakLastDate(today);
+    emit(next);
+  }
+
+  static String _dateKey(DateTime d) =>
+      '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+}
