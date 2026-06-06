@@ -33,7 +33,7 @@ void main() async {
   };
   final storage = di.sl<SecureStorage>();
 
-  final isDone = profile?.name != null;
+  final isDone = profile?.name?.isNotEmpty == true;
   final initialLocation = isDone ? AppRouter.affirmation : AppRouter.home;
 
   final router = createAppRouter(initialLocation: initialLocation);
