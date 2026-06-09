@@ -1,15 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/storage/secure_storage.dart';
+import 'package:motivation_app/core/analytics/activity_logger.dart';
 import 'package:motivation_app/core/streak/streak_cubit.dart';
+import 'package:motivation_app/core/supabase/supabase_bootstrap.dart';
+import 'package:motivation_app/core/sync/one_time_migration.dart';
+import 'package:motivation_app/core/sync/sync_service.dart';
 import 'package:motivation_app/core/theme/card_theme_cubit.dart';
 import 'package:motivation_app/core/notifications/notification_service.dart';
 import 'package:motivation_app/core/widgets/home_widget_service.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
-import 'package:motivation_app/features/affirmation/data/datasources/affirmation_seed.dart';
 import 'package:motivation_app/features/affirmation/domain/repositories/affirmation_repository.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
@@ -18,11 +24,24 @@ import 'package:motivation_app/injection_container.dart' as di;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await dotenv.load(fileName: '.env');
+  await initSupabase();
+  await ensureAnonymousSession();
+
   await di.init();
 
   final local = di.sl<AffirmationLocalDataSource>();
-  await seedAffirmationsIfEmpty(local);
-  di.sl<AffirmationRepository>().weeklyRefreshInBackground();
+  final repo = di.sl<AffirmationRepository>();
+  final affirmationCount = await local.totalCount();
+  if (affirmationCount == 0) {
+    await repo.weeklyRefreshInBackground();
+  } else {
+    unawaited(repo.weeklyRefreshInBackground());
+  }
+
+  await di.sl<OneTimeMigration>().runIfNeeded();
+  await di.sl<ActivityLogger>().log(ActivityEvent.appOpen);
+  unawaited(di.sl<SyncService>().kick());
 
   final onboardingCubit = di.sl<OnboardingCubit>();
   await onboardingCubit.loadUserProfile();
@@ -61,7 +80,7 @@ void main() async {
   await cardThemeCubit.load();
 
   final streakCubit = di.sl<StreakCubit>();
-  if (isDone) await streakCubit.load();
+  await streakCubit.load();
 
   runApp(MyApp(
     router: router,
@@ -110,13 +129,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         BlocProvider.value(value: widget.cardThemeCubit),
         BlocProvider.value(value: widget.streakCubit),
       ],
-      child: MaterialApp.router(
-        title: 'Motivation App',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.dark,
-        routerConfig: widget.router,
+      child: BlocListener<OnboardingCubit, OnboardingState>(
+        listenWhen: (prev, next) =>
+            prev is! OnboardingDataSaved && next is OnboardingDataSaved,
+        listener: (context, state) => widget.streakCubit.load(),
+        child: MaterialApp.router(
+          title: 'Motivation App',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.dark,
+          routerConfig: widget.router,
+        ),
       ),
     );
   }

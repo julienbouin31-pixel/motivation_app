@@ -1,8 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:motivation_app/core/analytics/activity_logger.dart';
 import 'package:motivation_app/core/errors/failures.dart';
 import 'package:motivation_app/core/network/network_info.dart';
+import 'package:motivation_app/core/sync/sync_entity_type.dart';
+import 'package:motivation_app/core/sync/sync_queue_dao.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_remote_data_source.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
@@ -16,12 +19,16 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
   final AffirmationRemoteDataSource remoteDataSource;
   final NetworkInfo networkInfo;
   final GetUserProfileUseCase getUserProfile;
+  final SyncQueueDao syncQueue;
+  final ActivityLogger activityLogger;
 
   AffirmationRepositoryImpl({
     required this.localDataSource,
     required this.remoteDataSource,
     required this.networkInfo,
     required this.getUserProfile,
+    required this.syncQueue,
+    required this.activityLogger,
   });
 
   // ─── Gestion de la date du dernier fetch ────────────────────────────────────
@@ -120,6 +127,10 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
   Future<Either<Failure, void>> markAsViewed(int id) async {
     try {
       await localDataSource.markAsViewed(id);
+      await activityLogger.log(
+        ActivityEvent.affirmationViewed,
+        payload: {'affirmation_local_id': id},
+      );
       return Right(null);
     } catch (e) {
       debugPrint('[markAsViewed] Erreur: $e');
@@ -131,9 +142,95 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
   Future<Either<Failure, void>> toggleFavorite(int id) async {
     try {
       await localDataSource.toggleFavorite(id);
+      final row = await localDataSource.getRowById(id);
+      if (row != null) {
+        await syncQueue.enqueue(
+          entityType: SyncEntityType.favorite,
+          operation: row.isFavorite ? SyncOperation.upsert : SyncOperation.delete,
+          entityLocalId: id,
+          payload: {
+            'content': row.content,
+            'category': row.category,
+            'is_custom': row.isCustom,
+            'custom_remote_id': row.isCustom ? row.remoteId : null,
+          },
+        );
+        if (row.isFavorite) {
+          await activityLogger.log(
+            ActivityEvent.favoriteAdded,
+            payload: {'category': row.category, 'is_custom': row.isCustom},
+          );
+        }
+      }
       return Right(null);
     } catch (e) {
       debugPrint('[toggleFavorite] Erreur: $e');
+      return Left(CacheFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Affirmation>>> getCustomAffirmations() async {
+    try {
+      final models = await localDataSource.getCustomAffirmations();
+      return Right(models.map((m) => m.toEntity()).toList());
+    } catch (e) {
+      debugPrint('[getCustomAffirmations] Erreur: $e');
+      return Left(CacheFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> addCustomAffirmation(String text) async {
+    try {
+      final localId = await localDataSource.saveCustomAffirmation(text);
+      await syncQueue.enqueue(
+        entityType: SyncEntityType.customAffirmation,
+        operation: SyncOperation.upsert,
+        entityLocalId: localId,
+        payload: {'content': text},
+      );
+      await activityLogger.log(ActivityEvent.customAffirmationCreated);
+      return Right(null);
+    } catch (e) {
+      debugPrint('[addCustomAffirmation] Erreur: $e');
+      return Left(CacheFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> updateCustomAffirmation(int id, String text) async {
+    try {
+      await localDataSource.updateCustomAffirmation(id, text);
+      await syncQueue.enqueue(
+        entityType: SyncEntityType.customAffirmation,
+        operation: SyncOperation.upsert,
+        entityLocalId: id,
+        payload: {'content': text},
+      );
+      return Right(null);
+    } catch (e) {
+      debugPrint('[updateCustomAffirmation] Erreur: $e');
+      return Left(CacheFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteCustomAffirmation(int id) async {
+    try {
+      final remoteId = await localDataSource.getRemoteId(id);
+      await localDataSource.deleteAffirmation(id);
+      if (remoteId != null) {
+        await syncQueue.enqueue(
+          entityType: SyncEntityType.customAffirmation,
+          operation: SyncOperation.delete,
+          entityLocalId: id,
+          payload: {'remote_id': remoteId},
+        );
+      }
+      return Right(null);
+    } catch (e) {
+      debugPrint('[deleteCustomAffirmation] Erreur: $e');
       return Left(CacheFailure());
     }
   }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -6,7 +8,7 @@ import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/notifications/notification_service.dart';
 import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
-import 'package:motivation_app/features/affirmation/data/datasources/affirmation_seed.dart';
+import 'package:motivation_app/features/affirmation/domain/repositories/affirmation_repository.dart';
 import 'package:motivation_app/core/streak/streak_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
@@ -208,7 +210,7 @@ class ProfilePage extends StatelessWidget {
                     onTap: () async {
                       final local = di.sl<AffirmationLocalDataSource>();
                       await local.clearAll();
-                      await seedAffirmationsIfEmpty(local);
+                      unawaited(di.sl<AffirmationRepository>().weeklyRefreshInBackground());
                       await NotificationService.cancelAll();
                       await di.sl<SecureStorage>().deleteAll();
                       di.sl<OnboardingCubit>().reset();

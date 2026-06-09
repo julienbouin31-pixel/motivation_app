@@ -159,6 +159,16 @@ class SecureStorage {
   Future<void> saveCardTheme(String value) =>
       _storage.write(key: _keyCardTheme, value: value);
 
+  // ─── Migration Supabase ──────────────────────────────────────────────────
+  static const String _keyMigratedToSupabase = 'migrated_to_supabase';
+
+  Future<bool> readMigratedToSupabase() async {
+    return await _storage.read(key: _keyMigratedToSupabase) == 'true';
+  }
+
+  Future<void> setMigratedToSupabase() =>
+      _storage.write(key: _keyMigratedToSupabase, value: 'true');
+
   // ─── Streak ──────────────────────────────────────────────────────────────
   static const String _keyStreak = 'streak_count';
   static const String _keyStreakLastDate = 'streak_last_date';

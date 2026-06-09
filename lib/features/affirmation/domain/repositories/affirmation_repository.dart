@@ -13,4 +13,8 @@ abstract class AffirmationRepository {
   Future<void> weeklyRefreshInBackground();
   Future<Either<Failure, List<AffirmationCategory>>> getSavedCategories();
   Future<Either<Failure, void>> saveCategories(List<AffirmationCategory> categories);
+  Future<Either<Failure, List<Affirmation>>> getCustomAffirmations();
+  Future<Either<Failure, void>> addCustomAffirmation(String text);
+  Future<Either<Failure, void>> updateCustomAffirmation(int id, String text);
+  Future<Either<Failure, void>> deleteCustomAffirmation(int id);
 }

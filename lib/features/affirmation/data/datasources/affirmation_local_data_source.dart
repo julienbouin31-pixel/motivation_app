@@ -20,9 +20,30 @@ abstract class AffirmationLocalDataSource {
   Future<DateTime?> getLastFetchDate();
   Future<void> setLastFetchDate(DateTime date);
   Future<List<AffirmationModel>> getCustomAffirmations();
-  Future<void> saveCustomAffirmation(String text);
+  Future<int> saveCustomAffirmation(String text);
   Future<void> updateCustomAffirmation(int id, String text);
   Future<void> deleteAffirmation(int id);
+  Future<String?> getRemoteId(int id);
+  Future<void> setRemoteId(int id, String remoteId);
+  Future<AffirmationRowData?> getRowById(int id);
+}
+
+class AffirmationRowData {
+  final int id;
+  final String content;
+  final String category;
+  final bool isFavorite;
+  final bool isCustom;
+  final String? remoteId;
+
+  const AffirmationRowData({
+    required this.id,
+    required this.content,
+    required this.category,
+    required this.isFavorite,
+    required this.isCustom,
+    this.remoteId,
+  });
 }
 
 @LazySingleton(as: AffirmationLocalDataSource)
@@ -173,8 +194,8 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
   }
 
   @override
-  Future<void> saveCustomAffirmation(String text) async {
-    await db.into(db.affirmationItems).insert(
+  Future<int> saveCustomAffirmation(String text) async {
+    return db.into(db.affirmationItems).insert(
       AffirmationItemsCompanion.insert(
         content: text,
         category: AffirmationCategory.custom.name,
@@ -193,6 +214,36 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
   @override
   Future<void> deleteAffirmation(int id) async {
     await (db.delete(db.affirmationItems)..where((t) => t.id.equals(id))).go();
+  }
+
+  @override
+  Future<String?> getRemoteId(int id) async {
+    final row = await (db.select(db.affirmationItems)
+          ..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
+    return row?.remoteId;
+  }
+
+  @override
+  Future<void> setRemoteId(int id, String remoteId) async {
+    await (db.update(db.affirmationItems)..where((t) => t.id.equals(id)))
+        .write(AffirmationItemsCompanion(remoteId: Value(remoteId)));
+  }
+
+  @override
+  Future<AffirmationRowData?> getRowById(int id) async {
+    final row = await (db.select(db.affirmationItems)
+          ..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
+    if (row == null) return null;
+    return AffirmationRowData(
+      id: row.id,
+      content: row.content,
+      category: row.category,
+      isFavorite: row.isFavorite,
+      isCustom: row.isCustom,
+      remoteId: row.remoteId,
+    );
   }
 
   AffirmationModel _fromRow(AffirmationItem row) => AffirmationModel(
