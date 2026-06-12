@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/notifications/notification_service.dart';
 import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
@@ -116,154 +115,165 @@ class _NotificationPageState extends State<NotificationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
-
     return Scaffold(
-      backgroundColor: colors.scaffold,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ─── Header ───────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: colors.surface,
-                        shape: BoxShape.circle,
+      backgroundColor: Colors.black,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF1A1A1A), Colors.black, Colors.black],
+            stops: [0.0, 0.3, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ─── Header ───────────────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.pop(),
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.05),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                        ),
+                        child: const Icon(Icons.arrow_back_ios_new_rounded, size: 17, color: Colors.white),
                       ),
-                      child: Icon(Icons.arrow_back,
-                          size: 20, color: colors.primary),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Text(
-                    'Rappels',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.3,
-                      color: colors.primary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            if (_loading)
-              const Expanded(child: Center(child: CircularProgressIndicator()))
-            else
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // ─── Toggle ────────────────────────────────────────
-                      _Card(
-                        colors: colors,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Activer les rappels',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                      color: colors.primary,
-                                    ),
-                                  ),
-                                  Text(
-                                    _enabled ? 'Actifs' : 'Désactivés',
-                                    style: TextStyle(
-                                        fontSize: 12, color: colors.secondary),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Switch.adaptive(
-                              value: _enabled,
-                              onChanged: _setEnabled,
-                              activeThumbColor: colors.primary,
-                              activeTrackColor:
-                                  colors.primary.withValues(alpha: 0.3),
-                            ),
-                          ],
-                        ),
+                    const SizedBox(width: 16),
+                    const Text(
+                      'Rappels',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.5,
+                        color: Colors.white,
                       ),
-
-                      if (_enabled) ...[
-                        const SizedBox(height: 16),
-
-                        // ─── Test ──────────────────────────────────────
-                        _TestButton(colors: colors),
-
-                        const SizedBox(height: 28),
-
-                        // ─── Fréquence ─────────────────────────────────
-                        _SectionLabel('FRÉQUENCE', colors),
-                        const SizedBox(height: 10),
-                        ..._freqOptions.map((opt) => Padding(
-                              padding: const EdgeInsets.only(bottom: 8),
-                              child: _FrequencyCard(
-                                label: opt.label,
-                                sub: opt.sub,
-                                selected: _frequency == opt.freq,
-                                colors: colors,
-                                onTap: () => _onFreqChanged(opt.freq),
-                              ),
-                            )),
-
-                        const SizedBox(height: 28),
-
-                        // ─── Plage horaire ─────────────────────────────
-                        _SectionLabel('PLAGE HORAIRE', colors),
-                        const SizedBox(height: 6),
-                        Text(
-                          'Tes rappels seront envoyés entre ces heures',
-                          style: TextStyle(
-                              fontSize: 13, color: colors.secondary),
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _HourPicker(
-                                label: 'De',
-                                value: _startHour,
-                                colors: colors,
-                                onChanged: _onStartChanged,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _HourPicker(
-                                label: 'À',
-                                value: _endHour,
-                                colors: colors,
-                                onChanged: _onEndChanged,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-
-                      const SizedBox(height: 32),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-          ],
+              const SizedBox(height: 24),
+
+              if (_loading)
+                const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(color: Colors.white54),
+                  ),
+                )
+              else
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // ─── Toggle ────────────────────────────────────
+                        _Card(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Activer les rappels',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    Text(
+                                      _enabled ? 'Actifs' : 'Désactivés',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white.withValues(alpha: 0.4),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Switch.adaptive(
+                                value: _enabled,
+                                onChanged: _setEnabled,
+                                activeThumbColor: Colors.white,
+                                activeTrackColor: Colors.white.withValues(alpha: 0.3),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        if (_enabled) ...[
+                          const SizedBox(height: 16),
+
+                          // ─── Test ──────────────────────────────────
+                          const _TestButton(),
+
+                          const SizedBox(height: 28),
+
+                          // ─── Fréquence ─────────────────────────────
+                          const _SectionLabel('FRÉQUENCE'),
+                          const SizedBox(height: 10),
+                          ..._freqOptions.map((opt) => Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: _FrequencyCard(
+                                  label: opt.label,
+                                  sub: opt.sub,
+                                  selected: _frequency == opt.freq,
+                                  onTap: () => _onFreqChanged(opt.freq),
+                                ),
+                              )),
+
+                          const SizedBox(height: 28),
+
+                          // ─── Plage horaire ─────────────────────────
+                          const _SectionLabel('PLAGE HORAIRE'),
+                          const SizedBox(height: 6),
+                          Text(
+                            'Tes rappels seront envoyés entre ces heures',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.white.withValues(alpha: 0.4),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _HourPicker(
+                                  label: 'De',
+                                  value: _startHour,
+                                  onChanged: _onStartChanged,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _HourPicker(
+                                  label: 'À',
+                                  value: _endHour,
+                                  onChanged: _onEndChanged,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+
+                        const SizedBox(height: 32),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -274,8 +284,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
 class _SectionLabel extends StatelessWidget {
   final String text;
-  final AppColors colors;
-  const _SectionLabel(this.text, this.colors);
+  const _SectionLabel(this.text);
 
   @override
   Widget build(BuildContext context) => Text(
@@ -284,24 +293,23 @@ class _SectionLabel extends StatelessWidget {
           fontSize: 11,
           fontWeight: FontWeight.w600,
           letterSpacing: 1.2,
-          color: colors.secondary,
+          color: Colors.white.withValues(alpha: 0.4),
         ),
       );
 }
 
 class _Card extends StatelessWidget {
-  final AppColors colors;
   final Widget child;
-  const _Card({required this.colors, required this.child});
+  const _Card({required this.child});
 
   @override
   Widget build(BuildContext context) => Container(
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: colors.card,
+          color: Colors.white.withValues(alpha: 0.04),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: colors.border),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
         ),
         child: child,
       );
@@ -311,14 +319,12 @@ class _FrequencyCard extends StatelessWidget {
   final String label;
   final String sub;
   final bool selected;
-  final AppColors colors;
   final VoidCallback onTap;
 
   const _FrequencyCard({
     required this.label,
     required this.sub,
     required this.selected,
-    required this.colors,
     required this.onTap,
   });
 
@@ -329,12 +335,16 @@ class _FrequencyCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
         decoration: BoxDecoration(
-          color: selected ? colors.primary : colors.card,
-          borderRadius: BorderRadius.circular(12),
+          color: selected
+              ? Colors.white.withValues(alpha: 0.1)
+              : Colors.white.withValues(alpha: 0.03),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: selected ? colors.primary : colors.border,
+            color: selected
+                ? Colors.white.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.08),
           ),
         ),
         child: Column(
@@ -345,7 +355,7 @@ class _FrequencyCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: selected ? colors.scaffold : colors.primary,
+                color: selected ? Colors.white : Colors.white.withValues(alpha: 0.85),
               ),
             ),
             const SizedBox(height: 2),
@@ -354,8 +364,8 @@ class _FrequencyCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 color: selected
-                    ? colors.scaffold.withValues(alpha: 0.6)
-                    : colors.secondary,
+                    ? Colors.white.withValues(alpha: 0.6)
+                    : Colors.white.withValues(alpha: 0.4),
               ),
             ),
           ],
@@ -366,8 +376,7 @@ class _FrequencyCard extends StatelessWidget {
 }
 
 class _TestButton extends StatefulWidget {
-  final AppColors colors;
-  const _TestButton({required this.colors});
+  const _TestButton();
 
   @override
   State<_TestButton> createState() => _TestButtonState();
@@ -382,33 +391,32 @@ class _TestButtonState extends State<_TestButton> {
       onTap: _sent
           ? null
           : () async {
-              final onboardingState =
-                  context.read<OnboardingCubit>().state;
+              final onboardingState = context.read<OnboardingCubit>().state;
               final profile = switch (onboardingState) {
                 OnboardingDataSaved(:final profile) => profile,
                 OnboardingProfileLoaded(:final profile) => profile,
                 _ => null,
               };
               final userName = profile?.name ?? '';
-              final texts =
-                  await di.sl<AffirmationLocalDataSource>().getAllTexts();
+              final texts = await di.sl<AffirmationLocalDataSource>().getAllTexts();
               texts.shuffle();
-              final text = (texts.isNotEmpty ? texts.first : 'Continue, tu es plus proche que tu ne le crois.')
+              final text = (texts.isNotEmpty
+                      ? texts.first
+                      : 'Continue, tu es plus proche que tu ne le crois.')
                   .replaceAll('{name}', userName);
               await NotificationService.scheduleTestIn5Seconds(text);
               setState(() => _sent = true);
-              Future.delayed(const Duration(seconds: 8),
-                  () { if (mounted) setState(() => _sent = false); });
-              Future.delayed(const Duration(seconds: 8),
-                  () { if (mounted) setState(() => _sent = false); });
+              Future.delayed(const Duration(seconds: 8), () {
+                if (mounted) setState(() => _sent = false);
+              });
             },
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: widget.colors.surface,
+          color: Colors.white.withValues(alpha: 0.04),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: widget.colors.border),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -416,15 +424,17 @@ class _TestButtonState extends State<_TestButton> {
             Icon(
               _sent ? Icons.check : Icons.notifications_active_outlined,
               size: 16,
-              color: widget.colors.secondary,
+              color: Colors.white.withValues(alpha: 0.6),
             ),
             const SizedBox(width: 8),
             Text(
-              _sent ? 'Notif dans 5 secondes — passe en arrière-plan' : 'Envoyer une notif de test',
+              _sent
+                  ? 'Notif dans 5 secondes — passe en arrière-plan'
+                  : 'Envoyer une notif de test',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: widget.colors.secondary,
+                color: Colors.white.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -437,13 +447,11 @@ class _TestButtonState extends State<_TestButton> {
 class _HourPicker extends StatelessWidget {
   final String label;
   final int value;
-  final AppColors colors;
   final ValueChanged<int> onChanged;
 
   const _HourPicker({
     required this.label,
     required this.value,
-    required this.colors,
     required this.onChanged,
   });
 
@@ -452,34 +460,39 @@ class _HourPicker extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: TextStyle(fontSize: 13, color: colors.secondary)),
+        Text(
+          label,
+          style: TextStyle(fontSize: 13, color: Colors.white.withValues(alpha: 0.5)),
+        ),
         const SizedBox(height: 6),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
           decoration: BoxDecoration(
-            color: colors.card,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: colors.border),
+            color: Colors.white.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
               value: value,
               isExpanded: true,
-              dropdownColor: colors.card,
-              style: TextStyle(
+              dropdownColor: const Color(0xFF1A1A1A),
+              style: const TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w600,
-                color: colors.primary,
+                color: Colors.white,
               ),
-              icon: Icon(Icons.keyboard_arrow_down_rounded,
-                  color: colors.secondary),
+              icon: Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: Colors.white.withValues(alpha: 0.5),
+              ),
               items: List.generate(
-                  24,
-                  (h) => DropdownMenuItem(
-                        value: h,
-                        child: Text('${h}h00'),
-                      )),
+                24,
+                (h) => DropdownMenuItem(
+                  value: h,
+                  child: Text('${h}h00'),
+                ),
+              ),
               onChanged: (h) {
                 if (h != null) onChanged(h);
               },

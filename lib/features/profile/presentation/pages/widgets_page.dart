@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:motivation_app/config/themes/app_theme.dart';
 
 class WidgetsPage extends StatelessWidget {
   const WidgetsPage({super.key});
@@ -10,104 +9,112 @@ class WidgetsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
-
     return Scaffold(
-      backgroundColor: colors.scaffold,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // ─── Header ──────────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: colors.surface,
-                        shape: BoxShape.circle,
+      backgroundColor: Colors.black,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF1A1A1A), Colors.black, Colors.black],
+            stops: [0.0, 0.3, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // ─── Header ──────────────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.pop(),
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.05),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                        ),
+                        child: const Icon(Icons.arrow_back_ios_new_rounded, size: 17, color: Colors.white),
                       ),
-                      child: Icon(Icons.arrow_back, size: 20, color: colors.primary),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Text(
-                    'Widgets',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: colors.primary,
+                    const SizedBox(width: 16),
+                    const Text(
+                      'Widgets',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        letterSpacing: -0.5,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            // ─── Contenu ─────────────────────────────────────────────────────
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
-                children: [
-                  // ── Widget écran d'accueil ─────────────────────────────────
-                  _SectionLabel('ÉCRAN D\'ACCUEIL', colors),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: (MediaQuery.of(context).size.width - 40 - 24) / 2,
-                        child: _WidgetPreviewSquare(
-                          label: 'Affirmation  2×2',
-                          child: _AffirmationHomeWidget(
-                            text: _affirmationText,
-                            category: _category,
+              // ─── Contenu ─────────────────────────────────────────────────
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
+                  children: [
+                    // ── Widget écran d'accueil ──────────────────────────────
+                    const _SectionLabel('ÉCRAN D\'ACCUEIL'),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: (MediaQuery.of(context).size.width - 40 - 24) / 2,
+                          child: const _WidgetPreviewSquare(
+                            label: 'Affirmation  2×2',
+                            child: _AffirmationHomeWidget(
+                              text: _affirmationText,
+                              category: _category,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  _InstructionsCard(
-                    colors: colors,
-                    icon: Icons.home_rounded,
-                    title: 'Ajouter sur l\'écran d\'accueil',
-                    steps: const [
-                      'Appuie longuement sur l\'écran d\'accueil',
-                      'Tape "+" en haut à gauche',
-                      'Recherche "Motivation" dans la liste',
-                      'Choisis le widget et appuie sur Ajouter',
-                    ],
-                  ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    const _InstructionsCard(
+                      icon: Icons.home_rounded,
+                      title: 'Ajouter sur l\'écran d\'accueil',
+                      steps: [
+                        'Appuie longuement sur l\'écran d\'accueil',
+                        'Tape "+" en haut à gauche',
+                        'Recherche "Motivation" dans la liste',
+                        'Choisis le widget et appuie sur Ajouter',
+                      ],
+                    ),
 
-                  const SizedBox(height: 32),
+                    const SizedBox(height: 32),
 
-                  // ── Widget écran de verrouillage ───────────────────────────
-                  _SectionLabel('ÉCRAN DE VERROUILLAGE', colors),
-                  const SizedBox(height: 12),
-                  _WidgetPreviewLockScreen(
-                    label: 'Affirmation  rectangulaire',
-                    child: _AffirmationLockWidget(text: _affirmationText),
-                  ),
-                  const SizedBox(height: 10),
-                  _InstructionsCard(
-                    colors: colors,
-                    icon: Icons.lock_outline_rounded,
-                    title: 'Ajouter sur l\'écran de verrouillage',
-                    steps: const [
-                      'Appuie longuement sur l\'écran de verrouillage',
-                      'Tape "Personnaliser"',
-                      'Sélectionne "Écran de verrouillage"',
-                      'Tape la zone des widgets sous l\'heure',
-                      'Recherche "Motivation" et ajoute le widget',
-                    ],
-                  ),
-                ],
+                    // ── Widget écran de verrouillage ────────────────────────
+                    const _SectionLabel('ÉCRAN DE VERROUILLAGE'),
+                    const SizedBox(height: 12),
+                    const _WidgetPreviewLockScreen(
+                      label: 'Affirmation  rectangulaire',
+                      child: _AffirmationLockWidget(text: _affirmationText),
+                    ),
+                    const SizedBox(height: 10),
+                    const _InstructionsCard(
+                      icon: Icons.lock_outline_rounded,
+                      title: 'Ajouter sur l\'écran de verrouillage',
+                      steps: [
+                        'Appuie longuement sur l\'écran de verrouillage',
+                        'Tape "Personnaliser"',
+                        'Sélectionne "Écran de verrouillage"',
+                        'Tape la zone des widgets sous l\'heure',
+                        'Recherche "Motivation" et ajoute le widget',
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -118,8 +125,7 @@ class WidgetsPage extends StatelessWidget {
 
 class _SectionLabel extends StatelessWidget {
   final String label;
-  final AppColors colors;
-  const _SectionLabel(this.label, this.colors);
+  const _SectionLabel(this.label);
 
   @override
   Widget build(BuildContext context) {
@@ -128,8 +134,8 @@ class _SectionLabel extends StatelessWidget {
       style: TextStyle(
         fontSize: 11,
         fontWeight: FontWeight.w600,
-        color: colors.secondary,
-        letterSpacing: 0.8,
+        color: Colors.white.withValues(alpha: 0.4),
+        letterSpacing: 1.2,
       ),
     );
   }
@@ -138,13 +144,11 @@ class _SectionLabel extends StatelessWidget {
 // ─── Instructions card ────────────────────────────────────────────────────────
 
 class _InstructionsCard extends StatelessWidget {
-  final AppColors colors;
   final IconData icon;
   final String title;
   final List<String> steps;
 
   const _InstructionsCard({
-    required this.colors,
     required this.icon,
     required this.title,
     required this.steps,
@@ -155,8 +159,9 @@ class _InstructionsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colors.card,
+        color: Colors.white.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,19 +172,19 @@ class _InstructionsCard extends StatelessWidget {
                 width: 34,
                 height: 34,
                 decoration: BoxDecoration(
-                  color: colors.primary,
+                  color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(9),
                 ),
-                child: Icon(icon, size: 18, color: colors.scaffold),
+                child: Icon(icon, size: 18, color: Colors.white.withValues(alpha: 0.8)),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: colors.primary,
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -187,7 +192,7 @@ class _InstructionsCard extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           ...steps.asMap().entries.map(
-            (e) => _Step(number: '${e.key + 1}', text: e.value, colors: colors),
+            (e) => _Step(number: '${e.key + 1}', text: e.value),
           ),
         ],
       ),
@@ -198,8 +203,7 @@ class _InstructionsCard extends StatelessWidget {
 class _Step extends StatelessWidget {
   final String number;
   final String text;
-  final AppColors colors;
-  const _Step({required this.number, required this.text, required this.colors});
+  const _Step({required this.number, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -211,14 +215,17 @@ class _Step extends StatelessWidget {
           Container(
             width: 20,
             height: 20,
-            decoration: BoxDecoration(color: colors.surface, shape: BoxShape.circle),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.08),
+              shape: BoxShape.circle,
+            ),
             child: Center(
               child: Text(
                 number,
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  color: colors.secondary,
+                  color: Colors.white.withValues(alpha: 0.6),
                 ),
               ),
             ),
@@ -227,7 +234,11 @@ class _Step extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: TextStyle(fontSize: 13, color: colors.secondary, height: 1.4),
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.white.withValues(alpha: 0.5),
+                height: 1.4,
+              ),
             ),
           ),
         ],
@@ -245,7 +256,6 @@ class _WidgetPreviewSquare extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -254,7 +264,7 @@ class _WidgetPreviewSquare extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: colors.border),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(21),
@@ -265,7 +275,11 @@ class _WidgetPreviewSquare extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           label,
-          style: TextStyle(fontSize: 12, color: colors.secondary, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.white.withValues(alpha: 0.4),
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ],
     );
@@ -279,11 +293,9 @@ class _WidgetPreviewLockScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Simule un écran de verrouillage iOS
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
@@ -297,10 +309,9 @@ class _WidgetPreviewLockScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Heure simulée
-              Text(
+              const Text(
                 '09:41',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 56,
                   fontWeight: FontWeight.w200,
                   color: Colors.white,
@@ -316,7 +327,6 @@ class _WidgetPreviewLockScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              // Zone widget
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -335,7 +345,11 @@ class _WidgetPreviewLockScreen extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           label,
-          style: TextStyle(fontSize: 12, color: colors.secondary, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.white.withValues(alpha: 0.4),
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ],
     );
@@ -361,7 +375,7 @@ class _AffirmationHomeWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '“',
+            '"',
             style: TextStyle(
               fontSize: 44,
               fontWeight: FontWeight.w900,

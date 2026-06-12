@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
 import 'package:motivation_app/core/theme/card_visual_theme.dart';
 import 'package:motivation_app/core/theme/card_theme_cubit.dart';
@@ -26,98 +25,113 @@ class _CustomAffirmationsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
     final affirmations = context.watch<CustomAffirmationsCubit>().state;
 
     return Scaffold(
-      backgroundColor: colors.scaffold,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: colors.surface,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(Icons.arrow_back, size: 20, color: colors.primary),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Mes affirmations',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: colors.primary,
-                          ),
+      backgroundColor: Colors.black,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF1A1A1A), Colors.black, Colors.black],
+            stops: [0.0, 0.3, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.pop(),
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.05),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                         ),
-                        if (affirmations.isNotEmpty)
-                          Text(
-                            '${affirmations.length} créée${affirmations.length > 1 ? 's' : ''}',
-                            style: TextStyle(fontSize: 12, color: colors.secondary),
-                          ),
-                      ],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => _showEditSheet(context, null),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: colors.primary,
-                        borderRadius: BorderRadius.circular(20),
+                        child: const Icon(Icons.arrow_back_ios_new_rounded, size: 17, color: Colors.white),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.add, size: 16, color: colors.scaffold),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Créer',
+                          const Text(
+                            'Mes affirmations',
                             style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: colors.scaffold,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                              letterSpacing: -0.5,
                             ),
                           ),
+                          if (affirmations.isNotEmpty)
+                            Text(
+                              '${affirmations.length} créée${affirmations.length > 1 ? 's' : ''}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white.withValues(alpha: 0.4),
+                              ),
+                            ),
                         ],
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-
-            Expanded(
-              child: affirmations.isEmpty
-                  ? _EmptyState(onTap: () => _showEditSheet(context, null))
-                  : ListView.separated(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
-                      itemCount: affirmations.length,
-                      separatorBuilder: (context, _) => const SizedBox(height: 10),
-                      itemBuilder: (context, index) {
-                        final a = affirmations[index];
-                        return _AffirmationTile(
-                          affirmation: a,
-                          onEdit: () => _showEditSheet(context, a),
-                        );
-                      },
+                    GestureDetector(
+                      onTap: () => _showEditSheet(context, null),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.add, size: 16, color: Colors.white.withValues(alpha: 0.9)),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Créer',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white.withValues(alpha: 0.9),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-            ),
-          ],
+                  ],
+                ),
+              ),
+
+              Expanded(
+                child: affirmations.isEmpty
+                    ? _EmptyState(onTap: () => _showEditSheet(context, null))
+                    : ListView.separated(
+                        padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+                        itemCount: affirmations.length,
+                        separatorBuilder: (context, _) => const SizedBox(height: 10),
+                        itemBuilder: (context, index) {
+                          final a = affirmations[index];
+                          return _AffirmationTile(
+                            affirmation: a,
+                            onEdit: () => _showEditSheet(context, a),
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -159,8 +173,6 @@ class _AffirmationTileState extends State<_AffirmationTile> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
-
     return Dismissible(
       key: ValueKey(widget.affirmation.id),
       direction: DismissDirection.endToStart,
@@ -178,8 +190,9 @@ class _AffirmationTileState extends State<_AffirmationTile> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: colors.card,
+          color: Colors.white.withValues(alpha: 0.04),
           borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,10 +203,10 @@ class _AffirmationTileState extends State<_AffirmationTile> {
                 children: [
                   Text(
                     widget.affirmation.text,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: colors.primary,
+                      color: Colors.white,
                       height: 1.45,
                     ),
                   ),
@@ -203,7 +216,7 @@ class _AffirmationTileState extends State<_AffirmationTile> {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
-                      color: colors.secondary,
+                      color: Colors.white.withValues(alpha: 0.35),
                     ),
                   ),
                 ],
@@ -217,7 +230,11 @@ class _AffirmationTileState extends State<_AffirmationTile> {
                   onTap: widget.onEdit,
                   child: Padding(
                     padding: const EdgeInsets.all(4),
-                    child: Icon(Icons.edit_outlined, size: 18, color: colors.secondary),
+                    child: Icon(
+                      Icons.edit_outlined,
+                      size: 18,
+                      color: Colors.white.withValues(alpha: 0.4),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 4),
@@ -225,7 +242,11 @@ class _AffirmationTileState extends State<_AffirmationTile> {
                   onTap: () => _share(context),
                   child: Padding(
                     padding: const EdgeInsets.all(4),
-                    child: Icon(Icons.ios_share_outlined, size: 18, color: colors.secondary),
+                    child: Icon(
+                      Icons.ios_share_outlined,
+                      size: 18,
+                      color: Colors.white.withValues(alpha: 0.4),
+                    ),
                   ),
                 ),
               ],
@@ -256,7 +277,6 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -265,25 +285,33 @@ class _EmptyState extends StatelessWidget {
             width: 72,
             height: 72,
             decoration: BoxDecoration(
-              color: colors.surface,
+              color: Colors.white.withValues(alpha: 0.06),
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.edit_note_rounded, size: 34, color: colors.secondary),
+            child: Icon(
+              Icons.edit_note_rounded,
+              size: 34,
+              color: Colors.white.withValues(alpha: 0.4),
+            ),
           ),
           const SizedBox(height: 16),
-          Text(
+          const Text(
             'Aucune affirmation',
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
-              color: colors.primary,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 6),
           Text(
             'Crée ta première affirmation\npersonnalisée.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 13, color: colors.secondary, height: 1.4),
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.white.withValues(alpha: 0.4),
+              height: 1.4,
+            ),
           ),
           const SizedBox(height: 24),
           GestureDetector(
@@ -291,15 +319,16 @@ class _EmptyState extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
               decoration: BoxDecoration(
-                color: colors.primary,
+                color: Colors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
               ),
-              child: Text(
+              child: const Text(
                 'Créer une affirmation',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: colors.scaffold,
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -353,14 +382,13 @@ class _EditSheetState extends State<_EditSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
     final canSave = _controller.text.trim().isNotEmpty;
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
 
     return Container(
-      decoration: BoxDecoration(
-        color: colors.scaffold,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: const BoxDecoration(
+        color: Color(0xFF1A1A1A),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: EdgeInsets.fromLTRB(20, 20, 20, 24 + bottomPadding),
       child: Column(
@@ -372,7 +400,7 @@ class _EditSheetState extends State<_EditSheet> {
               width: 36,
               height: 4,
               decoration: BoxDecoration(
-                color: colors.border,
+                color: Colors.white.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -381,10 +409,10 @@ class _EditSheetState extends State<_EditSheet> {
 
           Text(
             _isEdit ? 'Modifier l\'affirmation' : 'Nouvelle affirmation',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w800,
-              color: colors.primary,
+              color: Colors.white,
               letterSpacing: -0.4,
             ),
           ),
@@ -392,9 +420,9 @@ class _EditSheetState extends State<_EditSheet> {
 
           Container(
             decoration: BoxDecoration(
-              color: colors.card,
+              color: Colors.white.withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: colors.border),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
             ),
             child: TextField(
               controller: _controller,
@@ -402,14 +430,18 @@ class _EditSheetState extends State<_EditSheet> {
               autofocus: true,
               maxLines: 4,
               minLines: 3,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 15,
-                color: colors.primary,
+                color: Colors.white,
                 height: 1.5,
               ),
+              cursorColor: Colors.white,
               decoration: InputDecoration(
                 hintText: 'Écris ton affirmation…',
-                hintStyle: TextStyle(color: colors.secondary, fontSize: 15),
+                hintStyle: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.35),
+                  fontSize: 15,
+                ),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.all(14),
               ),
@@ -424,8 +456,15 @@ class _EditSheetState extends State<_EditSheet> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 16),
               decoration: BoxDecoration(
-                color: canSave ? colors.primary : colors.surface,
+                color: canSave
+                    ? Colors.white.withValues(alpha: 0.15)
+                    : Colors.white.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: canSave
+                      ? Colors.white.withValues(alpha: 0.3)
+                      : Colors.white.withValues(alpha: 0.08),
+                ),
               ),
               child: Center(
                 child: _saving
@@ -434,7 +473,7 @@ class _EditSheetState extends State<_EditSheet> {
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: colors.scaffold,
+                          color: Colors.white.withValues(alpha: 0.8),
                         ),
                       )
                     : Text(
@@ -442,7 +481,9 @@ class _EditSheetState extends State<_EditSheet> {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: canSave ? colors.scaffold : colors.secondary,
+                          color: canSave
+                              ? Colors.white
+                              : Colors.white.withValues(alpha: 0.35),
                         ),
                       ),
               ),

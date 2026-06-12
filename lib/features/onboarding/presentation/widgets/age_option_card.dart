@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:motivation_app/config/themes/app_theme.dart';
 
 class AgeOptionCard extends StatelessWidget {
   final String ageRange;
@@ -15,18 +14,22 @@ class AgeOptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 13),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         decoration: BoxDecoration(
-          color: isSelected ? colors.primary : colors.card,
-          borderRadius: BorderRadius.circular(14),
+          color: isSelected
+              ? Colors.white.withValues(alpha: 0.1)
+              : Colors.white.withValues(alpha: 0.03),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? colors.primary : colors.border,
-            width: isSelected ? 2 : 1,
+            color: isSelected
+                ? Colors.white.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.08),
           ),
         ),
         child: Row(
@@ -35,17 +38,20 @@ class AgeOptionCard extends StatelessWidget {
               child: Text(
                 ageRange,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: isSelected ? colors.scaffold : colors.primary,
+                  letterSpacing: -0.2,
+                  color: isSelected
+                      ? Colors.white
+                      : Colors.white.withValues(alpha: 0.75),
                 ),
               ),
             ),
             if (isSelected)
-              Icon(
-                Icons.check_circle,
-                color: colors.scaffold,
-                size: 24,
+              const Icon(
+                Icons.check_circle_rounded,
+                color: Colors.white,
+                size: 20,
               ),
           ],
         ),

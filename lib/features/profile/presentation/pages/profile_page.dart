@@ -29,217 +29,212 @@ class ProfilePage extends StatelessWidget {
 
     final name = (profile?.name?.isNotEmpty == true) ? profile!.name! : null;
     final initial = (name != null && name.isNotEmpty) ? name[0].toUpperCase() : '?';
-    const subtitle = '';
     final streak = context.watch<StreakCubit>().state;
 
     return Scaffold(
-      backgroundColor: colors.scaffold,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ─── Header ────────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: colors.surface,
-                        shape: BoxShape.circle,
+      backgroundColor: Colors.black,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF1A1A1A), Colors.black, Colors.black],
+            stops: [0.0, 0.3, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ─── Header ──────────────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.pop(),
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.05),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                        ),
+                        child: const Icon(Icons.arrow_back_ios_new_rounded, size: 17, color: Colors.white),
                       ),
-                      child: Icon(Icons.arrow_back, size: 20, color: colors.primary),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Text(
-                    'Réglages',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: colors.primary,
+                    const SizedBox(width: 16),
+                    const Text(
+                      'Réglages',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        letterSpacing: -0.5,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            const SizedBox(height: 8),
+              const SizedBox(height: 8),
 
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
-                children: [
-                  // ── Carte profil ──────────────────────────────────────────
-                  GestureDetector(
-                    onTap: () => context.push(AppRouter.editProfile),
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: colors.card,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 52,
-                            height: 52,
-                            decoration: BoxDecoration(
-                              color: colors.primary,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                initial,
-                                style: TextStyle(
-                                  color: colors.scaffold,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 22,
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+                  children: [
+                    // ── Carte profil ────────────────────────────────────────
+                    GestureDetector(
+                      onTap: () => context.push(AppRouter.editProfile),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 52,
+                              height: 52,
+                              decoration: BoxDecoration(
+                                color: colors.primary,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  initial,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 22,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 14),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  name ?? '—',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: colors.primary,
-                                  ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Text(
+                                name ?? '—',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                  letterSpacing: -0.3,
                                 ),
-                                if (subtitle.isNotEmpty) ...[
-                                  const SizedBox(height: 3),
-                                  Text(
-                                    subtitle,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: colors.secondary,
-                                    ),
-                                  ),
-                                ],
-                              ],
+                              ),
                             ),
-                          ),
-                          Icon(Icons.chevron_right, size: 20, color: colors.secondary),
-                        ],
+                            Icon(Icons.chevron_right, size: 20, color: Colors.white.withValues(alpha: 0.3)),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
-                  // ── Streak ────────────────────────────────────────────────
-                  _StreakCard(streak: streak),
+                    // ── Streak ──────────────────────────────────────────────
+                    _StreakCard(streak: streak),
 
-                  const SizedBox(height: 28),
+                    const SizedBox(height: 28),
 
-                  // ── Section Affirmations ───────────────────────────────────
-                  _SectionLabel('AFFIRMATIONS', colors),
-                  const SizedBox(height: 8),
-                  _SettingsGroup(
-                    colors: colors,
-                    items: [
-                      _SettingsItem(
-                        icon: Icons.favorite_outline,
-                        title: 'Mes favoris',
-                        subtitle: 'Affirmations sauvegardées',
-                        onTap: () => context.push(AppRouter.affirmationFavorites),
-                      ),
-                      _SettingsItem(
-                        icon: Icons.edit_note_rounded,
-                        title: 'Mes affirmations',
-                        subtitle: 'Créer des affirmations perso',
-                        onTap: () => context.push(AppRouter.affirmationCustom),
-                      ),
-                    ],
-                  ),
+                    // ── Section Affirmations ────────────────────────────────
+                    const _SectionLabel('AFFIRMATIONS'),
+                    const SizedBox(height: 8),
+                    const _SettingsGroup(
+                      items: [
+                        _SettingsItem(
+                          icon: Icons.favorite_outline,
+                          title: 'Mes favoris',
+                          subtitle: 'Affirmations sauvegardées',
+                          route: AppRouter.affirmationFavorites,
+                        ),
+                        _SettingsItem(
+                          icon: Icons.edit_note_rounded,
+                          title: 'Mes affirmations',
+                          subtitle: 'Créer des affirmations perso',
+                          route: AppRouter.affirmationCustom,
+                        ),
+                      ],
+                    ),
 
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                  // ── Section Personnalisation ───────────────────────────────
-                  _SectionLabel('PERSONNALISATION', colors),
-                  const SizedBox(height: 8),
-                  _SettingsGroup(
-                    colors: colors,
-                    items: [
-                      _SettingsItem(
-                        icon: Icons.widgets_outlined,
-                        title: 'Widgets',
-                        subtitle: 'Écran d\'accueil & verrouillage',
-                        onTap: () => context.push(AppRouter.widgets),
-                      ),
-                      _SettingsItem(
-                        icon: Icons.palette_outlined,
-                        title: 'Apparence',
-                        subtitle: 'Thème & couleurs',
-                        onTap: () => context.push(AppRouter.appearance),
-                      ),
-                    ],
-                  ),
+                    // ── Section Personnalisation ────────────────────────────
+                    const _SectionLabel('PERSONNALISATION'),
+                    const SizedBox(height: 8),
+                    const _SettingsGroup(
+                      items: [
+                        _SettingsItem(
+                          icon: Icons.widgets_outlined,
+                          title: 'Widgets',
+                          subtitle: 'Écran d\'accueil & verrouillage',
+                          route: AppRouter.widgets,
+                        ),
+                        _SettingsItem(
+                          icon: Icons.palette_outlined,
+                          title: 'Apparence',
+                          subtitle: 'Thème & couleurs',
+                          route: AppRouter.appearance,
+                        ),
+                      ],
+                    ),
 
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                  // ── Section Notifications ──────────────────────────────────
-                  _SectionLabel('NOTIFICATIONS', colors),
-                  const SizedBox(height: 8),
-                  _SettingsGroup(
-                    colors: colors,
-                    items: [
-                      _SettingsItem(
-                        icon: Icons.notifications_outlined,
-                        title: 'Rappels quotidiens',
-                        subtitle: 'Heure & fréquence',
-                        onTap: () => context.push(AppRouter.notifications),
-                      ),
-                    ],
-                  ),
+                    // ── Section Notifications ───────────────────────────────
+                    const _SectionLabel('NOTIFICATIONS'),
+                    const SizedBox(height: 8),
+                    const _SettingsGroup(
+                      items: [
+                        _SettingsItem(
+                          icon: Icons.notifications_outlined,
+                          title: 'Rappels quotidiens',
+                          subtitle: 'Heure & fréquence',
+                          route: AppRouter.notifications,
+                        ),
+                      ],
+                    ),
 
-                  const SizedBox(height: 36),
+                    const SizedBox(height: 36),
 
-                  // ── Debug ──────────────────────────────────────────────────
-                  GestureDetector(
-                    onTap: () async {
-                      final local = di.sl<AffirmationLocalDataSource>();
-                      await local.clearAll();
-                      unawaited(di.sl<AffirmationRepository>().weeklyRefreshInBackground());
-                      await NotificationService.cancelAll();
-                      await di.sl<SecureStorage>().deleteAll();
-                      di.sl<OnboardingCubit>().reset();
-                      if (context.mounted) context.go(AppRouter.home);
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade50,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.red.shade200),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          '🧪 Reset onboarding (debug)',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
+                    // ── Debug ───────────────────────────────────────────────
+                    GestureDetector(
+                      onTap: () async {
+                        final local = di.sl<AffirmationLocalDataSource>();
+                        await local.clearAll();
+                        unawaited(di.sl<AffirmationRepository>().weeklyRefreshInBackground());
+                        await NotificationService.cancelAll();
+                        await di.sl<SecureStorage>().deleteAll();
+                        di.sl<OnboardingCubit>().reset();
+                        if (context.mounted) context.go(AppRouter.home);
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.red.withValues(alpha: 0.25)),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            '🧪 Reset onboarding (debug)',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -250,8 +245,7 @@ class ProfilePage extends StatelessWidget {
 
 class _SectionLabel extends StatelessWidget {
   final String label;
-  final AppColors colors;
-  const _SectionLabel(this.label, this.colors);
+  const _SectionLabel(this.label);
 
   @override
   Widget build(BuildContext context) {
@@ -260,8 +254,8 @@ class _SectionLabel extends StatelessWidget {
       style: TextStyle(
         fontSize: 11,
         fontWeight: FontWeight.w600,
-        color: colors.secondary,
-        letterSpacing: 0.8,
+        color: Colors.white.withValues(alpha: 0.4),
+        letterSpacing: 1.2,
       ),
     );
   }
@@ -271,34 +265,39 @@ class _SettingsItem {
   final IconData icon;
   final String title;
   final String? subtitle;
-  final VoidCallback? onTap;
+  final String route;
 
   const _SettingsItem({
     required this.icon,
     required this.title,
     this.subtitle,
-    this.onTap,
+    required this.route,
   });
 }
 
 class _SettingsGroup extends StatelessWidget {
   final List<_SettingsItem> items;
-  final AppColors colors;
-  const _SettingsGroup({required this.items, required this.colors});
+  const _SettingsGroup({required this.items});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: colors.card,
+        color: Colors.white.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Column(
         children: [
           for (int i = 0; i < items.length; i++) ...[
-            _SettingsRow(item: items[i], colors: colors),
+            _SettingsRow(item: items[i]),
             if (i < items.length - 1)
-              Divider(height: 1, thickness: 1, indent: 54, color: colors.border),
+              Divider(
+                height: 1,
+                thickness: 1,
+                indent: 54,
+                color: Colors.white.withValues(alpha: 0.06),
+              ),
           ],
         ],
       ),
@@ -308,13 +307,12 @@ class _SettingsGroup extends StatelessWidget {
 
 class _SettingsRow extends StatelessWidget {
   final _SettingsItem item;
-  final AppColors colors;
-  const _SettingsRow({required this.item, required this.colors});
+  const _SettingsRow({required this.item});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: item.onTap,
+      onTap: () => context.push(item.route),
       behavior: HitTestBehavior.opaque,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
@@ -324,10 +322,10 @@ class _SettingsRow extends StatelessWidget {
               width: 34,
               height: 34,
               decoration: BoxDecoration(
-                color: colors.surface,
+                color: Colors.white.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(9),
               ),
-              child: Icon(item.icon, size: 17, color: colors.primary),
+              child: Icon(item.icon, size: 17, color: Colors.white.withValues(alpha: 0.8)),
             ),
             const SizedBox(width: 13),
             Expanded(
@@ -336,24 +334,29 @@ class _SettingsRow extends StatelessWidget {
                 children: [
                   Text(
                     item.title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      color: colors.primary,
+                      color: Colors.white,
+                      letterSpacing: -0.2,
                     ),
                   ),
                   if (item.subtitle != null) ...[
                     const SizedBox(height: 2),
                     Text(
                       item.subtitle!,
-                      style: TextStyle(fontSize: 12, color: colors.secondary),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withValues(alpha: 0.4),
+                        letterSpacing: -0.1,
+                      ),
                     ),
                   ],
                 ],
               ),
             ),
             const SizedBox(width: 8),
-            Icon(Icons.chevron_right, size: 18, color: colors.secondary),
+            Icon(Icons.chevron_right, size: 18, color: Colors.white.withValues(alpha: 0.3)),
           ],
         ),
       ),
@@ -369,21 +372,21 @@ class _StreakCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? const Color(0xFF1A1A1A) : const Color(0xFF1C1C1E);
     const days = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
     final todayIndex = DateTime.now().weekday - 1; // 0=Lun … 6=Dim
+    final isOnFire = streak >= 2;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       decoration: BoxDecoration(
-        color: bg,
+        color: Colors.white.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // ── Icône + Chiffre + label ────────────────────────────────
+          // ── Icône + Chiffre + label ──────────────────────────────────
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -391,17 +394,15 @@ class _StreakCard extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: streak >= 2
+                  color: isOnFire
                       ? const Color(0xFFFF9500).withValues(alpha: 0.15)
                       : const Color(0xFF4FC3F7).withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  streak >= 2 ? Icons.local_fire_department : Icons.ac_unit,
+                  isOnFire ? Icons.local_fire_department : Icons.ac_unit,
                   size: 22,
-                  color: streak >= 2
-                      ? const Color(0xFFFF9500)
-                      : const Color(0xFF4FC3F7),
+                  color: isOnFire ? const Color(0xFFFF9500) : const Color(0xFF4FC3F7),
                 ),
               ),
               const SizedBox(width: 10),
@@ -411,19 +412,20 @@ class _StreakCard extends StatelessWidget {
                   Text(
                     '$streak',
                     style: const TextStyle(
-                      fontSize: 40,
+                      fontSize: 38,
                       fontWeight: FontWeight.w800,
                       color: Colors.white,
                       height: 1,
+                      letterSpacing: -2.0,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
+                  Text(
                     'Série',
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: Colors.white54,
+                      color: Colors.white.withValues(alpha: 0.45),
                     ),
                   ),
                 ],
@@ -433,36 +435,40 @@ class _StreakCard extends StatelessWidget {
 
           const Spacer(),
 
-          // ── Jours de la semaine ────────────────────────────────────────
+          // ── Jours de la semaine ──────────────────────────────────────
           Row(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(7, (i) {
               final isToday = i == todayIndex;
               return Padding(
-                padding: const EdgeInsets.only(left: 6),
+                padding: const EdgeInsets.only(left: 5),
                 child: Column(
                   children: [
                     Text(
                       days[i],
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 9,
                         fontWeight: FontWeight.w600,
-                        color: isToday ? Colors.white : Colors.white38,
+                        color: isToday ? Colors.white : Colors.white.withValues(alpha: 0.25),
                       ),
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 4),
                     Container(
-                      width: 26,
-                      height: 26,
+                      width: 24,
+                      height: 24,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: isToday
-                            ? const Color(0xFF4CAF50)
-                            : Colors.white.withValues(alpha: 0.1),
+                            ? const Color(0xFF4CAF50).withValues(alpha: 0.9)
+                            : Colors.white.withValues(alpha: 0.06),
+                        border: Border.all(
+                          color: isToday
+                              ? const Color(0xFF4CAF50).withValues(alpha: 0.4)
+                              : Colors.white.withValues(alpha: 0.08),
+                        ),
                       ),
                       child: isToday
-                          ? const Icon(Icons.check_rounded,
-                              size: 14, color: Colors.white)
+                          ? const Icon(Icons.check_rounded, size: 12, color: Colors.white)
                           : null,
                     ),
                   ],

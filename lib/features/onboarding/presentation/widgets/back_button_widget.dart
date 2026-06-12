@@ -1,34 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:motivation_app/config/themes/app_theme.dart';
 
 class BackButtonWidget extends StatelessWidget {
   final VoidCallback? onPressed;
 
-  const BackButtonWidget({
-    super.key,
-    this.onPressed,
-  });
+  const BackButtonWidget({super.key, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
     return GestureDetector(
       onTap: onPressed ?? () => Navigator.pop(context),
       child: Container(
-        width: 40,
-        height: 40,
+        width: 44,
+        height: 44,
         decoration: BoxDecoration(
-          color: colors.card,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: colors.border,
-            width: 1,
-          ),
+          color: Colors.white.withValues(alpha: 0.05),
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
-        child: Icon(
-          Icons.arrow_back,
-          size: 20,
-          color: colors.primary,
+        child: const Icon(
+          Icons.arrow_back_ios_new_rounded,
+          size: 17,
+          color: Colors.white,
         ),
       ),
     );

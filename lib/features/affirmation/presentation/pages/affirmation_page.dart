@@ -244,7 +244,7 @@ class _AffirmationPageState extends State<AffirmationPage>
                                 context,
                                 text: text,
                                 category: affirmation.category.label,
-                                themeData: themed ? themeData : null,
+                                themeData: themeData,
                               );
                             },
                           ),
@@ -276,8 +276,11 @@ class _AffirmationPageState extends State<AffirmationPage>
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: uiBg ?? colors.surface,
+                            color: uiBg ?? Colors.white.withValues(alpha: 0.08),
                             shape: BoxShape.circle,
+                            border: themed
+                                ? null
+                                : Border.all(color: Colors.white.withValues(alpha: 0.1)),
                           ),
                           child: Icon(
                             Icons.favorite,

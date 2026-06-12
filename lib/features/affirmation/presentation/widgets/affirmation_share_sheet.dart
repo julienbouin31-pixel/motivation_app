@@ -4,7 +4,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/theme/card_visual_theme.dart';
 import 'package:motivation_app/core/widgets/home_widget_service.dart';
 import 'package:path_provider/path_provider.dart';
@@ -69,19 +68,18 @@ class _AffirmationShareSheetState extends State<AffirmationShareSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
     final size = MediaQuery.of(context).size;
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Container(
-      decoration: BoxDecoration(
-        color: colors.scaffold,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      decoration: const BoxDecoration(
+        color: Color(0xFF1A1A1A),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // ── Handle + titre ──────────────────────────────────────────────────
+          // ── Handle + close ──────────────────────────────────────────────────
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 14, 16, 0),
             child: Row(
@@ -90,7 +88,7 @@ class _AffirmationShareSheetState extends State<AffirmationShareSheet> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: colors.border,
+                    color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -101,10 +99,15 @@ class _AffirmationShareSheetState extends State<AffirmationShareSheet> {
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: colors.surface,
+                      color: Colors.white.withValues(alpha: 0.08),
                       shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                     ),
-                    child: Icon(Icons.close, size: 16, color: colors.secondary),
+                    child: Icon(
+                      Icons.close,
+                      size: 15,
+                      color: Colors.white.withValues(alpha: 0.5),
+                    ),
                   ),
                 ),
               ],
@@ -117,10 +120,11 @@ class _AffirmationShareSheetState extends State<AffirmationShareSheet> {
               alignment: Alignment.centerLeft,
               child: Text(
                 'Partager',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: colors.primary,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                  letterSpacing: -0.4,
                 ),
               ),
             ),
@@ -246,13 +250,11 @@ class _PreviewCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             );
     } else {
-      final isDark = Theme.of(context).brightness == Brightness.dark;
-      final base = isDark ? Colors.white : const Color(0xFF111111);
-      textColor = base;
-      muted = base.withValues(alpha: isDark ? 0.18 : 0.1);
-      secondary = base.withValues(alpha: isDark ? 0.38 : 0.4);
+      textColor = Colors.white;
+      muted = Colors.white.withValues(alpha: 0.18);
+      secondary = Colors.white.withValues(alpha: 0.45);
       bgDecoration = BoxDecoration(
-        color: isDark ? const Color(0xFF1A1A1A) : const Color(0xFFF0EDE7),
+        color: const Color(0xFF111111),
         borderRadius: BorderRadius.circular(20),
       );
     }
@@ -263,7 +265,7 @@ class _PreviewCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '“',
+            '"',
             style: TextStyle(
               fontSize: 72,
               height: 0.85,
@@ -371,7 +373,6 @@ class _ShareAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -381,11 +382,11 @@ class _ShareAction extends StatelessWidget {
             width: 58,
             height: 58,
             decoration: BoxDecoration(
-              color: colors.card,
+              color: Colors.white.withValues(alpha: 0.08),
               shape: BoxShape.circle,
-              border: Border.all(color: colors.border, width: 1),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
             ),
-            child: Icon(icon, size: 22, color: colors.primary),
+            child: Icon(icon, size: 22, color: Colors.white.withValues(alpha: 0.8)),
           ),
           const SizedBox(height: 8),
           Text(
@@ -393,7 +394,7 @@ class _ShareAction extends StatelessWidget {
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w500,
-              color: colors.secondary,
+              color: Colors.white.withValues(alpha: 0.5),
             ),
           ),
         ],

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
 
 class AffirmationCard extends StatelessWidget {
@@ -25,10 +23,9 @@ class AffirmationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
-    final effectiveTextColor = textColor ?? colors.primary;
-    final effectiveButtonBg = buttonBg ?? colors.surface;
-    final effectiveButtonIconColor = buttonIconColor ?? colors.secondary;
+    final effectiveTextColor = textColor ?? Colors.white;
+    final effectiveButtonBg = buttonBg ?? Colors.white.withValues(alpha: 0.08);
+    final effectiveButtonIconColor = buttonIconColor ?? Colors.white.withValues(alpha: 0.7);
     final displayText = affirmation.text
         .replaceAll('{name}', userName);
     return Column(
@@ -39,7 +36,7 @@ class AffirmationCard extends StatelessWidget {
           child: Text(
             '"$displayText"',
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
+            style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w500,
               height: 1.4,

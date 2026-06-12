@@ -81,8 +81,17 @@ class _OnboardingNotificationPageState
     final colors = Theme.of(context).extension<AppColors>()!;
 
     return Scaffold(
-      backgroundColor: colors.scaffold,
-      body: SafeArea(
+      backgroundColor: Colors.black,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF1A1A1A), Colors.black, Colors.black],
+            stops: [0.0, 0.3, 1.0],
+          ),
+        ),
+        child: SafeArea(
         child: Column(
           children: [
             // ─── Header fixe ───────────────────────────────────────────
@@ -112,34 +121,31 @@ class _OnboardingNotificationPageState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: colors.surface,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(Icons.notifications_outlined,
-                          size: 22, color: colors.primary),
-                    ),
-                    const SizedBox(height: 14),
-                    Text(
-                      'Tes rappels',
-                      style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.5,
-                        color: colors.primary,
-                        height: 1.2,
+                    ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [Colors.white, Color(0xFFD3D3D3)],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ).createShader(bounds),
+                      child: const Text(
+                        'Tes rappels',
+                        style: TextStyle(
+                          fontSize: 34,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          height: 1.15,
+                          letterSpacing: -1.0,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 12),
                     Text(
                       'Quand veux-tu recevoir tes affirmations ?',
                       style: TextStyle(
-                          fontSize: 14,
-                          color: colors.secondary,
-                          height: 1.4),
+                        fontSize: 16,
+                        color: Colors.white.withValues(alpha: 0.5),
+                        height: 1.4,
+                      ),
                     ),
                     const SizedBox(height: 24),
 
@@ -206,6 +212,7 @@ class _OnboardingNotificationPageState
           ],
         ),
       ),
+    ),
     );
   }
 }
@@ -224,7 +231,7 @@ class _SectionLabel extends StatelessWidget {
           fontSize: 11,
           fontWeight: FontWeight.w600,
           letterSpacing: 1.2,
-          color: colors.secondary,
+          color: Colors.white.withValues(alpha: 0.4),
         ),
       );
 }
@@ -253,10 +260,14 @@ class _FrequencyCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
         decoration: BoxDecoration(
-          color: selected ? colors.primary : colors.card,
-          borderRadius: BorderRadius.circular(12),
+          color: selected
+              ? Colors.white.withValues(alpha: 0.1)
+              : Colors.white.withValues(alpha: 0.03),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: selected ? colors.primary : colors.border,
+            color: selected
+                ? Colors.white.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.08),
           ),
         ),
         child: Column(
@@ -267,7 +278,7 @@ class _FrequencyCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: selected ? colors.scaffold : colors.primary,
+                color: selected ? Colors.white : Colors.white.withValues(alpha: 0.85),
               ),
             ),
             const SizedBox(height: 2),
@@ -276,8 +287,8 @@ class _FrequencyCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 color: selected
-                    ? colors.scaffold.withValues(alpha: 0.6)
-                    : colors.secondary,
+                    ? Colors.white.withValues(alpha: 0.6)
+                    : Colors.white.withValues(alpha: 0.4),
               ),
             ),
           ],
@@ -311,22 +322,22 @@ class _HourPicker extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
           decoration: BoxDecoration(
-            color: colors.card,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: colors.border),
+            color: Colors.white.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
               value: value,
               isExpanded: true,
-              dropdownColor: colors.card,
-              style: TextStyle(
+              dropdownColor: const Color(0xFF1A1A1A),
+              style: const TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w600,
-                color: colors.primary,
+                color: Colors.white,
               ),
               icon: Icon(Icons.keyboard_arrow_down_rounded,
-                  color: colors.secondary),
+                  color: Colors.white.withValues(alpha: 0.5)),
               items: List.generate(24, (h) => DropdownMenuItem(
                     value: h,
                     child: Text('${h}h00'),
