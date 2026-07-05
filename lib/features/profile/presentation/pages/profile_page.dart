@@ -204,11 +204,11 @@ class ProfilePage extends StatelessWidget {
                       onTap: () async {
                         final local = di.sl<AffirmationLocalDataSource>();
                         await local.clearAll();
-                        unawaited(di.sl<AffirmationRepository>().weeklyRefreshInBackground());
                         await NotificationService.cancelAll();
                         await di.sl<SecureStorage>().deleteAll();
+                        unawaited(di.sl<AffirmationRepository>().weeklyRefreshInBackground());
                         di.sl<OnboardingCubit>().reset();
-                        if (context.mounted) context.go(AppRouter.home);
+                        if (context.mounted) context.go(AppRouter.onboardingWelcome);
                       },
                       child: Container(
                         width: double.infinity,

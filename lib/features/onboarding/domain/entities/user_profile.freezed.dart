@@ -15,6 +15,8 @@ T _$identity<T>(T value) => value;
 mixin _$UserProfile {
 
  String? get name;
+ String? get mood;
+ String? get goal;
 /// Create a copy of UserProfile
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +27,16 @@ $UserProfileCopyWith<UserProfile> get copyWith => _$UserProfileCopyWithImpl<User
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserProfile&&(identical(other.name, name) || other.name == name));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserProfile&&(identical(other.name, name) || other.name == name)&&(identical(other.mood, mood) || other.mood == mood)&&(identical(other.goal, goal) || other.goal == goal));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name);
+int get hashCode => Object.hash(runtimeType,name,mood,goal);
 
 @override
 String toString() {
-  return 'UserProfile(name: $name)';
+  return 'UserProfile(name: $name, mood: $mood, goal: $goal)';
 }
 
 
@@ -45,7 +47,7 @@ abstract mixin class $UserProfileCopyWith<$Res>  {
   factory $UserProfileCopyWith(UserProfile value, $Res Function(UserProfile) _then) = _$UserProfileCopyWithImpl;
 @useResult
 $Res call({
- String? name
+ String? name, String? mood, String? goal
 });
 
 
@@ -62,9 +64,13 @@ class _$UserProfileCopyWithImpl<$Res>
 
 /// Create a copy of UserProfile
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? name = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = freezed, Object? mood = freezed, Object? goal = freezed,}) {
   return _then(_self.copyWith(
 name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,
+mood: freezed == mood ? _self.mood : mood // ignore: cast_nullable_to_non_nullable
+as String?,
+goal: freezed == goal ? _self.goal : goal // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -74,18 +80,6 @@ as String?,
 
 /// Adds pattern-matching-related methods to [UserProfile].
 extension UserProfilePatterns on UserProfile {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
 @optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _UserProfile value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
@@ -95,18 +89,6 @@ return $default(_that);case _:
 
 }
 }
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
 
 @optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _UserProfile value)  $default,){
 final _that = this;
@@ -117,17 +99,6 @@ return $default(_that);case _:
 
 }
 }
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
 
 @optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _UserProfile value)?  $default,){
 final _that = this;
@@ -138,63 +109,29 @@ return $default(_that);case _:
 
 }
 }
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? name)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? name, String? mood, String? goal)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserProfile() when $default != null:
-return $default(_that.name);case _:
+return $default(_that.name, _that.mood, _that.goal);case _:
   return orElse();
 
 }
 }
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? name)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? name, String? mood, String? goal)  $default,) {final _that = this;
 switch (_that) {
 case _UserProfile():
-return $default(_that.name);case _:
+return $default(_that.name, _that.mood, _that.goal);case _:
   throw StateError('Unexpected subclass');
 
 }
 }
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? name)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? name, String? mood, String? goal)?  $default,) {final _that = this;
 switch (_that) {
 case _UserProfile() when $default != null:
-return $default(_that.name);case _:
+return $default(_that.name, _that.mood, _that.goal);case _:
   return null;
 
 }
@@ -206,10 +143,12 @@ return $default(_that.name);case _:
 
 
 class _UserProfile implements UserProfile {
-  const _UserProfile({this.name});
-  
+  const _UserProfile({this.name, this.mood, this.goal});
+
 
 @override final  String? name;
+@override final  String? mood;
+@override final  String? goal;
 
 /// Create a copy of UserProfile
 /// with the given fields replaced by the non-null parameter values.
@@ -221,16 +160,16 @@ _$UserProfileCopyWith<_UserProfile> get copyWith => __$UserProfileCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserProfile&&(identical(other.name, name) || other.name == name));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserProfile&&(identical(other.name, name) || other.name == name)&&(identical(other.mood, mood) || other.mood == mood)&&(identical(other.goal, goal) || other.goal == goal));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name);
+int get hashCode => Object.hash(runtimeType,name,mood,goal);
 
 @override
 String toString() {
-  return 'UserProfile(name: $name)';
+  return 'UserProfile(name: $name, mood: $mood, goal: $goal)';
 }
 
 
@@ -241,7 +180,7 @@ abstract mixin class _$UserProfileCopyWith<$Res> implements $UserProfileCopyWith
   factory _$UserProfileCopyWith(_UserProfile value, $Res Function(_UserProfile) _then) = __$UserProfileCopyWithImpl;
 @override @useResult
 $Res call({
- String? name
+ String? name, String? mood, String? goal
 });
 
 
@@ -258,9 +197,13 @@ class __$UserProfileCopyWithImpl<$Res>
 
 /// Create a copy of UserProfile
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? name = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? name = freezed, Object? mood = freezed, Object? goal = freezed,}) {
   return _then(_UserProfile(
 name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String?,
+mood: freezed == mood ? _self.mood : mood // ignore: cast_nullable_to_non_nullable
+as String?,
+goal: freezed == goal ? _self.goal : goal // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

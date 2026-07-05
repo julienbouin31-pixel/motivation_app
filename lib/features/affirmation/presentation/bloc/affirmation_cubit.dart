@@ -57,7 +57,12 @@ class AffirmationCubit extends Cubit<AffirmationState> {
       );
     }
     emit(const AffirmationState.loading());
-    final result = await getNextAffirmation(categories: _selectedCategories);
+    var result = await getNextAffirmation(categories: _selectedCategories);
+    if (result.isLeft()) {
+      // DB possibly still populating — wait and retry once
+      await Future.delayed(const Duration(seconds: 3));
+      result = await getNextAffirmation(categories: _selectedCategories);
+    }
     result.fold(
       (_) => emit(
           const AffirmationState.error('Impossible de charger une affirmation')),

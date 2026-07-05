@@ -8,8 +8,12 @@ import 'package:motivation_app/features/affirmation/presentation/pages/custom_af
 import 'package:motivation_app/features/affirmation/presentation/pages/favorites_page.dart';
 import 'package:motivation_app/features/home/presentation/pages/home_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_age_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_goal_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_mood_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_name_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_preview_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_transition_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_welcome_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/appearance_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/profile_page.dart';
@@ -22,10 +26,14 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 class AppRouter {
   static const String home = '/';
+  static const String onboardingWelcome = '/onboarding/welcome';
+  static const String onboardingMood = '/onboarding/mood';
+  static const String onboardingGoal = '/onboarding/goal';
   static const String onboardingName = '/onboarding/name';
   static const String onboardingTransition = '/onboarding/transition';
-  static const String onboardingAge = '/onboarding/age';
+  static const String onboardingPreview = '/onboarding/preview';
   static const String onboardingNotifications = '/onboarding/notifications';
+  static const String onboardingAge = '/onboarding/age';
   static const String affirmation = '/affirmation';
   static const String affirmationCategories = '/affirmation/categories';
   static const String affirmationFavorites = '/affirmation/favorites';
@@ -50,6 +58,24 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
     ),
     // ─── Onboarding — routes plates, OnboardingCubit est global ─────────────
     GoRoute(
+      path: AppRouter.onboardingWelcome,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: OnboardingWelcomePage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.onboardingMood,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: OnboardingMoodPage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.onboardingGoal,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: OnboardingGoalPage(),
+      ),
+    ),
+    GoRoute(
       path: AppRouter.onboardingName,
       pageBuilder: (context, state) => const MaterialPage(
         child: OnboardingNamePage(),
@@ -65,6 +91,12 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
       path: AppRouter.onboardingAge,
       pageBuilder: (context, state) => const MaterialPage(
         child: OnboardingAgePage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.onboardingPreview,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: OnboardingPreviewPage(),
       ),
     ),
     GoRoute(

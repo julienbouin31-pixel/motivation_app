@@ -10,6 +10,8 @@ abstract class UserProfileModel with _$UserProfileModel {
 
   const factory UserProfileModel({
     @Default('') String name,
+    @Default('') String mood,
+    @Default('') String goal,
   }) = _UserProfileModel;
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) =>
@@ -17,5 +19,7 @@ abstract class UserProfileModel with _$UserProfileModel {
 
   UserProfile toEntity() => UserProfile(
         name: name,
+        mood: mood.isEmpty ? null : mood,
+        goal: goal.isEmpty ? null : goal,
       );
 }

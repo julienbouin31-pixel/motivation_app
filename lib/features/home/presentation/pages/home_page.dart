@@ -102,7 +102,7 @@ class HomePage extends StatelessWidget {
                 FadeSlideIn(
                   delay: const Duration(milliseconds: 360),
                   child: HomeCtaButton(
-                    onPressed: () => context.push(AppRouter.onboardingName),
+                    onPressed: () => context.push(AppRouter.onboardingWelcome),
                   ),
                 ),
                 const SizedBox(height: 24), // Laisse le bouton respirer en bas

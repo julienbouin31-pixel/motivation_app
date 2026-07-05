@@ -44,5 +44,11 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   Future<void> saveName(String name) =>
       _save(_currentProfile().copyWith(name: name));
 
+  Future<void> saveMood(String mood) =>
+      _save(_currentProfile().copyWith(mood: mood));
+
+  Future<void> saveGoal(String goal) =>
+      _save(_currentProfile().copyWith(goal: goal));
+
   void reset() => emit(const OnboardingState.initial());
 }

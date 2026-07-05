@@ -4,9 +4,12 @@ import 'package:motivation_app/config/routes/app_router.dart';
 
 class OnboardingFlow {
   static const List<String> steps = [
+    AppRouter.onboardingWelcome,
+    AppRouter.onboardingMood,
+    AppRouter.onboardingGoal,
     AppRouter.onboardingName,
     AppRouter.onboardingTransition,
-    AppRouter.onboardingAge,
+    AppRouter.onboardingPreview,
     AppRouter.onboardingNotifications,
   ];
 
