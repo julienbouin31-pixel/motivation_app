@@ -29,6 +29,8 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage>
   int _currentIndex = 0;
   bool _isCardLiked = false;
   bool _isExiting = false;
+  double _dragY = 0;
+  double _exitStartY = 0;
 
   late final AnimationController _exitCtrl;
   late final AnimationController _enterCtrl;
@@ -51,6 +53,8 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage>
           _currentIndex = (_currentIndex + 1) % _mockTexts.length;
           _isCardLiked = false;
           _isExiting = false;
+          _dragY = 0;
+          _exitStartY = 0;
         });
         _exitCtrl.reset();
         if (_likedCount < 3) {
@@ -72,13 +76,34 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage>
     setState(() {
       _isCardLiked = true;
       _likedCount++;
+      _dragY = 0;
     });
     Future.delayed(const Duration(milliseconds: 480), _triggerExit);
   }
 
+  void _onDragUpdate(DragUpdateDetails d) {
+    if (_isExiting || _isCardLiked) return;
+    setState(() {
+      _dragY = (_dragY + d.delta.dy).clamp(-350.0, 0.0);
+    });
+  }
+
+  void _onDragEnd(DragEndDetails d) {
+    if (_isExiting || _isCardLiked) return;
+    final velocity = d.primaryVelocity ?? 0;
+    if (_dragY < -60 || velocity < -500) {
+      _triggerExit();
+    } else {
+      setState(() => _dragY = 0);
+    }
+  }
+
   void _triggerExit() {
     if (!mounted || _isExiting) return;
-    setState(() => _isExiting = true);
+    setState(() {
+      _exitStartY = _dragY;
+      _isExiting = true;
+    });
     _exitCtrl.forward();
   }
 
@@ -165,7 +190,7 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage>
                           child: Text(
                             isUnlocked
                                 ? 'Tu es prêt à commencer ton parcours.'
-                                : 'Appuie sur le cœur pour aimer une affirmation.',
+                                : 'Swipe pour passer · ❤️ pour aimer (3 nécessaires)',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.white.withValues(alpha: 0.35),
@@ -259,32 +284,37 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage>
                           ),
                         ),
                       )
-                    : AnimatedBuilder(
-                        animation: Listenable.merge([_exitCtrl, _enterCtrl]),
-                        builder: (ctx, _) {
-                          double translateY;
-                          double opacity;
+                    : GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onVerticalDragUpdate: _onDragUpdate,
+                        onVerticalDragEnd: _onDragEnd,
+                        child: AnimatedBuilder(
+                          animation: Listenable.merge([_exitCtrl, _enterCtrl]),
+                          builder: (ctx, _) {
+                            double translateY;
+                            double opacity;
 
-                          if (_isExiting) {
-                            translateY = -_exitCtrl.value * screenH * 0.55;
-                            opacity = (1.0 - _exitCtrl.value * 1.8).clamp(0.0, 1.0);
-                          } else {
-                            translateY = (1.0 - _enterCtrl.value) * 35;
-                            opacity = _enterCtrl.value;
-                          }
+                            if (_isExiting) {
+                              translateY = _exitStartY - _exitCtrl.value * screenH * 0.6;
+                              opacity = (1.0 - _exitCtrl.value * 1.8).clamp(0.0, 1.0);
+                            } else {
+                              translateY = _dragY + (1.0 - _enterCtrl.value) * 35;
+                              opacity = _enterCtrl.value;
+                            }
 
-                          return Opacity(
-                            opacity: opacity,
-                            child: Transform.translate(
-                              offset: Offset(0, translateY),
-                              child: _MockCard(
-                                text: currentText,
-                                isLiked: _isCardLiked,
-                                onLike: _onLike,
+                            return Opacity(
+                              opacity: opacity,
+                              child: Transform.translate(
+                                offset: Offset(0, translateY),
+                                child: _MockCard(
+                                  text: currentText,
+                                  isLiked: _isCardLiked,
+                                  onLike: _onLike,
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
               ),
 
