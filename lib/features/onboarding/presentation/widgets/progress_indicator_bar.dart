@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:motivation_app/config/themes/app_theme.dart';
+import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_style.dart';
 
+/// Marqueur d'étape textuel — remplace la barre de progression générique.
 class ProgressIndicatorBar extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
@@ -13,13 +14,12 @@ class ProgressIndicatorBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
-    return LinearProgressIndicator(
-      value: currentStep / totalSteps,
-      backgroundColor: colors.border,
-      valueColor: AlwaysStoppedAnimation(colors.primary),
-      minHeight: 3,
-      borderRadius: BorderRadius.circular(2),
+    return Row(
+      children: [
+        Text('étape $currentStep sur $totalSteps', style: OnbStyle.overline),
+        const SizedBox(width: 14),
+        const Expanded(child: Divider(color: OnbStyle.hairline, height: 1)),
+      ],
     );
   }
 }

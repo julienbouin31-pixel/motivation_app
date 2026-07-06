@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/core/widgets/fade_slide_in.dart';
@@ -6,6 +7,7 @@ import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/continue_button.dart';
+import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_style.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 
 const _mockTexts = [
@@ -73,6 +75,7 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage>
 
   void _onLike() {
     if (_isCardLiked || _isExiting) return;
+    HapticFeedback.mediumImpact();
     setState(() {
       _isCardLiked = true;
       _likedCount++;
@@ -92,6 +95,7 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage>
     if (_isExiting || _isCardLiked) return;
     final velocity = d.primaryVelocity ?? 0;
     if (_dragY < -60 || velocity < -500) {
+      HapticFeedback.selectionClick();
       _triggerExit();
     } else {
       setState(() => _dragY = 0);
@@ -122,225 +126,145 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage>
     final currentText = _mockTexts[_currentIndex].replaceAll('toi', name);
 
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF1A1A1A), Colors.black, Colors.black],
-            stops: [0.0, 0.3, 1.0],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ── Header ──────────────────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+      backgroundColor: OnbStyle.bg,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Header ──────────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(28, 20, 28, 0),
+              child: FadeSlideIn(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    FadeSlideIn(
-                      child: ProgressIndicatorBar(
-                        currentStep: progress.step,
-                        totalSteps: progress.total,
-                      ),
+                    ProgressIndicatorBar(
+                      currentStep: progress.step,
+                      totalSteps: progress.total,
                     ),
-                    const SizedBox(height: 28),
-                    FadeSlideIn(
-                      delay: const Duration(milliseconds: 80),
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 350),
-                        transitionBuilder: (child, anim) => FadeTransition(
-                          opacity: anim,
-                          child: SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(0, 0.15),
-                              end: Offset.zero,
-                            ).animate(anim),
-                            child: child,
-                          ),
-                        ),
-                        child: Align(
-                          key: ValueKey(isUnlocked),
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            isUnlocked ? 'Tu as tout compris !' : "Essaie l'application",
-                            style: const TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white,
-                              height: 1.15,
-                              letterSpacing: -1.0,
-                            ),
-                          ),
-                        ),
-                      ),
+                    const SizedBox(height: 32),
+                    Text(
+                      isUnlocked ? 'c\'est exactement ça.' : 'à toi d\'essayer.',
+                      style: OnbStyle.display(size: 30),
                     ),
-                    const SizedBox(height: 8),
-                    FadeSlideIn(
-                      delay: const Duration(milliseconds: 130),
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        child: Align(
-                          key: ValueKey(isUnlocked),
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            isUnlocked
-                                ? 'Tu es prêt à commencer ton parcours.'
-                                : 'Swipe pour passer · ❤️ pour aimer (3 nécessaires)',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white.withValues(alpha: 0.35),
-                              letterSpacing: -0.1,
-                            ),
-                          ),
-                        ),
-                      ),
+                    const SizedBox(height: 10),
+                    Text(
+                      isUnlocked
+                          ? 'Tu viens de garder tes trois premières affirmations.'
+                          : 'Balaie vers le haut pour passer.\nAppuie sur le cœur pour en garder trois.',
+                      style: OnbStyle.body.copyWith(fontSize: 14),
                     ),
                   ],
                 ),
               ),
+            ),
 
-              const SizedBox(height: 28),
+            const SizedBox(height: 24),
 
-              // ── Hearts progress ──────────────────────────────────────────
-              FadeSlideIn(
-                delay: const Duration(milliseconds: 160),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    children: List.generate(3, (i) {
-                      final filled = i < _likedCount;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: AnimatedScale(
-                          scale: filled ? 1.2 : 1.0,
-                          duration: const Duration(milliseconds: 350),
-                          curve: Curves.elasticOut,
-                          child: Icon(
-                            filled ? Icons.favorite : Icons.favorite_border,
-                            color: filled
-                                ? Colors.red.shade400
-                                : Colors.white.withValues(alpha: 0.2),
-                            size: 26,
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              // ── Card / Success area ──────────────────────────────────────
-              Expanded(
-                child: isUnlocked
-                    ? FadeSlideIn(
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: 76,
-                                height: 76,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF4CAF50).withValues(alpha: 0.12),
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: const Color(0xFF4CAF50).withValues(alpha: 0.25),
-                                  ),
-                                ),
-                                child: const Icon(
-                                  Icons.check_rounded,
-                                  color: Color(0xFF4CAF50),
-                                  size: 38,
-                                ),
-                              ),
-                              const SizedBox(height: 24),
-                              const Text(
-                                '3 / 3',
-                                style: TextStyle(
-                                  fontSize: 52,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.white,
-                                  height: 1,
-                                  letterSpacing: -2.5,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'affirmations aimées',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.white.withValues(alpha: 0.4),
-                                  letterSpacing: -0.2,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onVerticalDragUpdate: _onDragUpdate,
-                        onVerticalDragEnd: _onDragEnd,
-                        child: AnimatedBuilder(
-                          animation: Listenable.merge([_exitCtrl, _enterCtrl]),
-                          builder: (ctx, _) {
-                            double translateY;
-                            double opacity;
-
-                            if (_isExiting) {
-                              translateY = _exitStartY - _exitCtrl.value * screenH * 0.6;
-                              opacity = (1.0 - _exitCtrl.value * 1.8).clamp(0.0, 1.0);
-                            } else {
-                              translateY = _dragY + (1.0 - _enterCtrl.value) * 35;
-                              opacity = _enterCtrl.value;
-                            }
-
-                            return Opacity(
-                              opacity: opacity,
-                              child: Transform.translate(
-                                offset: Offset(0, translateY),
-                                child: _MockCard(
-                                  text: currentText,
-                                  isLiked: _isCardLiked,
-                                  onLike: _onLike,
-                                ),
-                              ),
-                            );
-                          },
+            // ── Compteur ─────────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 28),
+              child: Row(
+                children: [
+                  for (int i = 0; i < 3; i++)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: AnimatedScale(
+                        scale: i < _likedCount ? 1.15 : 1.0,
+                        duration: const Duration(milliseconds: 350),
+                        curve: Curves.elasticOut,
+                        child: Icon(
+                          i < _likedCount
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: i < _likedCount
+                              ? Colors.red.shade400
+                              : OnbStyle.ink.withValues(alpha: 0.18),
+                          size: 20,
                         ),
                       ),
+                    ),
+                  const SizedBox(width: 6),
+                  Text('$_likedCount sur 3', style: OnbStyle.overline),
+                ],
               ),
+            ),
 
-              // ── CTA ──────────────────────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-                child: FadeSlideIn(
-                  delay: const Duration(milliseconds: 220),
-                  child: ContinueButton(
-                    label: isUnlocked ? 'Activer mes rappels' : 'Continuer',
-                    enabled: isUnlocked,
-                    onPressed: isUnlocked
-                        ? () => OnboardingFlow.next(context, AppRouter.onboardingPreview)
-                        : null,
-                  ),
-                ),
+            const SizedBox(height: 16),
+
+            // ── Carte / état final ───────────────────────────────────────
+            Expanded(
+              child: isUnlocked
+                  ? FadeSlideIn(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: Text(
+                            'voilà. c\'est aussi simple\nque ça, chaque matin.',
+                            textAlign: TextAlign.center,
+                            style: OnbStyle.displayItalic(size: 26)
+                                .copyWith(color: OnbStyle.ink.withValues(alpha: 0.8)),
+                          ),
+                        ),
+                      ),
+                    )
+                  : GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onVerticalDragUpdate: _onDragUpdate,
+                      onVerticalDragEnd: _onDragEnd,
+                      child: AnimatedBuilder(
+                        animation: Listenable.merge([_exitCtrl, _enterCtrl]),
+                        builder: (ctx, _) {
+                          double translateY;
+                          double opacity;
+
+                          if (_isExiting) {
+                            translateY =
+                                _exitStartY - _exitCtrl.value * screenH * 0.6;
+                            opacity =
+                                (1.0 - _exitCtrl.value * 1.8).clamp(0.0, 1.0);
+                          } else {
+                            translateY =
+                                _dragY + (1.0 - _enterCtrl.value) * 35;
+                            opacity = _enterCtrl.value;
+                          }
+
+                          return Opacity(
+                            opacity: opacity,
+                            child: Transform.translate(
+                              offset: Offset(0, translateY),
+                              child: _MockCard(
+                                text: currentText,
+                                isLiked: _isCardLiked,
+                                onLike: _onLike,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+            ),
+
+            // ── CTA ──────────────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(28, 0, 28, 32),
+              child: ContinueButton(
+                label: isUnlocked ? 'activer mes rappels' : 'continuer',
+                enabled: isUnlocked,
+                onPressed: isUnlocked
+                    ? () => OnboardingFlow.next(
+                        context, AppRouter.onboardingPreview)
+                    : null,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-// ─── Mock affirmation card ────────────────────────────────────────────────────
+// ─── Carte d'affirmation (copie de l'app) ────────────────────────────────────
 
 class _MockCard extends StatelessWidget {
   final String text;
@@ -359,17 +283,11 @@ class _MockCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
+          padding: const EdgeInsets.symmetric(horizontal: 36),
           child: Text(
-            '"$text"',
+            text,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w500,
-              height: 1.4,
-              letterSpacing: -0.5,
-              color: Colors.white,
-            ),
+            style: OnbStyle.display(size: 24).copyWith(height: 1.45),
           ),
         ),
         const SizedBox(height: 36),
@@ -382,13 +300,13 @@ class _MockCard extends StatelessWidget {
               width: 52,
               height: 52,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
+                border: Border.all(color: OnbStyle.hairline),
               ),
               child: Icon(
                 Icons.share_outlined,
-                color: Colors.white.withValues(alpha: 0.45),
-                size: 22,
+                color: OnbStyle.ink.withValues(alpha: 0.4),
+                size: 20,
               ),
             ),
           ],
@@ -398,7 +316,7 @@ class _MockCard extends StatelessWidget {
   }
 }
 
-// ─── Heart button with bounce animation ──────────────────────────────────────
+// ─── Bouton cœur avec rebond ─────────────────────────────────────────────────
 
 class _HeartButton extends StatefulWidget {
   final bool isLiked;
@@ -462,16 +380,21 @@ class _HeartButtonState extends State<_HeartButton>
           width: 52,
           height: 52,
           decoration: BoxDecoration(
-            color: widget.isLiked
-                ? Colors.red.shade400.withValues(alpha: 0.15)
-                : Colors.white.withValues(alpha: 0.08),
             shape: BoxShape.circle,
+            color: widget.isLiked
+                ? Colors.red.shade400.withValues(alpha: 0.12)
+                : Colors.transparent,
+            border: Border.all(
+              color: widget.isLiked
+                  ? Colors.red.shade400.withValues(alpha: 0.5)
+                  : OnbStyle.hairline,
+            ),
           ),
           child: Icon(
             widget.isLiked ? Icons.favorite : Icons.favorite_border,
             color: widget.isLiked
                 ? Colors.red.shade400
-                : Colors.white.withValues(alpha: 0.7),
+                : OnbStyle.ink.withValues(alpha: 0.65),
             size: 22,
           ),
         ),
