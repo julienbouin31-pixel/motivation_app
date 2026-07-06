@@ -8,11 +8,12 @@ import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_
 import 'package:motivation_app/features/onboarding/presentation/widgets/continue_button.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 
-const _previews = [
-  'Tu es capable d\'accomplir tout ce que tu entreprends.',
-  'Chaque matin est une nouvelle occasion de devenir la meilleure version de toi-même.',
-  'Ta force intérieure est plus grande que n\'importe quel obstacle.',
-  'Tu mérites tout le bonheur que la vie a à t\'offrir.',
+const _mockTexts = [
+  "Tu es capable d'accomplir tout ce que tu entreprends.",
+  "Chaque matin est une nouvelle occasion de devenir une meilleure version de toi-même.",
+  "Ta force intérieure est plus grande que n'importe quel obstacle.",
+  "Tu mérites tout le bonheur que la vie a à t'offrir.",
+  "Chaque pas en avant compte, même les plus petits.",
 ];
 
 class OnboardingPreviewPage extends StatefulWidget {
@@ -22,14 +23,63 @@ class OnboardingPreviewPage extends StatefulWidget {
   State<OnboardingPreviewPage> createState() => _OnboardingPreviewPageState();
 }
 
-class _OnboardingPreviewPageState extends State<OnboardingPreviewPage> {
-  final PageController _pageController = PageController(viewportFraction: 0.88);
-  int _currentPage = 0;
+class _OnboardingPreviewPageState extends State<OnboardingPreviewPage>
+    with TickerProviderStateMixin {
+  int _likedCount = 0;
+  int _currentIndex = 0;
+  bool _isCardLiked = false;
+  bool _isExiting = false;
+
+  late final AnimationController _exitCtrl;
+  late final AnimationController _enterCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _exitCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 350),
+    );
+    _enterCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 380),
+      value: 1.0,
+    );
+    _exitCtrl.addStatusListener((status) {
+      if (status == AnimationStatus.completed && mounted) {
+        setState(() {
+          _currentIndex = (_currentIndex + 1) % _mockTexts.length;
+          _isCardLiked = false;
+          _isExiting = false;
+        });
+        _exitCtrl.reset();
+        if (_likedCount < 3) {
+          _enterCtrl.forward(from: 0);
+        }
+      }
+    });
+  }
 
   @override
   void dispose() {
-    _pageController.dispose();
+    _exitCtrl.dispose();
+    _enterCtrl.dispose();
     super.dispose();
+  }
+
+  void _onLike() {
+    if (_isCardLiked || _isExiting) return;
+    setState(() {
+      _isCardLiked = true;
+      _likedCount++;
+    });
+    Future.delayed(const Duration(milliseconds: 480), _triggerExit);
+  }
+
+  void _triggerExit() {
+    if (!mounted || _isExiting) return;
+    setState(() => _isExiting = true);
+    _exitCtrl.forward();
   }
 
   @override
@@ -42,6 +92,9 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage> {
       _ => null,
     };
     final name = profile?.name?.isNotEmpty == true ? profile!.name! : 'toi';
+    final isUnlocked = _likedCount >= 3;
+    final screenH = MediaQuery.of(context).size.height;
+    final currentText = _mockTexts[_currentIndex].replaceAll('toi', name);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -58,7 +111,7 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Header ───────────────────────────────────────────────────
+              // ── Header ──────────────────────────────────────────────────
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
                 child: Column(
@@ -70,36 +123,55 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage> {
                         totalSteps: progress.total,
                       ),
                     ),
-                    const SizedBox(height: 36),
+                    const SizedBox(height: 28),
                     FadeSlideIn(
                       delay: const Duration(milliseconds: 80),
-                      child: ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          colors: [Colors.white, Color(0xFFD3D3D3)],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ).createShader(bounds),
-                        child: const Text(
-                          'Voici ce qui\nt\'attend chaque jour',
-                          style: TextStyle(
-                            fontSize: 34,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                            height: 1.15,
-                            letterSpacing: -1.0,
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 350),
+                        transitionBuilder: (child, anim) => FadeTransition(
+                          opacity: anim,
+                          child: SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(0, 0.15),
+                              end: Offset.zero,
+                            ).animate(anim),
+                            child: child,
+                          ),
+                        ),
+                        child: Align(
+                          key: ValueKey(isUnlocked),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            isUnlocked ? 'Tu as tout compris !' : "Essaie l'application",
+                            style: const TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              height: 1.15,
+                              letterSpacing: -1.0,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                     FadeSlideIn(
                       delay: const Duration(milliseconds: 130),
-                      child: Text(
-                        'Glisse pour découvrir d\'autres affirmations',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white.withValues(alpha: 0.35),
-                          letterSpacing: -0.1,
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        child: Align(
+                          key: ValueKey(isUnlocked),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            isUnlocked
+                                ? 'Tu es prêt à commencer ton parcours.'
+                                : 'Appuie sur le cœur pour aimer une affirmation.',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.white.withValues(alpha: 0.35),
+                              letterSpacing: -0.1,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -107,53 +179,29 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage> {
                 ),
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 28),
 
-              // ── Carrousel ────────────────────────────────────────────────
+              // ── Hearts progress ──────────────────────────────────────────
               FadeSlideIn(
-                delay: const Duration(milliseconds: 180),
-                child: SizedBox(
-                  height: 260,
-                  child: PageView.builder(
-                    controller: _pageController,
-                    onPageChanged: (i) => setState(() => _currentPage = i),
-                    itemCount: _previews.length,
-                    itemBuilder: (context, index) {
-                      final isActive = index == _currentPage;
-                      return AnimatedScale(
-                        scale: isActive ? 1.0 : 0.93,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeOutCubic,
-                        child: _PreviewCard(
-                          text: _previews[index].replaceAll('toi', name),
-                          isActive: isActive,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // ── Dots ─────────────────────────────────────────────────────
-              FadeSlideIn(
-                delay: const Duration(milliseconds: 220),
-                child: Center(
+                delay: const Duration(milliseconds: 160),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: List.generate(_previews.length, (i) {
-                      final active = i == _currentPage;
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 250),
-                        margin: const EdgeInsets.symmetric(horizontal: 3),
-                        width: active ? 20 : 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: active
-                              ? Colors.white.withValues(alpha: 0.8)
-                              : Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(3),
+                    children: List.generate(3, (i) {
+                      final filled = i < _likedCount;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: AnimatedScale(
+                          scale: filled ? 1.2 : 1.0,
+                          duration: const Duration(milliseconds: 350),
+                          curve: Curves.elasticOut,
+                          child: Icon(
+                            filled ? Icons.favorite : Icons.favorite_border,
+                            color: filled
+                                ? Colors.red.shade400
+                                : Colors.white.withValues(alpha: 0.2),
+                            size: 26,
+                          ),
                         ),
                       );
                     }),
@@ -161,16 +209,96 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage> {
                 ),
               ),
 
-              const Spacer(),
+              const SizedBox(height: 24),
+
+              // ── Card / Success area ──────────────────────────────────────
+              Expanded(
+                child: isUnlocked
+                    ? FadeSlideIn(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 76,
+                                height: 76,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF4CAF50).withValues(alpha: 0.12),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: const Color(0xFF4CAF50).withValues(alpha: 0.25),
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.check_rounded,
+                                  color: Color(0xFF4CAF50),
+                                  size: 38,
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              const Text(
+                                '3 / 3',
+                                style: TextStyle(
+                                  fontSize: 52,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                  height: 1,
+                                  letterSpacing: -2.5,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'affirmations aimées',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.white.withValues(alpha: 0.4),
+                                  letterSpacing: -0.2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : AnimatedBuilder(
+                        animation: Listenable.merge([_exitCtrl, _enterCtrl]),
+                        builder: (ctx, _) {
+                          double translateY;
+                          double opacity;
+
+                          if (_isExiting) {
+                            translateY = -_exitCtrl.value * screenH * 0.55;
+                            opacity = (1.0 - _exitCtrl.value * 1.8).clamp(0.0, 1.0);
+                          } else {
+                            translateY = (1.0 - _enterCtrl.value) * 35;
+                            opacity = _enterCtrl.value;
+                          }
+
+                          return Opacity(
+                            opacity: opacity,
+                            child: Transform.translate(
+                              offset: Offset(0, translateY),
+                              child: _MockCard(
+                                text: currentText,
+                                isLiked: _isCardLiked,
+                                onLike: _onLike,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
 
               // ── CTA ──────────────────────────────────────────────────────
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
                 child: FadeSlideIn(
-                  delay: const Duration(milliseconds: 280),
+                  delay: const Duration(milliseconds: 220),
                   child: ContinueButton(
-                    label: 'Activer mes rappels',
-                    onPressed: () => OnboardingFlow.next(context, AppRouter.onboardingPreview),
+                    label: isUnlocked ? 'Activer mes rappels' : 'Continuer',
+                    enabled: isUnlocked,
+                    onPressed: isUnlocked
+                        ? () => OnboardingFlow.next(context, AppRouter.onboardingPreview)
+                        : null,
                   ),
                 ),
               ),
@@ -182,61 +310,139 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage> {
   }
 }
 
-class _PreviewCard extends StatelessWidget {
-  final String text;
-  final bool isActive;
+// ─── Mock affirmation card ────────────────────────────────────────────────────
 
-  const _PreviewCard({required this.text, required this.isActive});
+class _MockCard extends StatelessWidget {
+  final String text;
+  final bool isLiked;
+  final VoidCallback onLike;
+
+  const _MockCard({
+    required this.text,
+    required this.isLiked,
+    required this.onLike,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6),
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF141414),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: isActive
-                ? Colors.white.withValues(alpha: 0.12)
-                : Colors.white.withValues(alpha: 0.05),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Text(
+            '"$text"',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w500,
+              height: 1.4,
+              letterSpacing: -0.5,
+              color: Colors.white,
+            ),
           ),
-          boxShadow: isActive
-              ? [
-                  BoxShadow(
-                    color: Colors.white.withValues(alpha: 0.04),
-                    blurRadius: 30,
-                    spreadRadius: 0,
-                  ),
-                ]
-              : [],
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '"',
-                style: TextStyle(
-                  fontSize: 64,
-                  height: 0.85,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white.withValues(alpha: 0.12),
-                ),
+        const SizedBox(height: 36),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _HeartButton(isLiked: isLiked, onTap: onLike),
+            const SizedBox(width: 16),
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.08),
+                shape: BoxShape.circle,
               ),
-              const Spacer(),
-              Text(
-                text,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  height: 1.5,
-                  color: Colors.white.withValues(alpha: isActive ? 0.9 : 0.5),
-                  letterSpacing: -0.3,
-                ),
+              child: Icon(
+                Icons.share_outlined,
+                color: Colors.white.withValues(alpha: 0.45),
+                size: 22,
               ),
-            ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+// ─── Heart button with bounce animation ──────────────────────────────────────
+
+class _HeartButton extends StatefulWidget {
+  final bool isLiked;
+  final VoidCallback onTap;
+
+  const _HeartButton({required this.isLiked, required this.onTap});
+
+  @override
+  State<_HeartButton> createState() => _HeartButtonState();
+}
+
+class _HeartButtonState extends State<_HeartButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 350),
+    );
+    _scale = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween(begin: 1.0, end: 1.45)
+            .chain(CurveTween(curve: Curves.easeOut)),
+        weight: 40,
+      ),
+      TweenSequenceItem(
+        tween: Tween(begin: 1.45, end: 0.88)
+            .chain(CurveTween(curve: Curves.easeIn)),
+        weight: 30,
+      ),
+      TweenSequenceItem(
+        tween: Tween(begin: 0.88, end: 1.0)
+            .chain(CurveTween(curve: Curves.elasticOut)),
+        weight: 30,
+      ),
+    ]).animate(_ctrl);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  void _handleTap() {
+    _ctrl.forward(from: 0);
+    widget.onTap();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _handleTap,
+      child: ScaleTransition(
+        scale: _scale,
+        child: Container(
+          width: 52,
+          height: 52,
+          decoration: BoxDecoration(
+            color: widget.isLiked
+                ? Colors.red.shade400.withValues(alpha: 0.15)
+                : Colors.white.withValues(alpha: 0.08),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            widget.isLiked ? Icons.favorite : Icons.favorite_border,
+            color: widget.isLiked
+                ? Colors.red.shade400
+                : Colors.white.withValues(alpha: 0.7),
+            size: 22,
           ),
         ),
       ),
