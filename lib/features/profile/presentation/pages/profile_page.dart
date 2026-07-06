@@ -324,9 +324,9 @@ class _StreakCard extends StatelessWidget {
                       height: 24,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isToday ? AppStyle.ink : Colors.transparent,
+                        color: isToday ? AppStyle.accent : Colors.transparent,
                         border: Border.all(
-                          color: isToday ? AppStyle.ink : AppStyle.hairline,
+                          color: isToday ? AppStyle.accent : AppStyle.hairline,
                         ),
                       ),
                       child: isToday

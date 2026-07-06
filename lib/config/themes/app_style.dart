@@ -10,6 +10,7 @@ abstract final class AppStyle {
   static const Color ink = Color(0xFFF4F4F1); // blanc doux neutre
   static const Color dim = Color(0xFF8B8B87); // gris neutre secondaire
   static const Color hairline = Color(0x26F4F4F1); // filets / séparateurs
+  static const Color accent = Color(0xFFE0A96D); // ocre doux — à petites doses
 
   static TextStyle display({double size = 34}) => GoogleFonts.urbanist(
         fontSize: size,
@@ -73,7 +74,7 @@ class AnimatedHairline extends StatelessWidget {
   }
 }
 
-/// Ligne sélectionnable façon sommaire : texte + point ivoire quand choisi,
+/// Ligne sélectionnable façon sommaire : texte + point ocre quand choisi,
 /// séparée par un filet. Remplace les anciennes cartes "verre dépoli".
 class SelectableRow extends StatelessWidget {
   final String label;
@@ -138,7 +139,7 @@ class SelectableRow extends StatelessWidget {
                 width: 7,
                 height: 7,
                 decoration: const BoxDecoration(
-                  color: AppStyle.ink,
+                  color: AppStyle.accent,
                   shape: BoxShape.circle,
                 ),
               ),

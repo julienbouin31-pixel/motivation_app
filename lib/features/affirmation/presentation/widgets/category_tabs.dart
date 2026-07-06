@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motivation_app/config/themes/app_style.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 
@@ -91,7 +92,7 @@ class CategoryButton extends StatelessWidget {
     final bgColor =
         colorOverride ?? (isDark ? Colors.transparent : colors.primary);
     final fgColor =
-        iconColorOverride ?? (isDark ? colors.primary : colors.scaffold);
+        iconColorOverride ?? (isDark ? AppStyle.accent : colors.scaffold);
     return GestureDetector(
       onTap: onTap,
       child: Container(
