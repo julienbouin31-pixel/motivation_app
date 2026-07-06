@@ -293,10 +293,14 @@ class _StreakCard extends StatelessWidget {
             ],
           ),
 
-          const Spacer(),
+          const SizedBox(width: 16),
 
           // ── Jours de la semaine ──────────────────────────────────────
-          Row(
+          Expanded(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerRight,
+              child: Row(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(7, (i) {
               final isToday = i == todayIndex;
@@ -334,6 +338,8 @@ class _StreakCard extends StatelessWidget {
                 ),
               );
             }),
+              ),
+            ),
           ),
         ],
       ),
