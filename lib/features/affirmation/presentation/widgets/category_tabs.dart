@@ -39,8 +39,11 @@ class CategoryPanel extends StatelessWidget {
               duration: const Duration(milliseconds: 150),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: isSelected ? colors.primary : colors.surface,
-                borderRadius: BorderRadius.circular(12),
+                color: isSelected ? colors.primary : Colors.transparent,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSelected ? colors.primary : colors.border,
+                ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -81,14 +84,14 @@ class CategoryButton extends StatelessWidget {
     this.iconColorOverride,
   });
 
-  static const _green = Color(0xFF4CAF50);
-
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = colorOverride ?? (isDark ? colors.surface : colors.primary);
-    final fgColor = iconColorOverride ?? (isDark ? _green : colors.scaffold);
+    final bgColor =
+        colorOverride ?? (isDark ? Colors.transparent : colors.primary);
+    final fgColor =
+        iconColorOverride ?? (isDark ? colors.primary : colors.scaffold);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -97,7 +100,7 @@ class CategoryButton extends StatelessWidget {
           color: bgColor,
           borderRadius: BorderRadius.circular(24),
           border: (colorOverride == null && isDark)
-              ? Border.all(color: _green.withValues(alpha: 0.3), width: 1)
+              ? Border.all(color: colors.border)
               : null,
         ),
         child: Row(

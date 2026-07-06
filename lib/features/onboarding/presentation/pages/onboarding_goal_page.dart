@@ -6,7 +6,7 @@ import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/back_button_widget.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/continue_button.dart';
-import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_style.dart';
+import 'package:motivation_app/config/themes/app_style.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 
 // Libellés conservés tels quels : ils sont enregistrés dans le profil.
@@ -32,7 +32,7 @@ class _OnboardingGoalPageState extends State<OnboardingGoalPage> {
     final progress = OnboardingFlow.progress(AppRouter.onboardingGoal);
 
     return Scaffold(
-      backgroundColor: OnbStyle.bg,
+      backgroundColor: AppStyle.bg,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(28, 12, 28, 32),
@@ -56,12 +56,12 @@ class _OnboardingGoalPageState extends State<OnboardingGoalPage> {
                     const SizedBox(height: 36),
                     Text(
                       'sur quoi veux-tu\ntravailler en premier ?',
-                      style: OnbStyle.display(),
+                      style: AppStyle.display(),
                     ),
                     const SizedBox(height: 12),
                     Text(
                       'Tes affirmations seront écrites autour de ça.',
-                      style: OnbStyle.body,
+                      style: AppStyle.body,
                     ),
                   ],
                 ),
@@ -76,7 +76,7 @@ class _OnboardingGoalPageState extends State<OnboardingGoalPage> {
                       FadeSlideIn(
                         delay: Duration(milliseconds: 250 + i * 70),
                         duration: const Duration(milliseconds: 500),
-                        child: OnbSelectableRow(
+                        child: SelectableRow(
                           label: goal.label,
                           sublabel: goal.sub,
                           selected: _selected == goal.label,

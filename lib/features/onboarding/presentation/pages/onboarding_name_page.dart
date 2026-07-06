@@ -6,7 +6,7 @@ import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/back_button_widget.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/continue_button.dart';
-import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_style.dart';
+import 'package:motivation_app/config/themes/app_style.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 
 class OnboardingNamePage extends StatefulWidget {
@@ -43,7 +43,7 @@ class _OnboardingNamePageState extends State<OnboardingNamePage> {
     final progress = OnboardingFlow.progress(AppRouter.onboardingName);
 
     return Scaffold(
-      backgroundColor: OnbStyle.bg,
+      backgroundColor: AppStyle.bg,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: CustomScrollView(
@@ -72,12 +72,12 @@ class _OnboardingNamePageState extends State<OnboardingNamePage> {
                             const SizedBox(height: 36),
                             Text(
                               'et toi, comment\ntu t\'appelles ?',
-                              style: OnbStyle.display(),
+                              style: AppStyle.display(),
                             ),
                             const SizedBox(height: 12),
                             Text(
                               'Chaque affirmation te sera adressée par ton prénom.',
-                              style: OnbStyle.body,
+                              style: AppStyle.body,
                             ),
                           ],
                         ),
@@ -92,23 +92,23 @@ class _OnboardingNamePageState extends State<OnboardingNamePage> {
                         child: TextField(
                           controller: _nameController,
                           textCapitalization: TextCapitalization.words,
-                          cursorColor: OnbStyle.ink,
-                          style: OnbStyle.display(size: 30),
+                          cursorColor: AppStyle.ink,
+                          style: AppStyle.display(size: 30),
                           decoration: InputDecoration(
                             hintText: 'ton prénom',
-                            hintStyle: OnbStyle.displayItalic(size: 30)
+                            hintStyle: AppStyle.displayItalic(size: 30)
                                 .copyWith(
                                     color:
-                                        OnbStyle.dim.withValues(alpha: 0.5)),
+                                        AppStyle.dim.withValues(alpha: 0.5)),
                             isDense: true,
                             contentPadding:
                                 const EdgeInsets.symmetric(vertical: 12),
                             enabledBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: OnbStyle.hairline),
+                              borderSide: BorderSide(color: AppStyle.hairline),
                             ),
                             focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
-                                color: OnbStyle.ink.withValues(alpha: 0.6),
+                                color: AppStyle.ink.withValues(alpha: 0.6),
                               ),
                             ),
                           ),
@@ -130,8 +130,8 @@ class _OnboardingNamePageState extends State<OnboardingNamePage> {
                               : const Offset(0, 0.3),
                           child: Text(
                             '« ${_nameController.text.trim()}, tu es capable de grandes choses. »',
-                            style: OnbStyle.displayItalic(size: 17).copyWith(
-                              color: OnbStyle.ink.withValues(alpha: 0.45),
+                            style: AppStyle.displayItalic(size: 17).copyWith(
+                              color: AppStyle.ink.withValues(alpha: 0.45),
                               height: 1.5,
                             ),
                           ),

@@ -3,7 +3,7 @@ import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/core/widgets/fade_slide_in.dart';
 import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/continue_button.dart';
-import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_style.dart';
+import 'package:motivation_app/config/themes/app_style.dart';
 
 class OnboardingWelcomePage extends StatelessWidget {
   const OnboardingWelcomePage({super.key});
@@ -11,7 +11,7 @@ class OnboardingWelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: OnbStyle.bg,
+      backgroundColor: AppStyle.bg,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(28, 0, 28, 32),
@@ -39,12 +39,12 @@ class OnboardingWelcomePage extends StatelessWidget {
                 duration: const Duration(milliseconds: 700),
                 child: Text.rich(
                   TextSpan(
-                    style: OnbStyle.display(size: 40),
+                    style: AppStyle.display(size: 40),
                     children: [
                       const TextSpan(text: 'un mot '),
                       TextSpan(
                           text: 'juste',
-                          style: OnbStyle.displayItalic(size: 40)),
+                          style: AppStyle.displayItalic(size: 40)),
                       const TextSpan(text: ',\nchaque matin.'),
                     ],
                   ),
@@ -65,7 +65,7 @@ class OnboardingWelcomePage extends StatelessWidget {
                 duration: const Duration(milliseconds: 700),
                 child: Text(
                   'Des affirmations écrites pour toi,\nà lire en trente secondes avec ton café.',
-                  style: OnbStyle.body,
+                  style: AppStyle.body,
                 ),
               ),
 

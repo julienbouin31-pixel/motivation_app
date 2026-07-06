@@ -7,7 +7,7 @@ import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/continue_button.dart';
-import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_style.dart';
+import 'package:motivation_app/config/themes/app_style.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 
 const _mockTexts = [
@@ -126,7 +126,7 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage>
     final currentText = _mockTexts[_currentIndex].replaceAll('toi', name);
 
     return Scaffold(
-      backgroundColor: OnbStyle.bg,
+      backgroundColor: AppStyle.bg,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,14 +145,14 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage>
                     const SizedBox(height: 32),
                     Text(
                       isUnlocked ? 'c\'est exactement ça.' : 'à toi d\'essayer.',
-                      style: OnbStyle.display(size: 30),
+                      style: AppStyle.display(size: 30),
                     ),
                     const SizedBox(height: 10),
                     Text(
                       isUnlocked
                           ? 'Tu viens de garder tes trois premières affirmations.'
                           : 'Balaie vers le haut pour passer.\nAppuie sur le cœur pour en garder trois.',
-                      style: OnbStyle.body.copyWith(fontSize: 14),
+                      style: AppStyle.body.copyWith(fontSize: 14),
                     ),
                   ],
                 ),
@@ -179,13 +179,13 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage>
                               : Icons.favorite_border,
                           color: i < _likedCount
                               ? Colors.red.shade400
-                              : OnbStyle.ink.withValues(alpha: 0.18),
+                              : AppStyle.ink.withValues(alpha: 0.18),
                           size: 20,
                         ),
                       ),
                     ),
                   const SizedBox(width: 6),
-                  Text('$_likedCount sur 3', style: OnbStyle.overline),
+                  Text('$_likedCount sur 3', style: AppStyle.overline),
                 ],
               ),
             ),
@@ -202,8 +202,8 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage>
                           child: Text(
                             'voilà. c\'est aussi simple\nque ça, chaque matin.',
                             textAlign: TextAlign.center,
-                            style: OnbStyle.displayItalic(size: 26)
-                                .copyWith(color: OnbStyle.ink.withValues(alpha: 0.8)),
+                            style: AppStyle.displayItalic(size: 26)
+                                .copyWith(color: AppStyle.ink.withValues(alpha: 0.8)),
                           ),
                         ),
                       ),
@@ -287,7 +287,7 @@ class _MockCard extends StatelessWidget {
           child: Text(
             text,
             textAlign: TextAlign.center,
-            style: OnbStyle.display(size: 24).copyWith(height: 1.45),
+            style: AppStyle.display(size: 24).copyWith(height: 1.45),
           ),
         ),
         const SizedBox(height: 36),
@@ -301,11 +301,11 @@ class _MockCard extends StatelessWidget {
               height: 52,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: OnbStyle.hairline),
+                border: Border.all(color: AppStyle.hairline),
               ),
               child: Icon(
                 Icons.share_outlined,
-                color: OnbStyle.ink.withValues(alpha: 0.4),
+                color: AppStyle.ink.withValues(alpha: 0.4),
                 size: 20,
               ),
             ),
@@ -387,14 +387,14 @@ class _HeartButtonState extends State<_HeartButton>
             border: Border.all(
               color: widget.isLiked
                   ? Colors.red.shade400.withValues(alpha: 0.5)
-                  : OnbStyle.hairline,
+                  : AppStyle.hairline,
             ),
           ),
           child: Icon(
             widget.isLiked ? Icons.favorite : Icons.favorite_border,
             color: widget.isLiked
                 ? Colors.red.shade400
-                : OnbStyle.ink.withValues(alpha: 0.65),
+                : AppStyle.ink.withValues(alpha: 0.65),
             size: 22,
           ),
         ),

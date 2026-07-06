@@ -10,7 +10,7 @@ import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/back_button_widget.dart';
-import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_style.dart';
+import 'package:motivation_app/config/themes/app_style.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 import 'package:motivation_app/injection_container.dart' as di;
 
@@ -85,7 +85,7 @@ class _OnboardingNotificationPageState
         OnboardingFlow.progress(AppRouter.onboardingNotifications);
 
     return Scaffold(
-      backgroundColor: OnbStyle.bg,
+      backgroundColor: AppStyle.bg,
       body: SafeArea(
         child: Column(
           children: [
@@ -122,12 +122,12 @@ class _OnboardingNotificationPageState
                         children: [
                           Text(
                             'quand veux-tu\nqu\'on t\'écrive ?',
-                            style: OnbStyle.display(),
+                            style: AppStyle.display(),
                           ),
                           const SizedBox(height: 12),
                           Text(
                             'Tu pourras changer ça à tout moment.',
-                            style: OnbStyle.body,
+                            style: AppStyle.body,
                           ),
                         ],
                       ),
@@ -137,14 +137,14 @@ class _OnboardingNotificationPageState
                     FadeSlideIn(
                       delay: const Duration(milliseconds: 200),
                       duration: const Duration(milliseconds: 500),
-                      child: const Text('fréquence', style: OnbStyle.overline),
+                      child: const Text('fréquence', style: AppStyle.overline),
                     ),
                     const SizedBox(height: 4),
                     for (final (i, opt) in _freqOptions.indexed)
                       FadeSlideIn(
                         delay: Duration(milliseconds: 260 + i * 70),
                         duration: const Duration(milliseconds: 500),
-                        child: OnbSelectableRow(
+                        child: SelectableRow(
                           label: opt.label,
                           sublabel: opt.sub,
                           selected: _frequency == opt.freq,
@@ -157,7 +157,7 @@ class _OnboardingNotificationPageState
                       delay: const Duration(milliseconds: 500),
                       duration: const Duration(milliseconds: 500),
                       child:
-                          const Text('plage horaire', style: OnbStyle.overline),
+                          const Text('plage horaire', style: AppStyle.overline),
                     ),
                     const SizedBox(height: 14),
                     FadeSlideIn(
@@ -199,10 +199,10 @@ class _OnboardingNotificationPageState
                 child: TextButton(
                   onPressed: _saving ? null : _confirm,
                   style: TextButton.styleFrom(
-                    backgroundColor: OnbStyle.ink,
+                    backgroundColor: AppStyle.ink,
                     foregroundColor: const Color(0xFF111110),
                     disabledBackgroundColor:
-                        OnbStyle.ink.withValues(alpha: 0.5),
+                        AppStyle.ink.withValues(alpha: 0.5),
                     shape: const StadiumBorder(),
                   ),
                   child: _saving
@@ -250,11 +250,11 @@ class _HourPicker extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label.toLowerCase(), style: OnbStyle.overline),
+        Text(label.toLowerCase(), style: AppStyle.overline),
         const SizedBox(height: 2),
         Container(
           decoration: const BoxDecoration(
-            border: Border(bottom: BorderSide(color: OnbStyle.hairline)),
+            border: Border(bottom: BorderSide(color: AppStyle.hairline)),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
@@ -264,11 +264,11 @@ class _HourPicker extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w500,
-                color: OnbStyle.ink,
+                color: AppStyle.ink,
               ),
               icon: Icon(
                 Icons.keyboard_arrow_down_rounded,
-                color: OnbStyle.ink.withValues(alpha: 0.4),
+                color: AppStyle.ink.withValues(alpha: 0.4),
               ),
               items: List.generate(
                 24,

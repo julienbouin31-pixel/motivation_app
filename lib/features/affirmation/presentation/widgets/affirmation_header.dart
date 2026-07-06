@@ -31,15 +31,18 @@ class AffirmationHeader extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: avatarBg ?? colors.primary,
+                color: avatarBg ?? Colors.transparent,
                 shape: BoxShape.circle,
+                border: avatarBg == null
+                    ? Border.all(color: colors.border)
+                    : null,
               ),
               child: Center(
                 child: Text(
                   initial,
                   style: TextStyle(
-                    color: avatarFg ?? colors.scaffold,
-                    fontWeight: FontWeight.bold,
+                    color: avatarFg ?? colors.primary,
+                    fontWeight: FontWeight.w500,
                     fontSize: 16,
                   ),
                 ),

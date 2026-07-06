@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_style.dart';
+import 'package:motivation_app/config/themes/app_style.dart';
 
 class BackButtonWidget extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -16,7 +16,7 @@ class BackButtonWidget extends StatelessWidget {
         child: Icon(
           Icons.arrow_back,
           size: 22,
-          color: OnbStyle.ink.withValues(alpha: 0.65),
+          color: AppStyle.ink.withValues(alpha: 0.65),
         ),
       ),
     );

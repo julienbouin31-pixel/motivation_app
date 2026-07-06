@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_style.dart';
+import 'package:motivation_app/config/themes/app_style.dart';
 
 class ContinueButton extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -29,7 +29,7 @@ class ContinueButton extends StatelessWidget {
         width: double.infinity,
         height: 58,
         decoration: BoxDecoration(
-          color: enabled ? OnbStyle.ink : OnbStyle.ink.withValues(alpha: 0.08),
+          color: enabled ? AppStyle.ink : AppStyle.ink.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(29),
         ),
         child: Center(
@@ -41,7 +41,7 @@ class ContinueButton extends StatelessWidget {
               letterSpacing: 0.1,
               color: enabled
                   ? const Color(0xFF111110)
-                  : OnbStyle.ink.withValues(alpha: 0.3),
+                  : AppStyle.ink.withValues(alpha: 0.3),
             ),
             child: Text(label),
           ),

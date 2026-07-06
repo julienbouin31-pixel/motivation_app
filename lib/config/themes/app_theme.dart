@@ -29,14 +29,14 @@ class AppColors extends ThemeExtension<AppColors> {
     border: Color(0xFFDEDBD5),
   );
 
-  // Aligné sur la palette des widgets iOS : #161616 fond, 38% white secondary
+  // Aligné sur la DA "curves" : noir profond, encre neutre douce, filets fins
   static const dark = AppColors(
-    scaffold: Color(0xFF161616),
-    card: Color(0xFF1E1E1E),
-    primary: Colors.white,
-    secondary: Color(0x99FFFFFF),
-    surface: Color(0xFF252525),
-    border: Color(0xFF2C2C2C),
+    scaffold: Color(0xFF0A0A0A),
+    card: Color(0xFF141413),
+    primary: Color(0xFFF4F4F1),
+    secondary: Color(0xFF8B8B87),
+    surface: Color(0xFF1C1C1B),
+    border: Color(0x26F4F4F1),
   );
 
   @override
@@ -82,11 +82,11 @@ class AppTheme {
         brightness: Brightness.light,
         scaffoldBackgroundColor: AppColors.light.scaffold,
         extensions: const [AppColors.light],
-        textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme),
+        textTheme: GoogleFonts.urbanistTextTheme(ThemeData.light().textTheme),
         appBarTheme: AppBarTheme(
           centerTitle: true,
           elevation: 0,
-          titleTextStyle: GoogleFonts.inter(
+          titleTextStyle: GoogleFonts.urbanist(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: AppColors.light.primary,
@@ -94,7 +94,7 @@ class AppTheme {
         ),
         snackBarTheme: SnackBarThemeData(
           backgroundColor: AppColors.light.primary,
-          contentTextStyle: GoogleFonts.inter(
+          contentTextStyle: GoogleFonts.urbanist(
             color: AppColors.light.scaffold,
             fontSize: 13,
             fontWeight: FontWeight.w500,
@@ -109,11 +109,11 @@ class AppTheme {
         brightness: Brightness.dark,
         scaffoldBackgroundColor: AppColors.dark.scaffold,
         extensions: const [AppColors.dark],
-        textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
+        textTheme: GoogleFonts.urbanistTextTheme(ThemeData.dark().textTheme),
         appBarTheme: AppBarTheme(
           centerTitle: true,
           elevation: 0,
-          titleTextStyle: GoogleFonts.inter(
+          titleTextStyle: GoogleFonts.urbanist(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: AppColors.dark.primary,
@@ -121,7 +121,7 @@ class AppTheme {
         ),
         snackBarTheme: SnackBarThemeData(
           backgroundColor: AppColors.dark.card,
-          contentTextStyle: GoogleFonts.inter(
+          contentTextStyle: GoogleFonts.urbanist(
             color: AppColors.dark.primary,
             fontSize: 13,
             fontWeight: FontWeight.w500,

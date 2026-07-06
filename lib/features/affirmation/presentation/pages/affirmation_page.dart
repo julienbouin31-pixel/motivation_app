@@ -276,17 +276,17 @@ class _AffirmationPageState extends State<AffirmationPage>
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: uiBg ?? Colors.white.withValues(alpha: 0.08),
+                            color: uiBg ?? Colors.transparent,
                             shape: BoxShape.circle,
                             border: themed
                                 ? null
-                                : Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                                : Border.all(color: colors.border),
                           ),
                           child: Icon(
                             Icons.favorite,
                             color: themed
                                 ? themeData.uiOverlayFg.withValues(alpha: 0.8)
-                                : Colors.red,
+                                : Colors.red.shade400,
                             size: 20,
                           ),
                         ),

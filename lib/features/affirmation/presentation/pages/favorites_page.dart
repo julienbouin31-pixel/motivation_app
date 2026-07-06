@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:motivation_app/config/themes/app_style.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/favorites_cubit.dart';
@@ -41,142 +42,118 @@ class _FavoritesViewState extends State<_FavoritesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF1A1A1A), Colors.black, Colors.black],
-            stops: [0.0, 0.3, 1.0],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ─── Header ────────────────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.05),
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-                        ),
-                        child: const Icon(Icons.arrow_back_ios_new_rounded, size: 17, color: Colors.white),
+      backgroundColor: AppStyle.bg,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ─── Header ────────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(28, 12, 28, 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () => context.pop(),
+                    behavior: HitTestBehavior.opaque,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Icon(
+                        Icons.arrow_back,
+                        size: 22,
+                        color: AppStyle.ink.withValues(alpha: 0.65),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    const Text(
-                      'Mes favoris',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const Spacer(),
-                    BlocBuilder<FavoritesCubit, FavoritesState>(
-                      builder: (context, state) {
-                        final count = state is FavoritesLoaded ? state.favorites.length : 0;
-                        return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.08),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            '$count',
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white.withValues(alpha: 0.6),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-
-              // ─── Barre de recherche ──────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-                  ),
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: (v) => setState(() => _query = v.toLowerCase()),
-                    style: const TextStyle(fontSize: 14, color: Colors.white),
-                    cursorColor: Colors.white,
-                    decoration: InputDecoration(
-                      hintText: 'Rechercher...',
-                      hintStyle: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white.withValues(alpha: 0.4),
-                      ),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        size: 18,
-                        color: Colors.white.withValues(alpha: 0.4),
-                      ),
-                      suffixIcon: _query.isNotEmpty
-                          ? GestureDetector(
-                              onTap: () {
-                                _searchController.clear();
-                                setState(() => _query = '');
-                              },
-                              child: Icon(
-                                Icons.close,
-                                size: 16,
-                                color: Colors.white.withValues(alpha: 0.4),
-                              ),
-                            )
-                          : null,
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 10),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text('mes favoris', style: AppStyle.display(size: 30)),
+                      const Spacer(),
+                      BlocBuilder<FavoritesCubit, FavoritesState>(
+                        builder: (context, state) {
+                          final count = state is FavoritesLoaded
+                              ? state.favorites.length
+                              : 0;
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Text('$count', style: AppStyle.overline),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               ),
+            ),
 
-              // ─── Contenu ─────────────────────────────────────────────────
-              Expanded(
-                child: BlocBuilder<FavoritesCubit, FavoritesState>(
-                  builder: (context, state) => switch (state) {
-                    FavoritesLoading() => Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.white.withValues(alpha: 0.5),
-                        ),
-                      ),
-                    FavoritesError() => Center(
-                        child: Text(
-                          'Erreur lors du chargement',
-                          style: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
-                        ),
-                      ),
-                    FavoritesLoaded(:final favorites) => favorites.isEmpty
-                        ? const _EmptyState()
-                        : _FavoritesList(favorites: favorites, query: _query),
-                    _ => const SizedBox.shrink(),
-                  },
+            // ─── Recherche ───────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(28, 8, 28, 12),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (v) => setState(() => _query = v.toLowerCase()),
+                style: const TextStyle(fontSize: 15, color: AppStyle.ink),
+                cursorColor: AppStyle.ink,
+                decoration: InputDecoration(
+                  hintText: 'rechercher…',
+                  hintStyle: const TextStyle(
+                    fontSize: 15,
+                    color: AppStyle.dim,
+                  ),
+                  icon: Icon(
+                    Icons.search,
+                    size: 18,
+                    color: AppStyle.ink.withValues(alpha: 0.4),
+                  ),
+                  suffixIcon: _query.isNotEmpty
+                      ? GestureDetector(
+                          onTap: () {
+                            _searchController.clear();
+                            setState(() => _query = '');
+                          },
+                          child: Icon(
+                            Icons.close,
+                            size: 16,
+                            color: AppStyle.ink.withValues(alpha: 0.4),
+                          ),
+                        )
+                      : null,
+                  enabledBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: AppStyle.hairline),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppStyle.ink.withValues(alpha: 0.5),
+                    ),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
                 ),
               ),
-            ],
-          ),
+            ),
+
+            // ─── Contenu ─────────────────────────────────────────────────
+            Expanded(
+              child: BlocBuilder<FavoritesCubit, FavoritesState>(
+                builder: (context, state) => switch (state) {
+                  FavoritesLoading() => const Center(
+                      child: CircularProgressIndicator(color: AppStyle.dim),
+                    ),
+                  FavoritesError() => const Center(
+                      child: Text(
+                        'Erreur lors du chargement',
+                        style: TextStyle(color: AppStyle.dim),
+                      ),
+                    ),
+                  FavoritesLoaded(:final favorites) => favorites.isEmpty
+                      ? const _EmptyState()
+                      : _FavoritesList(favorites: favorites, query: _query),
+                  _ => const SizedBox.shrink(),
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -198,31 +175,24 @@ class _EmptyState extends StatelessWidget {
             width: 64,
             height: 64,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.06),
               shape: BoxShape.circle,
+              border: Border.all(color: AppStyle.hairline),
             ),
             child: Icon(
               Icons.favorite_border,
-              size: 28,
-              color: Colors.white.withValues(alpha: 0.4),
+              size: 26,
+              color: AppStyle.ink.withValues(alpha: 0.4),
             ),
           ),
-          const SizedBox(height: 16),
-          const Text(
-            'Aucun favori pour l\'instant',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 20),
           Text(
-            'Appuie sur ❤️ pour sauvegarder une affirmation',
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.white.withValues(alpha: 0.4),
-            ),
+            'rien ici pour l\'instant.',
+            style: AppStyle.display(size: 20),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Appuie sur le cœur pour garder une affirmation.',
+            style: TextStyle(fontSize: 13, color: AppStyle.dim),
             textAlign: TextAlign.center,
           ),
         ],
@@ -252,25 +222,24 @@ class _FavoritesList extends StatelessWidget {
       return Center(
         child: Text(
           'Aucun résultat pour "$query"',
-          style: TextStyle(fontSize: 14, color: Colors.white.withValues(alpha: 0.4)),
+          style: const TextStyle(fontSize: 14, color: AppStyle.dim),
         ),
       );
     }
 
-    return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(28, 0, 28, 32),
       itemCount: filtered.length,
-      separatorBuilder: (context, i) => const SizedBox(height: 10),
-      itemBuilder: (context, i) => _FavoriteCard(affirmation: filtered[i]),
+      itemBuilder: (context, i) => _FavoriteRow(affirmation: filtered[i]),
     );
   }
 }
 
-// ─── Card ─────────────────────────────────────────────────────────────────────
+// ─── Rangée ───────────────────────────────────────────────────────────────────
 
-class _FavoriteCard extends StatelessWidget {
+class _FavoriteRow extends StatelessWidget {
   final Affirmation affirmation;
-  const _FavoriteCard({required this.affirmation});
+  const _FavoriteRow({required this.affirmation});
 
   @override
   Widget build(BuildContext context) {
@@ -280,15 +249,14 @@ class _FavoriteCard extends StatelessWidget {
       OnboardingProfileLoaded(:final profile) => profile,
       _ => null,
     };
-    final displayText = affirmation.text.replaceAll('{name}', profile?.name ?? 'toi');
+    final displayText =
+        affirmation.text.replaceAll('{name}', profile?.name ?? 'toi');
 
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.04),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: AppStyle.hairline)),
       ),
+      padding: const EdgeInsets.symmetric(vertical: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -297,36 +265,24 @@ class _FavoriteCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '"$displayText"',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    height: 1.5,
-                    color: Colors.white,
-                  ),
+                  displayText,
+                  style: AppStyle.display(size: 16).copyWith(height: 1.5),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Text(
-                  '— ${affirmation.category.label}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.white.withValues(alpha: 0.4),
-                  ),
+                  affirmation.category.label.toLowerCase(),
+                  style: AppStyle.overline,
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 16),
           GestureDetector(
-            onTap: () => context.read<FavoritesCubit>().removeFavorite(affirmation.id),
-            child: Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.favorite, color: Colors.red, size: 16),
+            onTap: () =>
+                context.read<FavoritesCubit>().removeFavorite(affirmation.id),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Icon(Icons.favorite, color: Colors.red.shade400, size: 18),
             ),
           ),
         ],

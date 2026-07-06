@@ -6,7 +6,7 @@ import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/back_button_widget.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/continue_button.dart';
-import 'package:motivation_app/features/onboarding/presentation/widgets/onboarding_style.dart';
+import 'package:motivation_app/config/themes/app_style.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 
 // Libellés conservés tels quels : ils sont enregistrés dans le profil.
@@ -36,7 +36,7 @@ class _OnboardingMoodPageState extends State<OnboardingMoodPage> {
     final progress = OnboardingFlow.progress(AppRouter.onboardingMood);
 
     return Scaffold(
-      backgroundColor: OnbStyle.bg,
+      backgroundColor: AppStyle.bg,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(28, 12, 28, 32),
@@ -60,12 +60,12 @@ class _OnboardingMoodPageState extends State<OnboardingMoodPage> {
                     const SizedBox(height: 36),
                     Text(
                       'comment tu te sens,\nlà, maintenant ?',
-                      style: OnbStyle.display(),
+                      style: AppStyle.display(),
                     ),
                     const SizedBox(height: 12),
                     Text(
                       'Réponds sans réfléchir — on part de là.',
-                      style: OnbStyle.body,
+                      style: AppStyle.body,
                     ),
                   ],
                 ),
@@ -81,7 +81,7 @@ class _OnboardingMoodPageState extends State<OnboardingMoodPage> {
                         FadeSlideIn(
                           delay: Duration(milliseconds: 250 + i * 55),
                           duration: const Duration(milliseconds: 500),
-                          child: OnbSelectableRow(
+                          child: SelectableRow(
                             label: mood,
                             selected: _selected == mood,
                             onTap: () => setState(() => _selected = mood),

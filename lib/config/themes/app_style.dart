@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 /// Direction de l'onboarding, alignée sur le logo "curves" : sans géométrique
 /// light en grands énoncés, monochrome neutre, filets fins qui font écho au
 /// tracé du nœud, ornements réduits au strict minimum.
-abstract final class OnbStyle {
+abstract final class AppStyle {
   static const Color bg = Color(0xFF0A0A0A);
   static const Color ink = Color(0xFFF4F4F1); // blanc doux neutre
   static const Color dim = Color(0xFF8B8B87); // gris neutre secondaire
@@ -66,7 +66,7 @@ class AnimatedHairline extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: FractionallySizedBox(
           widthFactor: value,
-          child: const Divider(color: OnbStyle.hairline, height: 1),
+          child: const Divider(color: AppStyle.hairline, height: 1),
         ),
       ),
     );
@@ -75,13 +75,13 @@ class AnimatedHairline extends StatelessWidget {
 
 /// Ligne sélectionnable façon sommaire : texte + point ivoire quand choisi,
 /// séparée par un filet. Remplace les anciennes cartes "verre dépoli".
-class OnbSelectableRow extends StatelessWidget {
+class SelectableRow extends StatelessWidget {
   final String label;
   final String? sublabel;
   final bool selected;
   final VoidCallback onTap;
 
-  const OnbSelectableRow({
+  const SelectableRow({
     super.key,
     required this.label,
     this.sublabel,
@@ -99,7 +99,7 @@ class OnbSelectableRow extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: Container(
         decoration: const BoxDecoration(
-          border: Border(bottom: BorderSide(color: OnbStyle.hairline)),
+          border: Border(bottom: BorderSide(color: AppStyle.hairline)),
         ),
         padding: EdgeInsets.symmetric(vertical: sublabel == null ? 16 : 14),
         child: Row(
@@ -114,8 +114,8 @@ class OnbSelectableRow extends StatelessWidget {
                       fontSize: 17,
                       fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
                       color: selected
-                          ? OnbStyle.ink
-                          : OnbStyle.ink.withValues(alpha: 0.55),
+                          ? AppStyle.ink
+                          : AppStyle.ink.withValues(alpha: 0.55),
                       letterSpacing: -0.2,
                     ),
                     child: Text(label),
@@ -124,7 +124,7 @@ class OnbSelectableRow extends StatelessWidget {
                     const SizedBox(height: 3),
                     Text(
                       sublabel!,
-                      style: const TextStyle(fontSize: 13, color: OnbStyle.dim),
+                      style: const TextStyle(fontSize: 13, color: AppStyle.dim),
                     ),
                   ],
                 ],
@@ -138,7 +138,7 @@ class OnbSelectableRow extends StatelessWidget {
                 width: 7,
                 height: 7,
                 decoration: const BoxDecoration(
-                  color: OnbStyle.ink,
+                  color: AppStyle.ink,
                   shape: BoxShape.circle,
                 ),
               ),
