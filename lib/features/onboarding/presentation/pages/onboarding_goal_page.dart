@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/core/widgets/fade_slide_in.dart';
+import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
+import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
+import 'package:motivation_app/injection_container.dart' as di;
 import 'package:motivation_app/features/onboarding/presentation/widgets/back_button_widget.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/continue_button.dart';
 import 'package:motivation_app/config/themes/app_style.dart';
@@ -16,6 +21,22 @@ const _goals = [
   (label: 'Rester focalisé(e)', sub: "Te concentrer sur l'essentiel"),
   (label: 'État d\'esprit', sub: 'Cultiver la croissance'),
 ];
+
+// L'objectif choisi pré-filtre le fil d'affirmations : c'est la promesse
+// affichée sous le titre ("tes affirmations seront écrites autour de ça").
+// L'utilisateur peut toujours élargir depuis la page catégories.
+const _goalCategories = <String, List<AffirmationCategory>>{
+  'Confiance en soi': [AffirmationCategory.confidence],
+  'Réduire le stress': [
+    AffirmationCategory.resilience,
+    AffirmationCategory.mindset,
+  ],
+  'Rester focalisé(e)': [AffirmationCategory.focus],
+  'État d\'esprit': [
+    AffirmationCategory.mindset,
+    AffirmationCategory.vision,
+  ],
+};
 
 class OnboardingGoalPage extends StatefulWidget {
   const OnboardingGoalPage({super.key});
@@ -96,6 +117,12 @@ class _OnboardingGoalPageState extends State<OnboardingGoalPage> {
                       ? null
                       : () {
                           context.read<OnboardingCubit>().saveGoal(_selected!);
+                          final categories = _goalCategories[_selected!];
+                          if (categories != null) {
+                            unawaited(di
+                                .sl<AffirmationLocalDataSource>()
+                                .saveCategories(categories));
+                          }
                           OnboardingFlow.next(context, AppRouter.onboardingGoal);
                         },
                 ),
