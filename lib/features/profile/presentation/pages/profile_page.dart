@@ -304,6 +304,11 @@ class _StreakCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: List.generate(7, (i) {
               final isToday = i == todayIndex;
+              // Jour couvert par la série : les `streak` derniers jours,
+              // en remontant depuis aujourd'hui (sans déborder sur la
+              // semaine précédente, non affichée ici).
+              final distance = todayIndex - i;
+              final isDone = distance >= 0 && distance < streak;
               return Padding(
                 padding: const EdgeInsets.only(left: 5),
                 child: Column(
@@ -313,7 +318,7 @@ class _StreakCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 9,
                         fontWeight: FontWeight.w600,
-                        color: isToday
+                        color: isDone || isToday
                             ? AppStyle.ink
                             : AppStyle.ink.withValues(alpha: 0.25),
                       ),
@@ -324,12 +329,16 @@ class _StreakCard extends StatelessWidget {
                       height: 24,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isToday ? AppStyle.accent : Colors.transparent,
+                        color: isDone ? AppStyle.accent : Colors.transparent,
                         border: Border.all(
-                          color: isToday ? AppStyle.accent : AppStyle.hairline,
+                          color: isDone
+                              ? AppStyle.accent
+                              : isToday
+                                  ? AppStyle.ink.withValues(alpha: 0.45)
+                                  : AppStyle.hairline,
                         ),
                       ),
-                      child: isToday
+                      child: isDone
                           ? const Icon(Icons.check_rounded,
                               size: 12, color: Color(0xFF111110))
                           : null,
