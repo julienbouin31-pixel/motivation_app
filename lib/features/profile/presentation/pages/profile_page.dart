@@ -169,7 +169,16 @@ class ProfilePage extends StatelessWidget {
                       final local = di.sl<AffirmationLocalDataSource>();
                       await local.clearAll();
                       await NotificationService.cancelAll();
-                      await di.sl<SecureStorage>().deleteAll();
+                      // Reset de l'onboarding, pas de la progression :
+                      // la série survit au deleteAll.
+                      final storage = di.sl<SecureStorage>();
+                      final streakCount = await storage.readStreak();
+                      final streakDate = await storage.readStreakLastDate();
+                      await storage.deleteAll();
+                      if (streakDate != null) {
+                        await storage.saveStreak(streakCount);
+                        await storage.saveStreakLastDate(streakDate);
+                      }
                       unawaited(di
                           .sl<AffirmationRepository>()
                           .weeklyRefreshInBackground());
