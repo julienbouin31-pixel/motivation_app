@@ -56,7 +56,7 @@ class OnboardingTransitionPage extends StatelessWidget {
                 delay: const Duration(milliseconds: 300),
                 duration: const Duration(milliseconds: 700),
                 child: Text(
-                  'On prépare tes affirmations.\nDeux dernières choses, et c\'est à toi.',
+                  'On va faire connaissance —\nquelques questions, deux petites minutes.',
                   style: AppStyle.body,
                 ),
               ),
