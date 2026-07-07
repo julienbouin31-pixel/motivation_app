@@ -6,8 +6,6 @@ import 'package:motivation_app/features/affirmation/presentation/pages/affirmati
 import 'package:motivation_app/features/affirmation/presentation/pages/category_page.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/custom_affirmations_page.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/favorites_page.dart';
-import 'package:motivation_app/features/home/presentation/pages/home_page.dart';
-import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_age_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_goal_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_mood_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_name_page.dart';
@@ -25,7 +23,6 @@ import 'package:motivation_app/injection_container.dart' as di;
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 class AppRouter {
-  static const String home = '/';
   static const String onboardingWelcome = '/onboarding/welcome';
   static const String onboardingMood = '/onboarding/mood';
   static const String onboardingGoal = '/onboarding/goal';
@@ -33,7 +30,6 @@ class AppRouter {
   static const String onboardingTransition = '/onboarding/transition';
   static const String onboardingPreview = '/onboarding/preview';
   static const String onboardingNotifications = '/onboarding/notifications';
-  static const String onboardingAge = '/onboarding/age';
   static const String affirmation = '/affirmation';
   static const String affirmationCategories = '/affirmation/categories';
   static const String affirmationFavorites = '/affirmation/favorites';
@@ -50,12 +46,6 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: initialLocation,
   routes: [
-    GoRoute(
-      path: AppRouter.home,
-      pageBuilder: (context, state) => const NoTransitionPage(
-        child: HomePage(),
-      ),
-    ),
     // ─── Onboarding — routes plates, OnboardingCubit est global ─────────────
     GoRoute(
       path: AppRouter.onboardingWelcome,
@@ -85,12 +75,6 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
       path: AppRouter.onboardingTransition,
       pageBuilder: (context, state) => const MaterialPage(
         child: OnboardingTransitionPage(),
-      ),
-    ),
-    GoRoute(
-      path: AppRouter.onboardingAge,
-      pageBuilder: (context, state) => const MaterialPage(
-        child: OnboardingAgePage(),
       ),
     ),
     GoRoute(
