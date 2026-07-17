@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:motivation_app/config/themes/app_style.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/theme/card_theme_cubit.dart';
 import 'package:motivation_app/core/theme/card_visual_theme.dart';
@@ -43,48 +44,31 @@ class _AppearancePageState extends State<AppearancePage> {
     final currentCardTheme = context.watch<CardThemeCubit>().state;
 
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF1A1A1A), Colors.black, Colors.black],
-            stops: [0.0, 0.3, 1.0],
-          ),
-        ),
-        child: SafeArea(
+      backgroundColor: AppStyle.bg,
+      body: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ─── Header ──────────────────────────────────────────────────
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Row(
+                padding: const EdgeInsets.fromLTRB(28, 12, 28, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     GestureDetector(
                       onTap: () => context.pop(),
-                      child: Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.05),
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                      behavior: HitTestBehavior.opaque,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Icon(
+                          Icons.arrow_back,
+                          size: 22,
+                          color: AppStyle.ink.withValues(alpha: 0.65),
                         ),
-                        child: const Icon(Icons.arrow_back_ios_new_rounded, size: 17, color: Colors.white),
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    const Text(
-                      'Apparence',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
+                    const SizedBox(height: 10),
+                    Text('apparence', style: AppStyle.display(size: 30)),
                   ],
                 ),
               ),
@@ -93,7 +77,7 @@ class _AppearancePageState extends State<AppearancePage> {
               SizedBox(
                 height: 36,
                 child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 28),
                   scrollDirection: Axis.horizontal,
                   children: ThemeCategory.values.map((cat) {
                     final active = _filter == cat;
@@ -105,22 +89,20 @@ class _AppearancePageState extends State<AppearancePage> {
                           duration: const Duration(milliseconds: 180),
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
                           decoration: BoxDecoration(
-                            color: active
-                                ? Colors.white.withValues(alpha: 0.15)
-                                : Colors.white.withValues(alpha: 0.06),
+                            color: active ? AppStyle.ink : Colors.transparent,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: active
-                                  ? Colors.white.withValues(alpha: 0.4)
-                                  : Colors.white.withValues(alpha: 0.1),
+                              color: active ? AppStyle.ink : AppStyle.hairline,
                             ),
                           ),
                           child: Text(
-                            _filterLabels[cat]!,
+                            _filterLabels[cat]!.toLowerCase(),
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
-                              color: active ? Colors.white : Colors.white.withValues(alpha: 0.5),
+                              color: active
+                                  ? const Color(0xFF111110)
+                                  : AppStyle.ink.withValues(alpha: 0.55),
                             ),
                           ),
                         ),
@@ -287,7 +269,6 @@ class _AppearancePageState extends State<AppearancePage> {
               ),
             ],
           ),
-        ),
       ),
     );
   }

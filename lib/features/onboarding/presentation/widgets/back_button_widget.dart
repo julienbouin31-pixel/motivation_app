@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motivation_app/config/themes/app_style.dart';
 
 class BackButtonWidget extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -9,18 +10,13 @@ class BackButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onPressed ?? () => Navigator.pop(context),
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-        ),
-        child: const Icon(
-          Icons.arrow_back_ios_new_rounded,
-          size: 17,
-          color: Colors.white,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Icon(
+          Icons.arrow_back,
+          size: 22,
+          color: AppStyle.ink.withValues(alpha: 0.65),
         ),
       ),
     );

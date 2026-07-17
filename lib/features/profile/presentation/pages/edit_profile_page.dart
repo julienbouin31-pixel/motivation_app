@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:motivation_app/config/themes/app_theme.dart';
+import 'package:motivation_app/config/themes/app_style.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 
@@ -48,146 +48,111 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
     final canSave = _nameController.text.trim().isNotEmpty;
 
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF1A1A1A), Colors.black, Colors.black],
-            stops: [0.0, 0.3, 1.0],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // ─── Header ─────────────────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.05),
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-                        ),
-                        child: const Icon(Icons.arrow_back_ios_new_rounded, size: 17, color: Colors.white),
+      backgroundColor: AppStyle.bg,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ─── Header ─────────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(28, 12, 28, 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () => context.pop(),
+                    behavior: HitTestBehavior.opaque,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Icon(
+                        Icons.arrow_back,
+                        size: 22,
+                        color: AppStyle.ink.withValues(alpha: 0.65),
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    const Text(
-                      'Modifier le profil',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text('ton profil', style: AppStyle.display(size: 30)),
+                ],
               ),
+            ),
 
-              // ─── Contenu ─────────────────────────────────────────────────
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
-                  children: [
-                    const _SectionLabel('NOM'),
-                    const SizedBox(height: 8),
-                    Container(
+            // ─── Contenu ─────────────────────────────────────────────────
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(28, 24, 28, 32),
+                children: [
+                  const Text('prénom', style: AppStyle.overline),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _nameController,
+                    onChanged: (_) => setState(() {}),
+                    textCapitalization: TextCapitalization.words,
+                    cursorColor: AppStyle.ink,
+                    style: AppStyle.display(size: 26),
+                    decoration: InputDecoration(
+                      hintText: 'ton prénom',
+                      hintStyle: AppStyle.displayItalic(size: 26)
+                          .copyWith(color: AppStyle.dim.withValues(alpha: 0.5)),
+                      isDense: true,
+                      contentPadding:
+                          const EdgeInsets.symmetric(vertical: 12),
+                      enabledBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: AppStyle.hairline),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: AppStyle.ink.withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 44),
+
+                  GestureDetector(
+                    onTap: (canSave && !_saving) ? _save : null,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      width: double.infinity,
+                      height: 54,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                        color: canSave
+                            ? AppStyle.ink
+                            : AppStyle.ink.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(27),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: TextField(
-                          controller: _nameController,
-                          onChanged: (_) => setState(() {}),
-                          style: const TextStyle(fontSize: 15, color: Colors.white),
-                          cursorColor: Colors.white,
-                          decoration: InputDecoration(
-                            hintText: 'Ton prénom',
-                            hintStyle: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.4),
-                              fontSize: 15,
-                            ),
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          textCapitalization: TextCapitalization.words,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 36),
-
-                    GestureDetector(
-                      onTap: (canSave && !_saving) ? _save : null,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        decoration: BoxDecoration(
-                          color: canSave ? colors.primary : Colors.white.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Center(
-                          child: _saving
-                              ? SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: colors.scaffold,
-                                  ),
-                                )
-                              : Text(
-                                  'Enregistrer',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: canSave ? colors.scaffold : Colors.white.withValues(alpha: 0.4),
-                                  ),
+                      child: Center(
+                        child: _saving
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Color(0xFF111110),
                                 ),
-                        ),
+                              )
+                            : Text(
+                                'enregistrer',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: canSave
+                                      ? const Color(0xFF111110)
+                                      : AppStyle.ink.withValues(alpha: 0.3),
+                                ),
+                              ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ),
-    );
-  }
-}
-
-class _SectionLabel extends StatelessWidget {
-  final String label;
-  const _SectionLabel(this.label);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      label,
-      style: TextStyle(
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        color: Colors.white.withValues(alpha: 0.4),
-        letterSpacing: 1.2,
       ),
     );
   }

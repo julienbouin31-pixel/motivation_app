@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:motivation_app/config/themes/app_style.dart';
 
 class WidgetsPage extends StatelessWidget {
   const WidgetsPage({super.key});
@@ -10,47 +11,31 @@ class WidgetsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF1A1A1A), Colors.black, Colors.black],
-            stops: [0.0, 0.3, 1.0],
-          ),
-        ),
-        child: SafeArea(
+      backgroundColor: AppStyle.bg,
+      body: SafeArea(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ─── Header ──────────────────────────────────────────────────
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Row(
+                padding: const EdgeInsets.fromLTRB(28, 12, 28, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     GestureDetector(
                       onTap: () => context.pop(),
-                      child: Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.05),
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                      behavior: HitTestBehavior.opaque,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Icon(
+                          Icons.arrow_back,
+                          size: 22,
+                          color: AppStyle.ink.withValues(alpha: 0.65),
                         ),
-                        child: const Icon(Icons.arrow_back_ios_new_rounded, size: 17, color: Colors.white),
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    const Text(
-                      'Widgets',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
+                    const SizedBox(height: 10),
+                    Text('widgets', style: AppStyle.display(size: 30)),
                   ],
                 ),
               ),
@@ -115,7 +100,6 @@ class WidgetsPage extends StatelessWidget {
               ),
             ],
           ),
-        ),
       ),
     );
   }
@@ -129,15 +113,7 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      label,
-      style: TextStyle(
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        color: Colors.white.withValues(alpha: 0.4),
-        letterSpacing: 1.2,
-      ),
-    );
+    return Text(label.toLowerCase(), style: AppStyle.overline);
   }
 }
 
@@ -159,9 +135,8 @@ class _InstructionsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: AppStyle.hairline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,10 +147,11 @@ class _InstructionsCard extends StatelessWidget {
                 width: 34,
                 height: 34,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(9),
+                  borderRadius: BorderRadius.circular(17),
+                  border: Border.all(color: AppStyle.hairline),
                 ),
-                child: Icon(icon, size: 18, color: Colors.white.withValues(alpha: 0.8)),
+                child: Icon(icon,
+                    size: 16, color: AppStyle.ink.withValues(alpha: 0.7)),
               ),
               const SizedBox(width: 12),
               Expanded(

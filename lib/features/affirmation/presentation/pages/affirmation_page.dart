@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:motivation_app/features/affirmation/presentation/widgets/affirmation_share_sheet.dart';
@@ -91,12 +92,14 @@ class _AffirmationPageState extends State<AffirmationPage>
     final cubit = context.read<AffirmationCubit>();
 
     if (_dragY < -60 || velocity < -500) {
+      HapticFeedback.selectionClick();
       setState(() {
         _isExiting = true;
         _goingBack = false;
       });
       _exitCtrl.forward();
     } else if ((_dragY > 60 || velocity > 500) && cubit.canGoBack) {
+      HapticFeedback.selectionClick();
       setState(() {
         _isExiting = true;
         _goingBack = true;
@@ -235,8 +238,10 @@ class _AffirmationPageState extends State<AffirmationPage>
                             textColor: themed ? themeData.textColor : null,
                             buttonBg: themed ? themeData.buttonBg : null,
                             buttonIconColor: themed ? themeData.buttonIconColor : null,
-                            onFavorite: () =>
-                                cubit.toggleFavoriteAction(affirmation.id),
+                            onFavorite: () {
+                              HapticFeedback.mediumImpact();
+                              cubit.toggleFavoriteAction(affirmation.id);
+                            },
                             onShare: () {
                               final text = affirmation.text
                                   .replaceAll('{name}', userName);
@@ -276,17 +281,17 @@ class _AffirmationPageState extends State<AffirmationPage>
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: uiBg ?? Colors.white.withValues(alpha: 0.08),
+                            color: uiBg ?? Colors.transparent,
                             shape: BoxShape.circle,
                             border: themed
                                 ? null
-                                : Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                                : Border.all(color: colors.border),
                           ),
                           child: Icon(
                             Icons.favorite,
                             color: themed
                                 ? themeData.uiOverlayFg.withValues(alpha: 0.8)
-                                : Colors.red,
+                                : Colors.red.shade400,
                             size: 20,
                           ),
                         ),

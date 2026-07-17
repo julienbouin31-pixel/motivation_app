@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:motivation_app/config/themes/app_style.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
 
 class AffirmationCard extends StatelessWidget {
@@ -23,25 +24,23 @@ class AffirmationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveTextColor = textColor ?? Colors.white;
-    final effectiveButtonBg = buttonBg ?? Colors.white.withValues(alpha: 0.08);
-    final effectiveButtonIconColor = buttonIconColor ?? Colors.white.withValues(alpha: 0.7);
+    final effectiveTextColor = textColor ?? AppStyle.ink;
+    final effectiveButtonBg = buttonBg ?? Colors.transparent;
+    final effectiveButtonIconColor =
+        buttonIconColor ?? AppStyle.ink.withValues(alpha: 0.65);
     final displayText = affirmation.text
         .replaceAll('{name}', userName);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
+          padding: const EdgeInsets.symmetric(horizontal: 36),
           child: Text(
-            '"$displayText"',
+            displayText,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w500,
-              height: 1.4,
-              letterSpacing: -0.5,
+            style: AppStyle.display(size: 26).copyWith(
               color: effectiveTextColor,
+              height: 1.45,
             ),
           ),
         ),
@@ -138,6 +137,9 @@ class _LikeButtonState extends State<_LikeButton>
           decoration: BoxDecoration(
             color: widget.bg,
             shape: BoxShape.circle,
+            border: widget.bg == Colors.transparent
+                ? Border.all(color: AppStyle.hairline)
+                : null,
           ),
           child: Icon(
             widget.isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -173,6 +175,9 @@ class _ActionButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: bg,
           shape: BoxShape.circle,
+          border: bg == Colors.transparent
+              ? Border.all(color: AppStyle.hairline)
+              : null,
         ),
         child: Icon(icon, color: color, size: 22),
       ),

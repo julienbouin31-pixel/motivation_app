@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:motivation_app/config/themes/app_theme.dart';
+import 'package:flutter/services.dart';
+import 'package:motivation_app/config/themes/app_style.dart';
 
 class ContinueButton extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -10,41 +11,40 @@ class ContinueButton extends StatelessWidget {
     super.key,
     this.onPressed,
     this.enabled = true,
-    this.label = 'Continuer',
+    this.label = 'continuer',
   });
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<AppColors>()!;
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: ElevatedButton(
-        onPressed: enabled ? onPressed : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: enabled ? colors.primary : colors.border,
-          foregroundColor: colors.scaffold,
-          disabledBackgroundColor: colors.border,
-          disabledForegroundColor: colors.secondary,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: 0,
+    return GestureDetector(
+      onTap: enabled && onPressed != null
+          ? () {
+              HapticFeedback.lightImpact();
+              onPressed!();
+            }
+          : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+        width: double.infinity,
+        height: 58,
+        decoration: BoxDecoration(
+          color: enabled ? AppStyle.ink : AppStyle.ink.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(29),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                letterSpacing: -0.2,
-              ),
+        child: Center(
+          child: AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 300),
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.1,
+              color: enabled
+                  ? const Color(0xFF111110)
+                  : AppStyle.ink.withValues(alpha: 0.3),
             ),
-            const SizedBox(width: 8),
-            const Icon(Icons.arrow_forward_rounded, size: 18),
-          ],
+            child: Text(label),
+          ),
         ),
       ),
     );

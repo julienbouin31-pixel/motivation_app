@@ -6,12 +6,18 @@ import 'package:motivation_app/features/affirmation/presentation/pages/affirmati
 import 'package:motivation_app/features/affirmation/presentation/pages/category_page.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/custom_affirmations_page.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/favorites_page.dart';
-import 'package:motivation_app/features/home/presentation/pages/home_page.dart';
-import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_age_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_belief_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_goal_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_mood_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_mood_source_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_name_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_preview_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_ready_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_science_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_streak_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_struggle_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_theme_page.dart';
+import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_tone_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_transition_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_welcome_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/appearance_page.dart';
@@ -25,15 +31,21 @@ import 'package:motivation_app/injection_container.dart' as di;
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 class AppRouter {
-  static const String home = '/';
   static const String onboardingWelcome = '/onboarding/welcome';
   static const String onboardingMood = '/onboarding/mood';
+  static const String onboardingMoodSource = '/onboarding/mood-source';
+  static const String onboardingBelief = '/onboarding/belief';
+  static const String onboardingScience = '/onboarding/science';
   static const String onboardingGoal = '/onboarding/goal';
+  static const String onboardingStruggle = '/onboarding/struggle';
+  static const String onboardingTone = '/onboarding/tone';
   static const String onboardingName = '/onboarding/name';
   static const String onboardingTransition = '/onboarding/transition';
   static const String onboardingPreview = '/onboarding/preview';
+  static const String onboardingTheme = '/onboarding/theme';
+  static const String onboardingStreak = '/onboarding/streak';
   static const String onboardingNotifications = '/onboarding/notifications';
-  static const String onboardingAge = '/onboarding/age';
+  static const String onboardingReady = '/onboarding/ready';
   static const String affirmation = '/affirmation';
   static const String affirmationCategories = '/affirmation/categories';
   static const String affirmationFavorites = '/affirmation/favorites';
@@ -50,12 +62,6 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: initialLocation,
   routes: [
-    GoRoute(
-      path: AppRouter.home,
-      pageBuilder: (context, state) => const NoTransitionPage(
-        child: HomePage(),
-      ),
-    ),
     // ─── Onboarding — routes plates, OnboardingCubit est global ─────────────
     GoRoute(
       path: AppRouter.onboardingWelcome,
@@ -88,9 +94,33 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
       ),
     ),
     GoRoute(
-      path: AppRouter.onboardingAge,
+      path: AppRouter.onboardingMoodSource,
       pageBuilder: (context, state) => const MaterialPage(
-        child: OnboardingAgePage(),
+        child: OnboardingMoodSourcePage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.onboardingBelief,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: OnboardingBeliefPage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.onboardingScience,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: OnboardingSciencePage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.onboardingStruggle,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: OnboardingStrugglePage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.onboardingTone,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: OnboardingTonePage(),
       ),
     ),
     GoRoute(
@@ -100,9 +130,27 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
       ),
     ),
     GoRoute(
+      path: AppRouter.onboardingTheme,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: OnboardingThemePage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.onboardingStreak,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: OnboardingStreakPage(),
+      ),
+    ),
+    GoRoute(
       path: AppRouter.onboardingNotifications,
       pageBuilder: (context, state) => const MaterialPage(
         child: OnboardingNotificationPage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.onboardingReady,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: OnboardingReadyPage(),
       ),
     ),
     // ─── Profil / Paramètres ─────────────────────────────────────────────────
