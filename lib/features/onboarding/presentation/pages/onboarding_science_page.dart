@@ -14,18 +14,17 @@ class OnboardingSciencePage extends StatelessWidget {
         TextSpan(
           style: AppStyle.display(size: 36),
           children: [
-            const TextSpan(text: 'la répétition\n'),
+            const TextSpan(text: 'ce que tu te répètes\nfinit par devenir '),
             TextSpan(
-              text: 'reprogramme',
+              text: 'vrai',
               style: AppStyle.displayItalic(size: 36),
             ),
-            const TextSpan(text: '\nton cerveau.'),
+            const TextSpan(text: '.'),
           ],
         ),
       ),
-      body: 'C\'est la neuroplasticité : ce que tu te répètes '
-          'chaque matin finit par devenir ta façon de penser.\n'
-          'C\'est exactement ce qu\'on va faire ensemble.',
+      body: 'Rien de magique : ce que tu lis le matin colore ta journée.\n'
+          'Autant choisir des mots qui te font du bien.',
     );
   }
 }
