@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_style.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
-import 'package:motivation_app/core/streak/streak_cubit.dart';
 
 class AffirmationHeader extends StatelessWidget {
   final String userName;
@@ -28,7 +26,6 @@ class AffirmationHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
     final initial = userName.isNotEmpty ? userName[0].toUpperCase() : '?';
-    final streak = context.watch<StreakCubit>().state;
     // Sur un thème de carte photo/dégradé, le texte suit la couleur d'overlay
     final fg = avatarFg ?? colors.primary;
 
@@ -47,44 +44,6 @@ class AffirmationHeader extends StatelessWidget {
                   .copyWith(color: fg.withValues(alpha: 0.85)),
             ),
           ),
-
-          // ── Série ────────────────────────────────────────────────────
-          if (streak >= 1) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: avatarBg == null
-                      ? AppStyle.hairline
-                      : fg.withValues(alpha: 0.2),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 6,
-                    height: 6,
-                    decoration: const BoxDecoration(
-                      color: AppStyle.accent,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    '$streak',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: fg.withValues(alpha: 0.85),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 10),
-          ],
 
           // ── Avatar ───────────────────────────────────────────────────
           GestureDetector(
