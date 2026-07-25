@@ -184,6 +184,17 @@ class SecureStorage {
   Future<void> saveStreakLastDate(String date) =>
       _storage.write(key: _keyStreakLastDate, value: date);
 
+  // ─── Jours actifs (total, pas remis à zéro par les trous de série) ───────
+  static const String _keyTotalActiveDays = 'total_active_days';
+
+  Future<int> readTotalActiveDays() async {
+    final raw = await _storage.read(key: _keyTotalActiveDays);
+    return int.tryParse(raw ?? '') ?? 0;
+  }
+
+  Future<void> saveTotalActiveDays(int count) =>
+      _storage.write(key: _keyTotalActiveDays, value: count.toString());
+
   // ─── Thème ───────────────────────────────────────────────────────────────
   Future<String?> readThemeMode() => _storage.read(key: _keyThemeMode);
 

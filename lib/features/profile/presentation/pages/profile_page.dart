@@ -124,6 +124,11 @@ class ProfilePage extends StatelessWidget {
                   const Text('affirmations', style: AppStyle.overline),
                   const SizedBox(height: 4),
                   const _SettingsRow(
+                    title: 'Ta progression',
+                    subtitle: 'Statistiques personnelles',
+                    route: AppRouter.stats,
+                  ),
+                  const _SettingsRow(
                     title: 'Mes favoris',
                     subtitle: 'Affirmations sauvegardées',
                     route: AppRouter.affirmationFavorites,

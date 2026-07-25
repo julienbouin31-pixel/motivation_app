@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -15,10 +17,28 @@ class NotificationService {
   static final _plugin = FlutterLocalNotificationsPlugin();
   static bool _initialized = false;
 
+  // ID réservé pour la notif "streak en danger" (hors plage des notifs
+  // quotidiennes, qui utilisent slot*100+day, max ~504 pour freq=5/30j).
+  static const int _streakDangerId = 90000;
+
+  // ─── Tap sur notification ────────────────────────────────────────────────
+  // payload = id de l'affirmation (String d'un int), ou vide pour les notifs
+  // sans cible précise (ex: streak en danger → ouvre juste l'app).
+  static final _tapController = StreamController<String>.broadcast();
+  static Stream<String> get onNotificationTap => _tapController.stream;
+
+  static void _onTap(NotificationResponse response) {
+    final payload = response.payload;
+    if (payload != null && payload.isNotEmpty) {
+      _tapController.add(payload);
+    }
+  }
+
   // ─── Init ─────────────────────────────────────────────────────────────────
 
-  static Future<void> init() async {
-    if (_initialized) return;
+  /// Retourne le payload de la notif ayant lancé l'app à froid, s'il y en a une.
+  static Future<String?> init() async {
+    if (_initialized) return null;
     tz.initializeTimeZones();
 
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -28,10 +48,18 @@ class NotificationService {
       requestSoundPermission: false,
     );
 
+    final launchDetails = await _plugin.getNotificationAppLaunchDetails();
+
     await _plugin.initialize(
       const InitializationSettings(android: android, iOS: ios),
+      onDidReceiveNotificationResponse: _onTap,
     );
     _initialized = true;
+
+    if (launchDetails?.didNotificationLaunchApp == true) {
+      return launchDetails?.notificationResponse?.payload;
+    }
+    return null;
   }
 
   // ─── Permissions ──────────────────────────────────────────────────────────
@@ -61,17 +89,19 @@ class NotificationService {
 
   // ─── Scheduling ───────────────────────────────────────────────────────────
 
-  /// [affirmations] : textes déjà résolus (sans placeholders {name}/{target})
+  /// [affirmations] : (id, texte déjà résolu sans placeholders {name}/{target})
   /// [frequency]   : 1, 3 ou 5 notifications par jour
   /// [startHour]   : heure de début de la plage (ex: 8)
   /// [endHour]     : heure de fin de la plage (ex: 21)
+  ///
+  /// Ne touche pas à la notif "streak en danger" (id dédié, hors de cette plage).
   static Future<void> schedule({
-    required List<String> affirmations,
+    required List<(int id, String text)> affirmations,
     required int frequency,
     required int startHour,
     required int endHour,
   }) async {
-    await _plugin.cancelAll();
+    await _cancelDailyAffirmations();
     if (affirmations.isEmpty) return;
 
     final times = _distributeTimes(frequency, startHour, endHour);
@@ -82,14 +112,14 @@ class NotificationService {
       final (hour, minute) = times[slot];
       for (int day = 0; day < daysAhead; day++) {
         final id = slot * 100 + day;
-        final text = affirmations[textIndex % affirmations.length];
+        final entry = affirmations[textIndex % affirmations.length];
         textIndex++;
 
         try {
           await _plugin.zonedSchedule(
             id,
             'Motivation',
-            text,
+            entry.$2,
             _nextOccurrence(hour, minute, day),
             const NotificationDetails(
               android: AndroidNotificationDetails(
@@ -106,6 +136,7 @@ class NotificationService {
                 presentSound: true,
               ),
             ),
+            payload: entry.$1.toString(),
             androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
@@ -120,6 +151,17 @@ class NotificationService {
       '[NotificationService] Scheduled ${times.length * daysAhead} notifications '
       '(${times.length}x/day, ${startHour}h→${endHour}h)',
     );
+  }
+
+  /// Annule uniquement les notifs quotidiennes (ids 0..~504), sans toucher
+  /// à la notif "streak en danger".
+  static Future<void> _cancelDailyAffirmations() async {
+    final pending = await _plugin.pendingNotificationRequests();
+    for (final n in pending) {
+      if (n.id != _streakDangerId) {
+        await _plugin.cancel(n.id);
+      }
+    }
   }
 
   static Future<void> cancelAll() async {
@@ -153,6 +195,49 @@ class NotificationService {
           UILocalNotificationDateInterpretation.absoluteTime,
     );
     debugPrint('[NotificationService] Test notification scheduled in 5s');
+  }
+
+  // ─── Streak en danger ─────────────────────────────────────────────────────
+
+  /// Programme un rappel pour demain [hour]h : "ta série de X jours expire
+  /// ce soir". Annulé/reprogrammé à chaque ouverture de l'app (voir StreakCubit) :
+  /// s'il n'est jamais annulé, c'est qu'on n'est pas revenu → il part.
+  static Future<void> scheduleStreakDanger(int streak, {int hour = 20}) async {
+    await _plugin.cancel(_streakDangerId);
+    if (streak <= 0) return;
+
+    final now = tz.TZDateTime.now(tz.local);
+    var date = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour)
+        .add(const Duration(days: 1));
+
+    final label = streak == 1 ? '1 jour' : '$streak jours';
+    try {
+      await _plugin.zonedSchedule(
+        _streakDangerId,
+        'Ta série est en jeu',
+        'Ta série de $label expire ce soir — ouvre l\'app pour la garder.',
+        date,
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'streak_danger',
+            'Série en danger',
+            channelDescription: 'Rappel avant la fin de ta série',
+            importance: Importance.high,
+            priority: Priority.high,
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: false,
+            presentSound: true,
+          ),
+        ),
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    } catch (e) {
+      debugPrint('[NotificationService] scheduleStreakDanger error: $e');
+    }
   }
 
   // ─── Helpers ──────────────────────────────────────────────────────────────

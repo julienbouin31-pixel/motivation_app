@@ -47,6 +47,8 @@ import 'package:motivation_app/features/affirmation/data/repositories/affirmatio
     as _i551;
 import 'package:motivation_app/features/affirmation/domain/repositories/affirmation_repository.dart'
     as _i555;
+import 'package:motivation_app/features/affirmation/domain/usecases/get_affirmation_by_id_usecase.dart'
+    as _i535;
 import 'package:motivation_app/features/affirmation/domain/usecases/get_favorites_usecase.dart'
     as _i541;
 import 'package:motivation_app/features/affirmation/domain/usecases/get_next_affirmation_usecase.dart'
@@ -207,6 +209,9 @@ extension GetItInjectableX on _i174.GetIt {
         activityLogger: gh<_i122.ActivityLogger>(),
       ),
     );
+    gh.lazySingleton<_i535.GetAffirmationByIdUseCase>(
+      () => _i535.GetAffirmationByIdUseCase(gh<_i555.AffirmationRepository>()),
+    );
     gh.lazySingleton<_i541.GetFavoritesUseCase>(
       () => _i541.GetFavoritesUseCase(gh<_i555.AffirmationRepository>()),
     );
@@ -228,19 +233,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i555.CustomAffirmationsCubit>(
       () => _i555.CustomAffirmationsCubit(gh<_i555.AffirmationRepository>()),
     );
-    gh.factory<_i1059.AffirmationCubit>(
-      () => _i1059.AffirmationCubit(
-        getNextAffirmation: gh<_i269.GetNextAffirmationUseCase>(),
-        markAsViewed: gh<_i661.MarkAsViewedUseCase>(),
-        toggleFavorite: gh<_i144.ToggleFavoriteUseCase>(),
-        getSavedCategories: gh<_i756.GetSavedCategoriesUseCase>(),
-        saveCategories: gh<_i192.SaveCategoriesUseCase>(),
-      ),
-    );
     gh.factory<_i841.FavoritesCubit>(
       () => _i841.FavoritesCubit(
         getFavorites: gh<_i541.GetFavoritesUseCase>(),
         toggleFavorite: gh<_i144.ToggleFavoriteUseCase>(),
+      ),
+    );
+    gh.factory<_i1059.AffirmationCubit>(
+      () => _i1059.AffirmationCubit(
+        getNextAffirmation: gh<_i269.GetNextAffirmationUseCase>(),
+        getAffirmationById: gh<_i535.GetAffirmationByIdUseCase>(),
+        markAsViewed: gh<_i661.MarkAsViewedUseCase>(),
+        toggleFavorite: gh<_i144.ToggleFavoriteUseCase>(),
+        getSavedCategories: gh<_i756.GetSavedCategoriesUseCase>(),
+        saveCategories: gh<_i192.SaveCategoriesUseCase>(),
       ),
     );
     return this;

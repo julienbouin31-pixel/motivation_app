@@ -10,6 +10,8 @@ abstract class AffirmationLocalDataSource {
   Future<AffirmationModel?> getNextUnviewed({List<String>? categories});
   Future<List<AffirmationModel>> getFavorites();
   Future<List<String>> getAllTexts();
+  Future<List<(int id, String text)>> getAllWithIds();
+  Future<int> viewedCount();
   Future<void> saveAll(List<AffirmationModel> affirmations);
   Future<void> clearAll();
   Future<void> markAsViewed(int id);
@@ -80,6 +82,20 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
   Future<List<String>> getAllTexts() async {
     final rows = await db.select(db.affirmationItems).get();
     return rows.map((r) => r.content).toList();
+  }
+
+  @override
+  Future<List<(int id, String text)>> getAllWithIds() async {
+    final rows = await db.select(db.affirmationItems).get();
+    return rows.map((r) => (r.id, r.content)).toList();
+  }
+
+  @override
+  Future<int> viewedCount() async {
+    final results = await (db.select(db.affirmationItems)
+          ..where((t) => t.lastViewedAt.isNotNull()))
+        .get();
+    return results.length;
   }
 
   @override

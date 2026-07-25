@@ -58,10 +58,10 @@ class _OnboardingNotificationPageState
       };
       final userName = profile?.name ?? '';
 
-      final rawTexts =
-          await di.sl<AffirmationLocalDataSource>().getAllTexts();
-      final resolved = rawTexts
-          .map((t) => t.replaceAll('{name}', userName))
+      final rawEntries =
+          await di.sl<AffirmationLocalDataSource>().getAllWithIds();
+      final resolved = rawEntries
+          .map((e) => (e.$1, e.$2.replaceAll('{name}', userName)))
           .toList()
         ..shuffle();
 

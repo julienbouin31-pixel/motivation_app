@@ -25,6 +25,7 @@ import 'package:motivation_app/features/profile/presentation/pages/edit_profile_
 import 'package:motivation_app/features/profile/presentation/pages/profile_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_notification_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/notification_page.dart';
+import 'package:motivation_app/features/profile/presentation/pages/stats_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/widgets_page.dart';
 import 'package:motivation_app/injection_container.dart' as di;
 
@@ -55,6 +56,7 @@ class AppRouter {
   static const String appearance = '/profile/appearance';
   static const String widgets = '/profile/widgets';
   static const String notifications = '/profile/notifications';
+  static const String stats = '/profile/stats';
 }
 
 /// [initialLocation] est calculé dans main.dart selon le profil chargé.
@@ -184,10 +186,16 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
         child: NotificationPage(),
       ),
     ),
+    GoRoute(
+      path: AppRouter.stats,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: StatsPage(),
+      ),
+    ),
     // ─── Affirmation — ShellRoute scopant AffirmationCubit ──────────────────
     ShellRoute(
-      builder: (context, state, child) => BlocProvider(
-        create: (_) => di.sl<AffirmationCubit>()..init(),
+      builder: (context, state, child) => _AffirmationShell(
+        id: int.tryParse(state.uri.queryParameters['id'] ?? ''),
         child: child,
       ),
       routes: [
@@ -219,3 +227,52 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
     ),
   ],
 );
+
+// ─── Shell de l'affirmation ────────────────────────────────────────────────
+// Le AffirmationCubit vit tant que le Shell est monté : BlocProvider.create
+// ne s'exécute qu'une fois. Pour réagir à un ?id= qui change après coup
+// (tap sur une notif pendant que l'app est déjà ouverte sur cet écran),
+// on détecte le changement via didUpdateWidget plutôt que de recréer le cubit.
+class _AffirmationShell extends StatefulWidget {
+  final int? id;
+  final Widget child;
+
+  const _AffirmationShell({required this.id, required this.child});
+
+  @override
+  State<_AffirmationShell> createState() => _AffirmationShellState();
+}
+
+class _AffirmationShellState extends State<_AffirmationShell> {
+  late final AffirmationCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = di.sl<AffirmationCubit>();
+    if (widget.id != null) {
+      _cubit.initById(widget.id!);
+    } else {
+      _cubit.init();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _AffirmationShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.id != null && widget.id != oldWidget.id) {
+      _cubit.initById(widget.id!);
+    }
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider.value(value: _cubit, child: widget.child);
+  }
+}

@@ -5,6 +5,7 @@ import 'package:motivation_app/config/themes/app_style.dart';
 import 'package:motivation_app/core/notifications/notification_service.dart';
 import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
+import 'package:motivation_app/core/streak/streak_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 import 'package:motivation_app/injection_container.dart' as di;
@@ -68,6 +69,11 @@ class _NotificationPageState extends State<NotificationPage> {
     await _storage.saveNotificationEnabled(value);
     if (value) {
       await _reschedule();
+      if (mounted) {
+        await NotificationService.scheduleStreakDanger(
+          context.read<StreakCubit>().state,
+        );
+      }
     } else {
       await NotificationService.cancelAll();
     }
@@ -82,9 +88,9 @@ class _NotificationPageState extends State<NotificationPage> {
     };
     final userName = profile?.name ?? '';
 
-    final rawTexts = await di.sl<AffirmationLocalDataSource>().getAllTexts();
-    final resolved = rawTexts
-        .map((t) => t.replaceAll('{name}', userName))
+    final rawEntries = await di.sl<AffirmationLocalDataSource>().getAllWithIds();
+    final resolved = rawEntries
+        .map((e) => (e.$1, e.$2.replaceAll('{name}', userName)))
         .toList()
       ..shuffle();
 

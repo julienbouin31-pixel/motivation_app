@@ -110,6 +110,23 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, Affirmation>> getAffirmationById(int id) async {
+    try {
+      final row = await localDataSource.getRowById(id);
+      if (row == null) return Left(CacheFailure());
+      return Right(Affirmation(
+        id: row.id,
+        text: row.content,
+        category: AffirmationCategory.values.byName(row.category),
+        isFavorite: row.isFavorite,
+      ));
+    } catch (e) {
+      debugPrint('[getAffirmationById] Erreur: $e');
+      return Left(CacheFailure());
+    }
+  }
+
   // ─── Autres méthodes ────────────────────────────────────────────────────────
 
   @override

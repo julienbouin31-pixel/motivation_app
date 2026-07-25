@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
+import 'package:motivation_app/features/affirmation/domain/usecases/get_affirmation_by_id_usecase.dart';
 import 'package:motivation_app/features/affirmation/domain/usecases/get_next_affirmation_usecase.dart';
 import 'package:motivation_app/features/affirmation/domain/usecases/get_saved_categories_usecase.dart';
 import 'package:motivation_app/features/affirmation/domain/usecases/mark_as_viewed_usecase.dart';
@@ -12,6 +13,7 @@ import 'package:motivation_app/features/affirmation/presentation/bloc/affirmatio
 @injectable
 class AffirmationCubit extends Cubit<AffirmationState> {
   final GetNextAffirmationUseCase getNextAffirmation;
+  final GetAffirmationByIdUseCase getAffirmationById;
   final MarkAsViewedUseCase markAsViewed;
   final ToggleFavoriteUseCase toggleFavorite;
   final GetSavedCategoriesUseCase getSavedCategories;
@@ -38,6 +40,7 @@ class AffirmationCubit extends Cubit<AffirmationState> {
 
   AffirmationCubit({
     required this.getNextAffirmation,
+    required this.getAffirmationById,
     required this.markAsViewed,
     required this.toggleFavorite,
     required this.getSavedCategories,
@@ -46,6 +49,23 @@ class AffirmationCubit extends Cubit<AffirmationState> {
 
   // Point d'entrée depuis le ShellRoute : restaure les catégories puis charge la première carte
   Future<void> init() => loadNext();
+
+  /// Ouvre une affirmation précise (ex: tap sur une notification), en
+  /// contournant la file "prochaine non vue". Fallback sur loadNext() si
+  /// l'affirmation n'existe plus (ex: supprimée entre-temps).
+  Future<void> initById(int id) async {
+    emit(const AffirmationState.loading());
+    final result = await getAffirmationById(id);
+    final fallback = result.isLeft();
+    result.fold(
+      (_) {},
+      (affirmation) => emit(AffirmationState.loaded(
+        affirmation: affirmation,
+        selectedCategory: displayCategory,
+      )),
+    );
+    if (fallback) await loadNext();
+  }
 
   Future<void> loadNext() async {
     if (!_categoriesRestored) {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/storage/secure_storage.dart';
@@ -23,8 +24,23 @@ import 'package:motivation_app/injection_container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await dotenv.load(fileName: '.env');
+
+  final sentryDsn = dotenv.env['SENTRY_DSN'];
+  if (sentryDsn != null && sentryDsn.isNotEmpty) {
+    await SentryFlutter.init(
+      (options) {
+        options.dsn = sentryDsn;
+        options.tracesSampleRate = 0.0;
+      },
+      appRunner: _bootstrap,
+    );
+  } else {
+    await _bootstrap();
+  }
+}
+
+Future<void> _bootstrap() async {
   await initSupabase();
   await ensureAnonymousSession();
 
@@ -54,16 +70,31 @@ void main() async {
   final storage = di.sl<SecureStorage>();
 
   final isDone = profile?.name?.isNotEmpty == true;
-  final initialLocation = isDone ? AppRouter.affirmation : AppRouter.onboardingWelcome;
+
+  // Ouvre l'affirmation précise si l'app a été lancée à froid depuis une notif.
+  final launchPayload = await NotificationService.init();
+  final launchId = int.tryParse(launchPayload ?? '');
+
+  var initialLocation = isDone ? AppRouter.affirmation : AppRouter.onboardingWelcome;
+  if (isDone && launchId != null) {
+    initialLocation = '${AppRouter.affirmation}?id=$launchId';
+  }
 
   final router = createAppRouter(initialLocation: initialLocation);
 
-  await NotificationService.init();
+  // Tap sur une notif pendant que l'app tourne déjà (foreground/background).
+  NotificationService.onNotificationTap.listen((payload) {
+    final id = int.tryParse(payload);
+    if (id != null) {
+      router.go('${AppRouter.affirmation}?id=$id');
+    }
+  });
+
   if (await storage.readNotificationEnabled()) {
-    final rawTexts = await local.getAllTexts();
+    final rawEntries = await local.getAllWithIds();
     final userName = profile?.name ?? '';
-    final resolved = rawTexts
-        .map((t) => t.replaceAll('{name}', userName))
+    final resolved = rawEntries
+        .map((e) => (e.$1, e.$2.replaceAll('{name}', userName)))
         .toList()
       ..shuffle();
     await NotificationService.schedule(
