@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:motivation_app/config/themes/app_style.dart';
 
 class WidgetsPage extends StatelessWidget {
@@ -334,8 +335,7 @@ class _WidgetPreviewLockScreen extends StatelessWidget {
 
 // ─── Widget content views ─────────────────────────────────────────────────────
 
-const _kBg = Color(0xFF161616);
-const _kSecondary = Color(0x62FFFFFF);
+const _kBg = Color(0xFF121211);
 
 class _AffirmationHomeWidget extends StatelessWidget {
   final String text;
@@ -346,35 +346,63 @@ class _AffirmationHomeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: _kBg,
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '"',
-            style: TextStyle(
-              fontSize: 44,
-              fontWeight: FontWeight.w900,
-              color: Color(0x1EFFFFFF),
-              height: 1,
+          // Grand guillemet ocre en filigrane
+          SizedBox(
+            height: 24,
+            child: ClipRect(
+              child: OverflowBox(
+                maxHeight: 60,
+                alignment: Alignment.topLeft,
+                child: Text(
+                  '“',
+                  style: GoogleFonts.urbanist(
+                    fontSize: 52,
+                    fontWeight: FontWeight.w600,
+                    color: AppStyle.accent.withValues(alpha: 0.28),
+                    height: 1,
+                  ),
+                ),
+              ),
             ),
           ),
           const Spacer(),
           Text(
             text,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: Colors.white,
-              height: 1.4,
-            ),
+            style: AppStyle.display(size: 15).copyWith(height: 1.35),
             maxLines: 4,
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 6),
-          Text(
-            '— $category',
-            style: const TextStyle(fontSize: 10, color: _kSecondary),
+          const Spacer(),
+          Container(width: 34, height: 1, color: AppStyle.hairline),
+          const SizedBox(height: 9),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 4,
+                height: 4,
+                decoration: const BoxDecoration(
+                  color: AppStyle.accent,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  category.toUpperCase(),
+                  style: AppStyle.overline.copyWith(
+                    fontSize: 9,
+                    letterSpacing: 2.4,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -388,16 +416,33 @@ class _AffirmationLockWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 13,
-        fontWeight: FontWeight.w500,
-        color: Colors.white,
-        height: 1.4,
-      ),
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '“',
+          style: GoogleFonts.urbanist(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.white.withValues(alpha: 0.5),
+            height: 1,
+          ),
+        ),
+        const SizedBox(width: 5),
+        Expanded(
+          child: Text(
+            text,
+            style: GoogleFonts.urbanist(
+              fontSize: 13,
+              fontWeight: FontWeight.w300,
+              color: Colors.white,
+              height: 1.3,
+            ),
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
     );
   }
 }
