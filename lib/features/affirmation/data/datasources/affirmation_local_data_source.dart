@@ -11,6 +11,7 @@ abstract class AffirmationLocalDataSource {
   Future<List<AffirmationModel>> getFavorites();
   Future<List<String>> getAllTexts();
   Future<List<(int id, String text)>> getAllWithIds();
+  Future<List<(int id, String text, String category)>> getAllForWidget();
   Future<int> viewedCount();
   Future<void> saveAll(List<AffirmationModel> affirmations);
   Future<void> clearAll();
@@ -88,6 +89,12 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
   Future<List<(int id, String text)>> getAllWithIds() async {
     final rows = await db.select(db.affirmationItems).get();
     return rows.map((r) => (r.id, r.content)).toList();
+  }
+
+  @override
+  Future<List<(int id, String text, String category)>> getAllForWidget() async {
+    final rows = await db.select(db.affirmationItems).get();
+    return rows.map((r) => (r.id, r.content, r.category)).toList();
   }
 
   @override

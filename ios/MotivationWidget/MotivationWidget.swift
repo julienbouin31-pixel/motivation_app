@@ -27,9 +27,21 @@ struct AffirmationEntry: TimelineEntry {
     let date: Date
     let text: String
     let category: String
+    var id: Int? = nil
+}
+
+// URL de deep-link ouverte au tap du widget → l'app ouvre cette affirmation.
+private func deepLink(for id: Int?) -> URL? {
+    guard let id = id else { return nil }
+    return URL(string: "curves://affirmation?id=\(id)")
 }
 
 struct AffirmationProvider: TimelineProvider {
+    // Rotation : nouvelle affirmation toutes les 6h (4×/jour), timeline
+    // pré-calculée sur 3 jours pour tourner même app fermée.
+    private let slotHours = 6
+    private let slotsAhead = 12
+
     private func read() -> (String, String) {
         let d = UserDefaults(suiteName: appGroupId)
         return (
@@ -37,16 +49,58 @@ struct AffirmationProvider: TimelineProvider {
             d?.string(forKey: "affirmation_category") ?? "général"
         )
     }
+
+    /// Réservoir poussé par l'app (JSON [{id, text, category}]).
+    private func readPool() -> [(id: Int?, text: String, category: String)] {
+        let d = UserDefaults(suiteName: appGroupId)
+        guard let raw = d?.string(forKey: "affirmation_pool"),
+              let data = raw.data(using: .utf8),
+              let arr = try? JSONSerialization.jsonObject(with: data) as? [[String: String]]
+        else { return [] }
+        return arr.compactMap { dict in
+            guard let t = dict["text"], let c = dict["category"] else { return nil }
+            return (dict["id"].flatMap { Int($0) }, t, c)
+        }
+    }
+
     func placeholder(in c: Context) -> AffirmationEntry {
         AffirmationEntry(date: .now, text: "Chaque action me rapproche de mon objectif.", category: "général")
     }
+
     func getSnapshot(in c: Context, completion: @escaping (AffirmationEntry) -> Void) {
-        let r = read(); completion(AffirmationEntry(date: .now, text: r.0, category: r.1))
+        let pool = readPool()
+        if let first = pool.first {
+            completion(AffirmationEntry(date: .now, text: first.text, category: first.category, id: first.id))
+        } else {
+            let r = read()
+            completion(AffirmationEntry(date: .now, text: r.0, category: r.1))
+        }
     }
+
     func getTimeline(in c: Context, completion: @escaping (Timeline<AffirmationEntry>) -> Void) {
-        let r = read()
-        let e = AffirmationEntry(date: .now, text: r.0, category: r.1)
-        completion(Timeline(entries: [e], policy: .after(Calendar.current.date(byAdding: .hour, value: 1, to: .now)!)))
+        let pool = readPool()
+        let now = Date()
+
+        // Fallback : pas de réservoir (ancienne version) → affirmation unique.
+        guard !pool.isEmpty else {
+            let r = read()
+            let e = AffirmationEntry(date: now, text: r.0, category: r.1)
+            completion(Timeline(entries: [e], policy: .after(Calendar.current.date(byAdding: .hour, value: 1, to: now)!)))
+            return
+        }
+
+        let interval = TimeInterval(slotHours * 3600)
+        let currentSlot = floor(now.timeIntervalSince1970 / interval)
+        var entries: [AffirmationEntry] = []
+        for i in 0..<slotsAhead {
+            let slot = currentSlot + Double(i)
+            let idx = ((Int(slot) % pool.count) + pool.count) % pool.count
+            let item = pool[idx]
+            // Première entrée à "maintenant" pour un rendu immédiat.
+            let date = i == 0 ? now : Date(timeIntervalSince1970: slot * interval)
+            entries.append(AffirmationEntry(date: date, text: item.text, category: item.category, id: item.id))
+        }
+        completion(Timeline(entries: entries, policy: .atEnd))
     }
 }
 
@@ -109,6 +163,7 @@ struct AffirmationWidget: Widget {
         StaticConfiguration(kind: kind, provider: AffirmationProvider()) { entry in
             AffirmationSmallView(entry: entry)
                 .containerBackground(kBg, for: .widget)
+                .widgetURL(deepLink(for: entry.id))
         }
         .configurationDisplayName("Affirmation")
         .description("Une affirmation motivante.")
@@ -147,6 +202,7 @@ struct LockScreenWidget: Widget {
         StaticConfiguration(kind: kind, provider: AffirmationProvider()) { entry in
             LockScreenView(entry: entry)
                 .containerBackground(.clear, for: .widget)
+                .widgetURL(deepLink(for: entry.id))
         }
         .configurationDisplayName("Affirmation")
         .description("Une affirmation sur l'écran de verrouillage.")

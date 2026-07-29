@@ -45,5 +45,20 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.JulienBouin.motivationApp.widget</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>curves</string>
+			</array>
+		</dict>
+	</array>
+	<!-- Le tap widget est routé par home_widget (widgetClicked), pas par le
+	     deep-linking natif de Flutter qui router-ait l'URL brute → page not found. -->
+	<key>FlutterDeepLinkingEnabled</key>
+	<false/>
 </dict>
 </plist>
