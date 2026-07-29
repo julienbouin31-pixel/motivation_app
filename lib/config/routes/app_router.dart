@@ -24,6 +24,7 @@ import 'package:motivation_app/features/profile/presentation/pages/appearance_pa
 import 'package:motivation_app/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/profile_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_notification_page.dart';
+import 'package:motivation_app/features/profile/presentation/pages/legal_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/notification_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/stats_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/widgets_page.dart';
@@ -57,6 +58,8 @@ class AppRouter {
   static const String widgets = '/profile/widgets';
   static const String notifications = '/profile/notifications';
   static const String stats = '/profile/stats';
+  static const String privacy = '/profile/privacy';
+  static const String terms = '/profile/terms';
 }
 
 /// [initialLocation] est calculé dans main.dart selon le profil chargé.
@@ -190,6 +193,18 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
       path: AppRouter.stats,
       pageBuilder: (context, state) => const MaterialPage(
         child: StatsPage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.privacy,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: LegalPage(doc: LegalDoc.privacy),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.terms,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: LegalPage(doc: LegalDoc.terms),
       ),
     ),
     // ─── Affirmation — ShellRoute scopant AffirmationCubit ──────────────────

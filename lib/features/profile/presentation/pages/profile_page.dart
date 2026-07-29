@@ -166,6 +166,22 @@ class ProfilePage extends StatelessWidget {
                     route: AppRouter.notifications,
                   ),
 
+                  const SizedBox(height: 32),
+
+                  // ── À propos ────────────────────────────────────────────
+                  const Text('à propos', style: AppStyle.overline),
+                  const SizedBox(height: 4),
+                  const _SettingsRow(
+                    title: 'Confidentialité',
+                    subtitle: 'Comment tes données sont traitées',
+                    route: AppRouter.privacy,
+                  ),
+                  const _SettingsRow(
+                    title: 'Conditions d\'utilisation',
+                    subtitle: 'Les règles du service',
+                    route: AppRouter.terms,
+                  ),
+
                   const SizedBox(height: 44),
 
                   // ── Debug ───────────────────────────────────────────────
