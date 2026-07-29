@@ -4,7 +4,13 @@
     // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-    
+
+        {
+            "name": "▶ Simulateur iOS (debug)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "2AE510A7-7E6A-4CA3-8BA2-4EA8272D0986"
+        },
         {
             "name": "motivation_app",
             "request": "launch",
