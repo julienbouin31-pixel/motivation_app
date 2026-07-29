@@ -68,6 +68,11 @@ dev_dependencies:
 
 dependency_overrides:
   sqlite3: '>=2.0.0 <3.0.0'
+  # 2.6.0 réintroduit une impl FFI via package:objective_c qui crashe au
+  # lancement iOS ("Couldn't resolve DOBJC_initializeApi"). 2.5.1 = dernière
+  # version à impl plugin classique, sans objective_c. Ne pas relever sans
+  # vérifier que le crash ne revient pas.
+  path_provider_foundation: 2.5.1
 
 flutter:
   uses-material-design: true
