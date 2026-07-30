@@ -11,6 +11,13 @@ class StreakCubit extends Cubit<int> {
   final SyncQueueDao _syncQueue;
   StreakCubit(this._storage, this._syncQueue) : super(0);
 
+  // Signal à usage unique : renseigné quand la série vient d'augmenter lors du
+  // dernier load() (nouveau jour actif), pour déclencher l'animation de
+  // célébration à l'arrivée sur l'écran d'accueil. Consommé par l'UI.
+  int? _celebration;
+  int? get celebration => _celebration;
+  void consumeCelebration() => _celebration = null;
+
   Future<void> load() async {
     final today = _dateKey(DateTime.now());
     final lastDate = await _storage.readStreakLastDate();
@@ -39,6 +46,8 @@ class StreakCubit extends Cubit<int> {
       operation: SyncOperation.upsert,
       payload: {'count': next, 'last_date': today},
     );
+    // Nouveau jour actif → à célébrer.
+    _celebration = next;
     emit(next);
 
     // Reprogramme le rappel "série en danger" pour demain soir. S'il n'est

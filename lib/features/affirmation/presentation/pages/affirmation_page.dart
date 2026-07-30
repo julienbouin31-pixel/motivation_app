@@ -10,6 +10,8 @@ import 'package:motivation_app/features/affirmation/presentation/bloc/affirmatio
 import 'package:motivation_app/features/affirmation/presentation/widgets/affirmation_card.dart';
 import 'package:motivation_app/features/affirmation/presentation/widgets/affirmation_header.dart';
 import 'package:motivation_app/features/affirmation/presentation/widgets/category_tabs.dart';
+import 'package:motivation_app/features/affirmation/presentation/widgets/streak_celebration.dart';
+import 'package:motivation_app/core/streak/streak_cubit.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
 import 'package:motivation_app/core/theme/card_theme_cubit.dart';
 import 'package:motivation_app/core/theme/card_visual_theme.dart';
@@ -34,6 +36,7 @@ class _AffirmationPageState extends State<AffirmationPage>
   bool _goingBack = false;
   bool _enterFromTop = false;
   bool _pendingGoBack = false;
+  int? _celebrateStreak;
 
   @override
   void initState() {
@@ -55,6 +58,17 @@ class _AffirmationPageState extends State<AffirmationPage>
         } else {
           context.read<AffirmationCubit>().markCurrentAsViewed();
         }
+      }
+    });
+
+    // Série gagnée aujourd'hui ? → déclenche l'animation de célébration.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final streak = context.read<StreakCubit>();
+      final gained = streak.celebration;
+      if (gained != null) {
+        streak.consumeCelebration();
+        setState(() => _celebrateStreak = gained);
       }
     });
   }
@@ -306,10 +320,11 @@ class _AffirmationPageState extends State<AffirmationPage>
       ),
     );
 
-    if (themeData.isAdaptive) return body;
-
-    if (themeData.assetImage != null) {
-      return Stack(
+    final Widget root;
+    if (themeData.isAdaptive) {
+      root = body;
+    } else if (themeData.assetImage != null) {
+      root = Stack(
         fit: StackFit.expand,
         children: [
           Image.asset(themeData.assetImage!, fit: BoxFit.cover),
@@ -326,17 +341,40 @@ class _AffirmationPageState extends State<AffirmationPage>
           body,
         ],
       );
+    } else {
+      root = Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: themeData.gradientColors,
+            begin: themeData.begin,
+            end: themeData.end,
+          ),
+        ),
+        child: body,
+      );
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: themeData.gradientColors,
-          begin: themeData.begin,
-          end: themeData.end,
-        ),
-      ),
-      child: body,
+    return Stack(
+      children: [
+        root,
+        if (_celebrateStreak != null)
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: SafeArea(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: StreakCelebration(
+                  count: _celebrateStreak!,
+                  onDismiss: () {
+                    if (mounted) setState(() => _celebrateStreak = null);
+                  },
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
