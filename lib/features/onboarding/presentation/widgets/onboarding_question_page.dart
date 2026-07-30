@@ -3,10 +3,11 @@ import 'package:motivation_app/config/themes/app_style.dart';
 import 'package:motivation_app/core/widgets/fade_slide_in.dart';
 import 'package:motivation_app/features/onboarding/onboarding_flow.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/back_button_widget.dart';
+import 'package:motivation_app/features/onboarding/presentation/widgets/continue_button.dart';
 import 'package:motivation_app/features/onboarding/presentation/widgets/progress_indicator_bar.dart';
 
-/// Page de question à choix unique : la sélection avance automatiquement
-/// après un court instant, un "passer" discret permet d'ignorer.
+/// Page de question à choix unique : on sélectionne une option puis on valide
+/// avec le bouton continuer. Un "passer" discret permet d'ignorer la question.
 class OnboardingQuestionPage extends StatefulWidget {
   final String route;
   final String title;
@@ -27,17 +28,9 @@ class OnboardingQuestionPage extends StatefulWidget {
 
 class _OnboardingQuestionPageState extends State<OnboardingQuestionPage> {
   String? _selected;
-  bool _advancing = false;
 
   void _select(String label) {
-    if (_advancing) return;
-    setState(() {
-      _selected = label;
-      _advancing = true;
-    });
-    Future.delayed(const Duration(milliseconds: 450), () {
-      if (mounted) OnboardingFlow.next(context, widget.route);
-    });
+    setState(() => _selected = label);
   }
 
   @override
@@ -107,6 +100,14 @@ class _OnboardingQuestionPageState extends State<OnboardingQuestionPage> {
                     ],
                   ),
                 ),
+              ),
+
+              const SizedBox(height: 16),
+              ContinueButton(
+                enabled: _selected != null,
+                onPressed: _selected == null
+                    ? null
+                    : () => OnboardingFlow.next(context, widget.route),
               ),
             ],
           ),

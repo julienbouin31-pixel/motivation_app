@@ -249,7 +249,7 @@ class _OnboardingPreviewPageState extends State<OnboardingPreviewPage>
             Padding(
               padding: const EdgeInsets.fromLTRB(28, 0, 28, 32),
               child: ContinueButton(
-                label: isUnlocked ? 'activer mes rappels' : 'continuer',
+                label: 'continuer',
                 enabled: isUnlocked,
                 onPressed: isUnlocked
                     ? () => OnboardingFlow.next(
