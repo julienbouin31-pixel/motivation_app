@@ -16,6 +16,12 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - purchases_flutter (10.6.0):
+    - Flutter
+    - PurchasesHybridCommon (= 18.26.0)
+  - PurchasesHybridCommon (18.26.0):
+    - RevenueCat (= 5.81.3)
+  - RevenueCat (5.81.3)
   - Sentry/HybridSDK (8.46.0)
   - sentry_flutter (8.14.2):
     - Flutter
@@ -63,6 +69,7 @@ DEPENDENCIES:
   - home_widget (from `.symlinks/plugins/home_widget/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - purchases_flutter (from `.symlinks/plugins/purchases_flutter/ios`)
   - sentry_flutter (from `.symlinks/plugins/sentry_flutter/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
@@ -71,6 +78,8 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - PurchasesHybridCommon
+    - RevenueCat
     - Sentry
     - sqlite3
 
@@ -91,6 +100,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  purchases_flutter:
+    :path: ".symlinks/plugins/purchases_flutter/ios"
   sentry_flutter:
     :path: ".symlinks/plugins/sentry_flutter/ios"
   share_plus:
@@ -111,6 +122,9 @@ SPEC CHECKSUMS:
   home_widget: 54b4f6b36ed8d64cfee594a476225c35c3e45091
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   path_provider_foundation: bb55f6dbba17d0dccd6737fe6f7f34fbd0376880
+  purchases_flutter: b3b8a0d1806760e29fc9b3cb03ed9382698cb01b
+  PurchasesHybridCommon: 81a372811549bddae23d1fc6036b3a2c0210a80d
+  RevenueCat: 228e2b3cd3d6b520bad203d11ae1ad9225f278da
   Sentry: da60d980b197a46db0b35ea12cb8f39af48d8854
   sentry_flutter: 27892878729f42701297c628eb90e7c6529f3684
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a

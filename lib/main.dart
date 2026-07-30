@@ -15,6 +15,8 @@ import 'package:motivation_app/core/sync/one_time_migration.dart';
 import 'package:motivation_app/core/sync/sync_service.dart';
 import 'package:motivation_app/core/theme/card_theme_cubit.dart';
 import 'package:motivation_app/core/notifications/notification_service.dart';
+import 'package:motivation_app/core/purchases/purchases_service.dart';
+import 'package:motivation_app/core/purchases/subscription_cubit.dart';
 import 'package:motivation_app/core/widgets/home_widget_service.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
@@ -121,6 +123,10 @@ Future<void> _bootstrap() async {
 
   await _pushWidgetPool(local, profile?.name ?? '');
 
+  await PurchasesService.init();
+  final subscriptionCubit = SubscriptionCubit();
+  await subscriptionCubit.load();
+
   final cardThemeCubit = CardThemeCubit(di.sl<SecureStorage>());
   await cardThemeCubit.load();
 
@@ -132,6 +138,7 @@ Future<void> _bootstrap() async {
     onboardingCubit: onboardingCubit,
     cardThemeCubit: cardThemeCubit,
     streakCubit: streakCubit,
+    subscriptionCubit: subscriptionCubit,
   ));
 }
 
@@ -160,6 +167,7 @@ class MyApp extends StatefulWidget {
   final OnboardingCubit onboardingCubit;
   final CardThemeCubit cardThemeCubit;
   final StreakCubit streakCubit;
+  final SubscriptionCubit subscriptionCubit;
 
   const MyApp({
     super.key,
@@ -167,6 +175,7 @@ class MyApp extends StatefulWidget {
     required this.onboardingCubit,
     required this.cardThemeCubit,
     required this.streakCubit,
+    required this.subscriptionCubit,
   });
 
   @override
@@ -193,6 +202,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         BlocProvider.value(value: widget.onboardingCubit),
         BlocProvider.value(value: widget.cardThemeCubit),
         BlocProvider.value(value: widget.streakCubit),
+        BlocProvider.value(value: widget.subscriptionCubit),
       ],
       child: BlocListener<OnboardingCubit, OnboardingState>(
         listenWhen: (prev, next) =>

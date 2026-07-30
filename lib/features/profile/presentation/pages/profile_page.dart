@@ -10,6 +10,7 @@ import 'package:motivation_app/core/storage/secure_storage.dart';
 import 'package:motivation_app/features/affirmation/data/datasources/affirmation_local_data_source.dart';
 import 'package:motivation_app/features/affirmation/domain/repositories/affirmation_repository.dart';
 import 'package:motivation_app/core/streak/streak_cubit.dart';
+import 'package:motivation_app/core/purchases/subscription_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 import 'package:motivation_app/injection_container.dart' as di;
@@ -118,6 +119,11 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                   ),
+
+                  const SizedBox(height: 20),
+
+                  // ── Premium ─────────────────────────────────────────────
+                  const _PremiumBanner(),
 
                   const SizedBox(height: 24),
 
@@ -229,6 +235,87 @@ class ProfilePage extends StatelessWidget {
                 ],
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Bannière premium ─────────────────────────────────────────────────────────
+
+class _PremiumBanner extends StatelessWidget {
+  const _PremiumBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    final isPremium = context.watch<SubscriptionCubit>().state;
+
+    if (isPremium) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppStyle.accent.withValues(alpha: 0.4)),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.auto_awesome, size: 16, color: AppStyle.accent),
+            const SizedBox(width: 10),
+            Text(
+              'membre premium',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppStyle.ink.withValues(alpha: 0.9),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return GestureDetector(
+      onTap: () => context.push(AppRouter.paywall),
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppStyle.accent.withValues(alpha: 0.35)),
+          gradient: LinearGradient(
+            colors: [
+              AppStyle.accent.withValues(alpha: 0.10),
+              AppStyle.accent.withValues(alpha: 0.02),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text('curves ', style: AppStyle.display(size: 18)),
+                      Text('premium',
+                          style: AppStyle.displayItalic(size: 18)
+                              .copyWith(color: AppStyle.accent)),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Débloque toutes les catégories, thèmes et plus.',
+                    style: const TextStyle(fontSize: 13, color: AppStyle.dim),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right,
+                size: 20, color: AppStyle.accent.withValues(alpha: 0.8)),
           ],
         ),
       ),

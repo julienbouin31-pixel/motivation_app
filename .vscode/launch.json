@@ -9,7 +9,7 @@
             "name": "▶ Simulateur iOS (debug)",
             "request": "launch",
             "type": "dart",
-            "deviceId": "2AE510A7-7E6A-4CA3-8BA2-4EA8272D0986"
+            "deviceId": "748CBAFE-0581-49A2-80F3-48DF14D18E2A"
         },
         {
             "name": "motivation_app",

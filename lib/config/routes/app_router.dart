@@ -28,6 +28,7 @@ import 'package:motivation_app/features/onboarding/presentation/pages/onboarding
 import 'package:motivation_app/features/profile/presentation/pages/notification_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/stats_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/widgets_page.dart';
+import 'package:motivation_app/features/subscription/presentation/paywall_page.dart';
 import 'package:motivation_app/injection_container.dart' as di;
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -59,6 +60,7 @@ class AppRouter {
   static const String notifications = '/profile/notifications';
   static const String stats = '/profile/stats';
   static const String affirmationHistory = '/affirmation/history';
+  static const String paywall = '/paywall';
 
   // Documents légaux hébergés (GitHub Pages)
   static const String privacyUrl =
@@ -198,6 +200,13 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
       path: AppRouter.stats,
       pageBuilder: (context, state) => const MaterialPage(
         child: StatsPage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.paywall,
+      pageBuilder: (context, state) => const MaterialPage(
+        fullscreenDialog: true,
+        child: PaywallPage(),
       ),
     ),
     // ─── Affirmation — ShellRoute scopant AffirmationCubit ──────────────────
