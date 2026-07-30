@@ -107,20 +107,29 @@ class NotificationService {
     final times = _distributeTimes(frequency, startHour, endHour);
     const daysAhead = 30;
     int textIndex = 0;
+    int scheduled = 0;
+
+    final now = tz.TZDateTime.now(tz.local);
 
     for (int slot = 0; slot < times.length; slot++) {
       final (hour, minute) = times[slot];
       for (int day = 0; day < daysAhead; day++) {
+        final when = _occurrence(hour, minute, day);
+        // Créneau déjà passé (uniquement possible aujourd'hui) → on saute,
+        // sinon il collisionnerait avec le même créneau de demain.
+        if (!when.isAfter(now)) continue;
+
         final id = slot * 100 + day;
         final entry = affirmations[textIndex % affirmations.length];
         textIndex++;
+        scheduled++;
 
         try {
           await _plugin.zonedSchedule(
             id,
             'Motivation',
             entry.$2,
-            _nextOccurrence(hour, minute, day),
+            when,
             const NotificationDetails(
               android: AndroidNotificationDetails(
                 'daily_affirmations',
@@ -148,7 +157,7 @@ class NotificationService {
     }
 
     debugPrint(
-      '[NotificationService] Scheduled ${times.length * daysAhead} notifications '
+      '[NotificationService] Scheduled $scheduled notifications '
       '(${times.length}x/day, ${startHour}h→${endHour}h)',
     );
   }
@@ -254,20 +263,13 @@ class NotificationService {
     });
   }
 
-  static tz.TZDateTime _nextOccurrence(int hour, int minute, int daysOffset) {
+  /// Date du créneau [hour]:[minute] sur le jour civil (aujourd'hui + [daysOffset]).
+  /// Ne décale JAMAIS d'un jour : un créneau déjà passé aujourd'hui est
+  /// simplement ignoré par l'appelant (sinon il entrerait en collision avec
+  /// le même créneau du lendemain → notification en double).
+  static tz.TZDateTime _occurrence(int hour, int minute, int daysOffset) {
     final now = tz.TZDateTime.now(tz.local);
-    var date = tz.TZDateTime(
-      tz.local,
-      now.year,
-      now.month,
-      now.day,
-      hour,
-      minute,
-    ).add(Duration(days: daysOffset));
-
-    if (daysOffset == 0 && date.isBefore(now)) {
-      date = date.add(const Duration(days: 1));
-    }
-    return date;
+    return tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute)
+        .add(Duration(days: daysOffset));
   }
 }
