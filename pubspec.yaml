@@ -53,6 +53,7 @@ dependencies:
   json_annotation: ^4.8.1
   injectable: ^2.5.0
   sentry_flutter: ^8.14.2
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:

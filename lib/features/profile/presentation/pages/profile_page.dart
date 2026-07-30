@@ -13,6 +13,12 @@ import 'package:motivation_app/core/streak/streak_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_cubit.dart';
 import 'package:motivation_app/features/onboarding/presentation/bloc/onboarding_state.dart';
 import 'package:motivation_app/injection_container.dart' as di;
+import 'package:url_launcher/url_launcher.dart';
+
+Future<void> _openUrl(String url) async {
+  final uri = Uri.parse(url);
+  await launchUrl(uri, mode: LaunchMode.externalApplication);
+}
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -129,6 +135,11 @@ class ProfilePage extends StatelessWidget {
                     route: AppRouter.stats,
                   ),
                   const _SettingsRow(
+                    title: 'Historique',
+                    subtitle: 'Les affirmations déjà vues',
+                    route: AppRouter.affirmationHistory,
+                  ),
+                  const _SettingsRow(
                     title: 'Mes favoris',
                     subtitle: 'Affirmations sauvegardées',
                     route: AppRouter.affirmationFavorites,
@@ -171,15 +182,17 @@ class ProfilePage extends StatelessWidget {
                   // ── À propos ────────────────────────────────────────────
                   const Text('à propos', style: AppStyle.overline),
                   const SizedBox(height: 4),
-                  const _SettingsRow(
+                  _SettingsRow(
                     title: 'Confidentialité',
                     subtitle: 'Comment tes données sont traitées',
-                    route: AppRouter.privacy,
+                    external: true,
+                    onTap: () => _openUrl(AppRouter.privacyUrl),
                   ),
-                  const _SettingsRow(
+                  _SettingsRow(
                     title: 'Conditions d\'utilisation',
                     subtitle: 'Les règles du service',
-                    route: AppRouter.terms,
+                    external: true,
+                    onTap: () => _openUrl(AppRouter.termsUrl),
                   ),
 
                   const SizedBox(height: 44),
@@ -237,18 +250,22 @@ class ProfilePage extends StatelessWidget {
 class _SettingsRow extends StatelessWidget {
   final String title;
   final String? subtitle;
-  final String route;
+  final String? route;
+  final VoidCallback? onTap;
+  final bool external;
 
   const _SettingsRow({
     required this.title,
     this.subtitle,
-    required this.route,
+    this.route,
+    this.onTap,
+    this.external = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.push(route),
+      onTap: onTap ?? (route != null ? () => context.push(route!) : null),
       behavior: HitTestBehavior.opaque,
       child: Container(
         decoration: const BoxDecoration(
@@ -283,8 +300,9 @@ class _SettingsRow extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right,
-                size: 18, color: AppStyle.ink.withValues(alpha: 0.3)),
+            Icon(external ? Icons.north_east : Icons.chevron_right,
+                size: external ? 15 : 18,
+                color: AppStyle.ink.withValues(alpha: 0.3)),
           ],
         ),
       ),

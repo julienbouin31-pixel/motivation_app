@@ -9,6 +9,7 @@ import 'package:motivation_app/features/affirmation/domain/entities/affirmation_
 abstract class AffirmationLocalDataSource {
   Future<AffirmationModel?> getNextUnviewed({List<String>? categories});
   Future<List<AffirmationModel>> getFavorites();
+  Future<List<AffirmationModel>> getViewed();
   Future<List<String>> getAllTexts();
   Future<List<(int id, String text)>> getAllWithIds();
   Future<List<(int id, String text, String category)>> getAllForWidget();
@@ -109,6 +110,15 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
   Future<List<AffirmationModel>> getFavorites() async {
     final rows = await (db.select(db.affirmationItems)
           ..where((t) => t.isFavorite.equals(true)))
+        .get();
+    return rows.map(_fromRow).toList();
+  }
+
+  @override
+  Future<List<AffirmationModel>> getViewed() async {
+    final rows = await (db.select(db.affirmationItems)
+          ..where((t) => t.lastViewedAt.isNotNull())
+          ..orderBy([(t) => OrderingTerm.desc(t.lastViewedAt)]))
         .get();
     return rows.map(_fromRow).toList();
   }

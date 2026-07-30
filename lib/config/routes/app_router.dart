@@ -6,6 +6,7 @@ import 'package:motivation_app/features/affirmation/presentation/pages/affirmati
 import 'package:motivation_app/features/affirmation/presentation/pages/category_page.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/custom_affirmations_page.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/favorites_page.dart';
+import 'package:motivation_app/features/affirmation/presentation/pages/history_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_belief_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_goal_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_mood_page.dart';
@@ -24,7 +25,6 @@ import 'package:motivation_app/features/profile/presentation/pages/appearance_pa
 import 'package:motivation_app/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/profile_page.dart';
 import 'package:motivation_app/features/onboarding/presentation/pages/onboarding_notification_page.dart';
-import 'package:motivation_app/features/profile/presentation/pages/legal_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/notification_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/stats_page.dart';
 import 'package:motivation_app/features/profile/presentation/pages/widgets_page.dart';
@@ -58,8 +58,13 @@ class AppRouter {
   static const String widgets = '/profile/widgets';
   static const String notifications = '/profile/notifications';
   static const String stats = '/profile/stats';
-  static const String privacy = '/profile/privacy';
-  static const String terms = '/profile/terms';
+  static const String affirmationHistory = '/affirmation/history';
+
+  // Documents légaux hébergés (GitHub Pages)
+  static const String privacyUrl =
+      'https://julienbouin31-pixel.github.io/motivation_app/privacy.html';
+  static const String termsUrl =
+      'https://julienbouin31-pixel.github.io/motivation_app/terms.html';
 }
 
 /// [initialLocation] est calculé dans main.dart selon le profil chargé.
@@ -195,18 +200,6 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
         child: StatsPage(),
       ),
     ),
-    GoRoute(
-      path: AppRouter.privacy,
-      pageBuilder: (context, state) => const MaterialPage(
-        child: LegalPage(doc: LegalDoc.privacy),
-      ),
-    ),
-    GoRoute(
-      path: AppRouter.terms,
-      pageBuilder: (context, state) => const MaterialPage(
-        child: LegalPage(doc: LegalDoc.terms),
-      ),
-    ),
     // ─── Affirmation — ShellRoute scopant AffirmationCubit ──────────────────
     ShellRoute(
       builder: (context, state, child) => _AffirmationShell(
@@ -238,6 +231,12 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
       path: AppRouter.affirmationCustom,
       pageBuilder: (context, state) => const MaterialPage(
         child: CustomAffirmationsPage(),
+      ),
+    ),
+    GoRoute(
+      path: AppRouter.affirmationHistory,
+      pageBuilder: (context, state) => const MaterialPage(
+        child: HistoryPage(),
       ),
     ),
   ],
