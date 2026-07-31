@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
@@ -8,7 +9,11 @@ import 'package:motivation_app/core/purchases/purchases_service.dart';
 import 'package:motivation_app/core/purchases/subscription_cubit.dart';
 
 class PaywallPage extends StatefulWidget {
-  const PaywallPage({super.key});
+  /// true quand le paywall est présenté à la fin de l'onboarding : le fermer
+  /// mène à l'app (au lieu d'un simple retour).
+  final bool fromOnboarding;
+
+  const PaywallPage({super.key, this.fromOnboarding = false});
 
   @override
   State<PaywallPage> createState() => _PaywallPageState();
@@ -52,6 +57,15 @@ class _PaywallPageState extends State<PaywallPage> {
     });
   }
 
+  /// Ferme le paywall : vers l'app si on vient de l'onboarding, sinon retour.
+  void _close() {
+    if (widget.fromOnboarding) {
+      context.go(AppRouter.affirmation);
+    } else {
+      context.pop();
+    }
+  }
+
   Future<void> _subscribe() async {
     final package = _selected;
     if (package == null || _busy) return;
@@ -60,10 +74,10 @@ class _PaywallPageState extends State<PaywallPage> {
     if (!mounted) return;
     setState(() => _busy = false);
     if (ok) {
-      Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Bienvenue dans Curves Premium ✦')),
       );
+      _close();
     }
   }
 
@@ -80,7 +94,7 @@ class _PaywallPageState extends State<PaywallPage> {
             : 'Aucun abonnement à restaurer.'),
       ),
     );
-    if (ok) Navigator.of(context).pop();
+    if (ok) _close();
   }
 
   @override
@@ -97,7 +111,7 @@ class _PaywallPageState extends State<PaywallPage> {
               child: Align(
                 alignment: Alignment.topRight,
                 child: GestureDetector(
-                  onTap: () => Navigator.of(context).maybePop(),
+                  onTap: _close,
                   behavior: HitTestBehavior.opaque,
                   child: Padding(
                     padding: const EdgeInsets.all(10),

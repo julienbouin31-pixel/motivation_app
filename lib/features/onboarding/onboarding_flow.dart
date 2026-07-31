@@ -26,7 +26,9 @@ class OnboardingFlow {
     if (index >= 0 && index < steps.length - 1) {
       context.push(steps[index + 1]);
     } else {
-      context.go(AppRouter.affirmation);
+      // Fin de l'onboarding : on présente le paywall une fois (soft, avec une
+      // croix pour passer), qui mène ensuite à l'app.
+      context.go('${AppRouter.paywall}?from=onboarding');
     }
   }
 

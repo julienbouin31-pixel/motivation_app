@@ -204,9 +204,11 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
     ),
     GoRoute(
       path: AppRouter.paywall,
-      pageBuilder: (context, state) => const MaterialPage(
+      pageBuilder: (context, state) => MaterialPage(
         fullscreenDialog: true,
-        child: PaywallPage(),
+        child: PaywallPage(
+          fromOnboarding: state.uri.queryParameters['from'] == 'onboarding',
+        ),
       ),
     ),
     // ─── Affirmation — ShellRoute scopant AffirmationCubit ──────────────────
