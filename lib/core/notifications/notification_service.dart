@@ -262,7 +262,7 @@ class NotificationService {
       await _plugin.zonedSchedule(
         _trialReminderId,
         'Ton essai gratuit se termine bientôt',
-        'Ton essai Curves Premium se termine dans 2 jours — annule quand tu veux.',
+        'Ton essai Curves Premium se termine bientôt — annule quand tu veux.',
         when,
         const NotificationDetails(
           android: AndroidNotificationDetails(

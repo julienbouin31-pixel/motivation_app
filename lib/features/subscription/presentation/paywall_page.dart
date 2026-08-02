@@ -23,9 +23,10 @@ class PaywallPage extends StatefulWidget {
 
 class _PaywallPageState extends State<PaywallPage> {
   // Essai gratuit (doit correspondre à l'introductory offer dans App Store
-  // Connect). La notif de rappel tombe [_reminderInDays] jours après le début.
-  static const int _trialDays = 7;
-  static const int _reminderInDays = 5;
+  // Connect). La notif de rappel tombe [_reminderInDays] jours après le début
+  // (ici 1 jour avant la fin).
+  static const int _trialDays = 3;
+  static const int _reminderInDays = 2;
 
   // Prix affichés en attendant la config RevenueCat. En production, ce sont les
   // vrais prix du store (storeProduct.priceString) qui priment.
