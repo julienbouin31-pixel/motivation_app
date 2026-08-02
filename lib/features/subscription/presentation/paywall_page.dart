@@ -176,7 +176,7 @@ class _PaywallPageState extends State<PaywallPage> {
                       padding: const EdgeInsets.fromLTRB(28, 4, 28, 8),
                       children: [
                         Text(
-                          'on te préviendra avant\nla fin de ton essai',
+                          'comment fonctionne\nton essai gratuit',
                           style: AppStyle.display(size: 27),
                         ),
                         const SizedBox(height: 14),
