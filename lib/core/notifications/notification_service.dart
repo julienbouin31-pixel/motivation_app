@@ -249,6 +249,46 @@ class NotificationService {
     }
   }
 
+  // ─── Rappel de fin d'essai ─────────────────────────────────────────────────
+
+  static const int _trialReminderId = 90001;
+
+  /// Programme un rappel [inDays] jours avant la fin de l'essai gratuit.
+  static Future<void> scheduleTrialReminder({required int inDays}) async {
+    await _plugin.cancel(_trialReminderId);
+    if (inDays <= 0) return;
+    final when = tz.TZDateTime.now(tz.local).add(Duration(days: inDays));
+    try {
+      await _plugin.zonedSchedule(
+        _trialReminderId,
+        'Ton essai gratuit se termine bientôt',
+        'Ton essai Curves Premium se termine dans 2 jours — annule quand tu veux.',
+        when,
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'trial_reminder',
+            'Fin d\'essai',
+            channelDescription: 'Rappel avant la fin de l\'essai gratuit',
+            importance: Importance.high,
+            priority: Priority.high,
+          ),
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: false,
+            presentSound: true,
+          ),
+        ),
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    } catch (e) {
+      debugPrint('[NotificationService] scheduleTrialReminder error: $e');
+    }
+  }
+
+  static Future<void> cancelTrialReminder() => _plugin.cancel(_trialReminderId);
+
   // ─── Helpers ──────────────────────────────────────────────────────────────
 
   /// Distribue [freq] créneaux entre [startH]h et [endH]h.
