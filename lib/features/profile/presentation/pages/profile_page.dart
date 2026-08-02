@@ -282,15 +282,7 @@ class _PremiumBanner extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: AppStyle.accent.withValues(alpha: 0.35)),
-          gradient: LinearGradient(
-            colors: [
-              AppStyle.accent.withValues(alpha: 0.10),
-              AppStyle.accent.withValues(alpha: 0.02),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          border: Border.all(color: AppStyle.hairline),
         ),
         child: Row(
           children: [
@@ -308,14 +300,14 @@ class _PremiumBanner extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Débloque toutes les catégories, thèmes et plus.',
+                    'débloque toutes les catégories, thèmes et plus.',
                     style: const TextStyle(fontSize: 13, color: AppStyle.dim),
                   ),
                 ],
               ),
             ),
             Icon(Icons.chevron_right,
-                size: 20, color: AppStyle.accent.withValues(alpha: 0.8)),
+                size: 18, color: AppStyle.ink.withValues(alpha: 0.3)),
           ],
         ),
       ),

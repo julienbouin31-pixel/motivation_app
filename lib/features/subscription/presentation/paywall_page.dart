@@ -62,7 +62,7 @@ class _PaywallPageState extends State<PaywallPage> {
     });
   }
 
-  // ─── Offres (réelles ou fallback) ───────────────────────────────────────────
+  // ─── Offres (réelles ou repli) ──────────────────────────────────────────────
 
   Package? get _annual => _packageOfType(PackageType.annual);
   Package? get _monthly => _packageOfType(PackageType.monthly);
@@ -81,14 +81,11 @@ class _PaywallPageState extends State<PaywallPage> {
   String get _monthlyPrice =>
       _monthly?.storeProduct.priceString ?? _fallbackMonthly;
 
-  /// Petit texte "engagement" adapté à l'offre sélectionnée.
   String get _finePrint {
     if (_annualSelected) {
-      return 'Sans engagement. Annule à tout moment ou continue pour '
-          '$_annualPrice/an (soit ~1,67 €/mois).';
+      return 'sans engagement, annule quand tu veux — puis $_annualPrice par an.';
     }
-    return 'Sans engagement. Annule à tout moment ou continue pour '
-        '$_monthlyPrice/mois.';
+    return 'sans engagement, annule quand tu veux — puis $_monthlyPrice par mois.';
   }
 
   // ─── Actions ────────────────────────────────────────────────────────────────
@@ -122,7 +119,7 @@ class _PaywallPageState extends State<PaywallPage> {
       }
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Bienvenue dans Curves Premium ✦')),
+        const SnackBar(content: Text('bienvenue dans curves premium.')),
       );
       _close();
     }
@@ -137,7 +134,7 @@ class _PaywallPageState extends State<PaywallPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content:
-            Text(ok ? 'Abonnement restauré.' : 'Aucun abonnement à restaurer.'),
+            Text(ok ? 'abonnement restauré.' : 'aucun abonnement à restaurer.'),
       ),
     );
     if (ok) _close();
@@ -159,7 +156,6 @@ class _PaywallPageState extends State<PaywallPage> {
             ? const Center(child: CircularProgressIndicator(color: AppStyle.dim))
             : Column(
                 children: [
-                  // Fermer
                   Align(
                     alignment: Alignment.topRight,
                     child: GestureDetector(
@@ -176,109 +172,97 @@ class _PaywallPageState extends State<PaywallPage> {
 
                   Expanded(
                     child: ListView(
-                      padding: const EdgeInsets.fromLTRB(28, 0, 28, 8),
+                      padding: const EdgeInsets.fromLTRB(28, 4, 28, 8),
                       children: [
                         Text(
-                          'on te préviendra avant\nla fin de ton essai gratuit',
-                          style: AppStyle.display(size: 26),
+                          'on te préviendra avant\nla fin de ton essai',
+                          style: AppStyle.display(size: 27),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 14),
                         Row(
                           children: [
-                            const Icon(Icons.check_rounded,
-                                size: 18, color: AppStyle.accent),
-                            const SizedBox(width: 6),
+                            Container(
+                              width: 6,
+                              height: 6,
+                              decoration: const BoxDecoration(
+                                color: AppStyle.accent,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
                             Text(
                               '0 € à payer aujourd\'hui',
                               style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: AppStyle.accent,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppStyle.ink.withValues(alpha: 0.85),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 36),
 
-                        // Timeline
+                        // Timeline sobre : marqueurs à filet, un point ocre
+                        // pour aujourd'hui, reliés par un filet.
                         _TimelineStep(
-                          icon: Icons.lock_open_rounded,
-                          title: 'aujourd\'hui',
+                          label: 'aujourd\'hui',
                           body:
-                              'Accès complet à toutes les fonctionnalités de Curves.',
+                              'accès complet à toutes les fonctionnalités de curves.',
+                          active: true,
                         ),
                         _TimelineStep(
-                          icon: Icons.notifications_none_rounded,
-                          title: 'dans $_reminderInDays jours',
+                          label: 'dans $_reminderInDays jours',
                           body:
-                              'On t\'envoie une notification avant la fin de ta période d\'essai.',
+                              'on t\'envoie un rappel avant la fin de ta période d\'essai.',
                         ),
                         _TimelineStep(
-                          icon: Icons.workspace_premium_outlined,
-                          title: 'dans $_trialDays jours',
+                          label: 'dans $_trialDays jours',
                           body:
-                              'Début de ton abonnement le ${_frenchDate(startDate)}, sauf si tu annules avant.',
+                              'début de l\'abonnement le ${_frenchDate(startDate)}, sauf si tu annules avant.',
                           isLast: true,
                         ),
 
                         const SizedBox(height: 20),
 
-                        // Sélecteur d'offre
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _OfferPill(
-                                title: 'annuel',
-                                price: '$_annualPrice/an',
-                                badge: '-44 %',
-                                selected: _annualSelected,
-                                onTap: () {
-                                  HapticFeedback.selectionClick();
-                                  setState(() =>
-                                      _selected = _annual ?? _selected);
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _OfferPill(
-                                title: 'mensuel',
-                                price: '$_monthlyPrice/mois',
-                                selected: !_annualSelected,
-                                onTap: () {
-                                  HapticFeedback.selectionClick();
-                                  setState(() =>
-                                      _selected = _monthly ?? _selected);
-                                },
-                              ),
-                            ),
-                          ],
+                        // Offres — listes à filets (composant maison)
+                        SelectableRow(
+                          label: 'annuel',
+                          sublabel: '$_annualPrice par an · environ 1,67 €/mois',
+                          selected: _annualSelected,
+                          onTap: () =>
+                              setState(() => _selected = _annual ?? _selected),
+                        ),
+                        SelectableRow(
+                          label: 'mensuel',
+                          sublabel: '$_monthlyPrice par mois',
+                          selected: !_annualSelected,
+                          onTap: () =>
+                              setState(() => _selected = _monthly ?? _selected),
                         ),
 
-                        const SizedBox(height: 20),
-
-                        // Toggle rappel
+                        // Rappel — même filet
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 18, vertical: 6),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(18),
-                            border: Border.all(color: AppStyle.hairline),
+                          decoration: const BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(color: AppStyle.hairline)),
                           ),
+                          padding: const EdgeInsets.symmetric(vertical: 6),
                           child: Row(
                             children: [
-                              const Expanded(
+                              Expanded(
                                 child: Text(
-                                  'Rappel avant la fin de l\'essai',
+                                  'me rappeler avant la fin',
                                   style: TextStyle(
-                                      fontSize: 14, color: AppStyle.ink),
+                                    fontSize: 16,
+                                    color: AppStyle.ink.withValues(alpha: 0.55),
+                                  ),
                                 ),
                               ),
                               Switch.adaptive(
                                 value: _reminder,
                                 onChanged: (v) => setState(() => _reminder = v),
                                 activeThumbColor: const Color(0xFF111110),
-                                activeTrackColor: AppStyle.accent,
+                                activeTrackColor: AppStyle.ink,
                               ),
                             ],
                           ),
@@ -287,9 +271,8 @@ class _PaywallPageState extends State<PaywallPage> {
                     ),
                   ),
 
-                  // Bas : engagement + CTA + légal
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(28, 8, 28, 16),
+                    padding: const EdgeInsets.fromLTRB(28, 10, 28, 16),
                     child: Column(
                       children: [
                         Text(
@@ -298,13 +281,13 @@ class _PaywallPageState extends State<PaywallPage> {
                           style:
                               const TextStyle(fontSize: 12, color: AppStyle.dim),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 14),
                         _PrimaryButton(
                           label: _busy ? '…' : 'essayer gratuitement',
                           enabled: !_busy,
                           onPressed: _subscribe,
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 12),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -332,18 +315,18 @@ class _PaywallPageState extends State<PaywallPage> {
       );
 }
 
-// ─── Étape de timeline ────────────────────────────────────────────────────────
+// ─── Étape de timeline (éditoriale : filets, point ocre) ──────────────────────
 
 class _TimelineStep extends StatelessWidget {
-  final IconData icon;
-  final String title;
+  final String label;
   final String body;
+  final bool active;
   final bool isLast;
 
   const _TimelineStep({
-    required this.icon,
-    required this.title,
+    required this.label,
     required this.body,
+    this.active = false,
     this.isLast = false,
   });
 
@@ -356,38 +339,49 @@ class _TimelineStep extends StatelessWidget {
           Column(
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: 16,
+                height: 16,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppStyle.accent.withValues(alpha: 0.12),
-                  border:
-                      Border.all(color: AppStyle.accent.withValues(alpha: 0.5)),
+                  border: Border.all(
+                    color: active
+                        ? AppStyle.accent
+                        : AppStyle.ink.withValues(alpha: 0.25),
+                  ),
                 ),
-                child: Icon(icon, size: 18, color: AppStyle.accent),
+                child: active
+                    ? Center(
+                        child: Container(
+                          width: 6,
+                          height: 6,
+                          decoration: const BoxDecoration(
+                            color: AppStyle.accent,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      )
+                    : null,
               ),
               if (!isLast)
                 Expanded(
-                  child: Container(
-                    width: 2,
-                    color: AppStyle.accent.withValues(alpha: 0.25),
-                  ),
+                  child: Container(width: 1, color: AppStyle.hairline),
                 ),
             ],
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(bottom: isLast ? 0 : 24, top: 6),
+              padding: EdgeInsets.only(bottom: isLast ? 0 : 26, top: 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    title,
+                    label,
                     style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
                       color: AppStyle.ink,
+                      letterSpacing: -0.2,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -396,7 +390,7 @@ class _TimelineStep extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14,
                       height: 1.45,
-                      color: AppStyle.ink.withValues(alpha: 0.6),
+                      color: AppStyle.ink.withValues(alpha: 0.55),
                     ),
                   ),
                 ],
@@ -409,87 +403,7 @@ class _TimelineStep extends StatelessWidget {
   }
 }
 
-// ─── Pilule d'offre ───────────────────────────────────────────────────────────
-
-class _OfferPill extends StatelessWidget {
-  final String title;
-  final String price;
-  final String? badge;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _OfferPill({
-    required this.title,
-    required this.price,
-    required this.selected,
-    required this.onTap,
-    this.badge,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: selected ? AppStyle.accent : AppStyle.hairline,
-            width: selected ? 1.5 : 1,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: AppStyle.ink,
-                  ),
-                ),
-                if (badge != null) ...[
-                  const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppStyle.accent,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      badge!,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF111110),
-                      ),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(
-              price,
-              style: TextStyle(
-                fontSize: 13,
-                color: AppStyle.ink.withValues(alpha: 0.6),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Bouton principal ────────────────────────────────────────────────────────
+// ─── Bouton pilule ivoire ─────────────────────────────────────────────────────
 
 class _PrimaryButton extends StatelessWidget {
   final String label;
