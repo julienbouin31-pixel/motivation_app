@@ -252,82 +252,97 @@ class _PremiumBanner extends StatelessWidget {
     final isPremium = context.watch<SubscriptionCubit>().state;
 
     if (isPremium) {
-      return GestureDetector(
+      return _FiletBanner(
         onTap: () => _openUrl('https://apps.apple.com/account/subscriptions'),
-        behavior: HitTestBehavior.opaque,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppStyle.accent.withValues(alpha: 0.4)),
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.auto_awesome, size: 16, color: AppStyle.accent),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'membre premium',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppStyle.ink.withValues(alpha: 0.9),
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      'gérer mon abonnement',
-                      style: TextStyle(fontSize: 13, color: AppStyle.dim),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(Icons.north_east,
-                  size: 15, color: AppStyle.ink.withValues(alpha: 0.3)),
-            ],
-          ),
-        ),
+        title: 'membre ',
+        accentWord: 'premium',
+        subtitle: 'ton accès est illimité.',
+        cta: 'gérer mon abonnement',
       );
     }
 
-    return GestureDetector(
+    return _FiletBanner(
       onTap: () => context.push(AppRouter.paywall),
+      title: 'passe en ',
+      accentWord: 'illimité',
+      subtitle: 'toutes les catégories, tous les thèmes.',
+      cta: 'découvrir',
+    );
+  }
+}
+
+/// Énoncé entre deux filets fins : grand titre light avec un mot en accent,
+/// sous-texte discret, et un lien (point ocre + flèche).
+class _FiletBanner extends StatelessWidget {
+  final VoidCallback onTap;
+  final String title;
+  final String accentWord;
+  final String subtitle;
+  final String cta;
+
+  const _FiletBanner({
+    required this.onTap,
+    required this.title,
+    required this.accentWord,
+    required this.subtitle,
+    required this.cta,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: AppStyle.hairline),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Divider(color: AppStyle.hairline, height: 1),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 22),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text.rich(
+                  TextSpan(
+                    text: title,
+                    style: AppStyle.display(size: 23),
                     children: [
-                      Text('curves ', style: AppStyle.display(size: 18)),
-                      Text('premium',
-                          style: AppStyle.displayItalic(size: 18)
-                              .copyWith(color: AppStyle.accent)),
+                      TextSpan(
+                        text: accentWord,
+                        style: AppStyle.displayItalic(size: 23)
+                            .copyWith(color: AppStyle.accent),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'débloque toutes les catégories, thèmes et plus.',
-                    style: const TextStyle(fontSize: 13, color: AppStyle.dim),
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  subtitle,
+                  style: const TextStyle(fontSize: 13.5, color: AppStyle.dim),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Container(
+                      width: 5,
+                      height: 5,
+                      decoration: const BoxDecoration(
+                        color: AppStyle.accent,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(cta, style: AppStyle.overline),
+                    const Spacer(),
+                    Icon(Icons.north_east,
+                        size: 15, color: AppStyle.ink.withValues(alpha: 0.3)),
+                  ],
+                ),
+              ],
             ),
-            Icon(Icons.chevron_right,
-                size: 18, color: AppStyle.ink.withValues(alpha: 0.3)),
-          ],
-        ),
+          ),
+          const Divider(color: AppStyle.hairline, height: 1),
+        ],
       ),
     );
   }
