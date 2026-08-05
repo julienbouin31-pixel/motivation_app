@@ -82,7 +82,16 @@ class PurchasesService {
     if (!_configured) return false;
     try {
       final result = await Purchases.purchase(PurchaseParams.package(package));
-      return _hasPremium(result.customerInfo);
+      final premium = _hasPremium(result.customerInfo);
+      if (!premium) {
+        debugPrint(
+          '[Purchases] Achat OK mais entitlement "$entitlementId" inactif — '
+          'vérifie que l\'entitlement existe sous ce nom et que le produit y '
+          'est attaché. Entitlements actifs: '
+          '${result.customerInfo.entitlements.active.keys.toList()}',
+        );
+      }
+      return premium;
     } on PlatformException catch (e) {
       final code = PurchasesErrorHelper.getErrorCode(e);
       if (code != PurchasesErrorCode.purchaseCancelledError) {
