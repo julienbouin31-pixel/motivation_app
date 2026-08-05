@@ -252,25 +252,43 @@ class _PremiumBanner extends StatelessWidget {
     final isPremium = context.watch<SubscriptionCubit>().state;
 
     if (isPremium) {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: AppStyle.accent.withValues(alpha: 0.4)),
-        ),
-        child: Row(
-          children: [
-            const Icon(Icons.auto_awesome, size: 16, color: AppStyle.accent),
-            const SizedBox(width: 10),
-            Text(
-              'membre premium',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppStyle.ink.withValues(alpha: 0.9),
+      return GestureDetector(
+        onTap: () => _openUrl('https://apps.apple.com/account/subscriptions'),
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: AppStyle.accent.withValues(alpha: 0.4)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.auto_awesome, size: 16, color: AppStyle.accent),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'membre premium',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppStyle.ink.withValues(alpha: 0.9),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    const Text(
+                      'gérer mon abonnement',
+                      style: TextStyle(fontSize: 13, color: AppStyle.dim),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+              Icon(Icons.north_east,
+                  size: 15, color: AppStyle.ink.withValues(alpha: 0.3)),
+            ],
+          ),
         ),
       );
     }
