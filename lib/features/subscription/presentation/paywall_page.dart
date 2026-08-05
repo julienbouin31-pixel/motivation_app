@@ -82,6 +82,15 @@ class _PaywallPageState extends State<PaywallPage> {
   String get _monthlyPrice =>
       _monthly?.storeProduct.priceString ?? _fallbackMonthly;
 
+  /// Sous-titre de l'offre annuelle, avec l'équivalent mensuel réel (calculé
+  /// par le store) quand il est disponible.
+  String get _annualSubtitle {
+    final perMonth = _annual?.storeProduct.pricePerMonthString;
+    return perMonth != null
+        ? '$_annualPrice par an · $perMonth/mois'
+        : '$_annualPrice par an';
+  }
+
   String get _finePrint {
     if (_annualSelected) {
       return 'sans engagement, annule quand tu veux — puis $_annualPrice par an.';
@@ -228,7 +237,7 @@ class _PaywallPageState extends State<PaywallPage> {
                         // Offres — listes à filets (composant maison)
                         SelectableRow(
                           label: 'annuel',
-                          sublabel: '$_annualPrice par an · environ 1,67 €/mois',
+                          sublabel: _annualSubtitle,
                           selected: _annualSelected,
                           onTap: () =>
                               setState(() => _selected = _annual ?? _selected),
