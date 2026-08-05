@@ -296,9 +296,8 @@ class _FiletBanner extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Divider(color: AppStyle.hairline, height: 1),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 22),
+            padding: const EdgeInsets.only(top: 4, bottom: 22),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
