@@ -11,10 +11,10 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 class PurchasesService {
   PurchasesService._();
 
-  /// Identifiant de l'entitlement "premium" à créer dans le dashboard
-  /// RevenueCat (Project → Entitlements). Toutes les offres (mensuel, annuel)
-  /// doivent débloquer cet entitlement.
-  static const String entitlementId = 'premium';
+  /// Identifiant de l'entitlement premium tel que défini dans RevenueCat
+  /// (Product catalog → Entitlements). Toutes les offres (mensuel, annuel)
+  /// doivent y être attachées.
+  static const String entitlementId = 'Curves Pro';
 
   static bool _configured = false;
   static bool get isConfigured => _configured;
