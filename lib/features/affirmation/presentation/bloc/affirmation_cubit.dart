@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:motivation_app/core/purchases/premium_content.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 import 'package:motivation_app/features/affirmation/domain/usecases/get_affirmation_by_id_usecase.dart';
@@ -23,6 +24,12 @@ class AffirmationCubit extends Cubit<AffirmationState> {
   List<AffirmationCategory> _selectedCategories = [];
   List<AffirmationCategory> get selectedCategories => _selectedCategories;
   bool _categoriesRestored = false;
+
+  // Statut premium : en gratuit, le tirage est borné aux catégories gratuites.
+  bool _isPremium = false;
+  void setPremium(bool value) => _isPremium = value;
+  List<AffirmationCategory> get _effectiveCategories =>
+      PremiumContent.effectiveCategories(_selectedCategories, _isPremium);
 
   // Historique des cartes vues (swipe haut) → permet le retour arrière (swipe bas)
   final List<Affirmation> _history = [];
@@ -77,11 +84,11 @@ class AffirmationCubit extends Cubit<AffirmationState> {
       );
     }
     emit(const AffirmationState.loading());
-    var result = await getNextAffirmation(categories: _selectedCategories);
+    var result = await getNextAffirmation(categories: _effectiveCategories);
     if (result.isLeft()) {
       // DB possibly still populating — wait and retry once
       await Future.delayed(const Duration(seconds: 3));
-      result = await getNextAffirmation(categories: _selectedCategories);
+      result = await getNextAffirmation(categories: _effectiveCategories);
     }
     result.fold(
       (_) => emit(
@@ -113,7 +120,7 @@ class AffirmationCubit extends Cubit<AffirmationState> {
     }
 
     await markAsViewed(currentState.affirmation.id);
-    final result = await getNextAffirmation(categories: _selectedCategories);
+    final result = await getNextAffirmation(categories: _effectiveCategories);
     result.fold(
       (_) => emit(
           const AffirmationState.error('Impossible de charger une affirmation')),

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_style.dart';
+import 'package:motivation_app/core/purchases/premium_content.dart';
+import 'package:motivation_app/core/purchases/subscription_cubit.dart';
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart';
 
@@ -55,6 +58,7 @@ class _CategoryPageState extends State<CategoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isPremium = context.watch<SubscriptionCubit>().state;
     final total = AffirmationCategory.values.length;
     final activeCount = _selected.isEmpty ? total : _selected.length;
     final isAll = _selected.isEmpty;
@@ -133,13 +137,18 @@ class _CategoryPageState extends State<CategoryPage> {
                 itemCount: _allItems.length,
                 itemBuilder: (context, index) {
                   final item = _allItems[index];
+                  final locked =
+                      PremiumContent.categoryLocked(item.category, isPremium);
                   final selected =
-                      isAll || _selected.contains(item.category);
+                      !locked && (isAll || _selected.contains(item.category));
                   return SelectableRow(
                     label: item.category.label,
-                    sublabel: item.description,
+                    sublabel: locked ? 'premium' : item.description,
                     selected: selected,
-                    onTap: () => _toggle(item.category),
+                    locked: locked,
+                    onTap: locked
+                        ? () => context.push(AppRouter.paywall)
+                        : () => _toggle(item.category),
                   );
                 },
               ),

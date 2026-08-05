@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_style.dart';
 import 'package:motivation_app/config/themes/app_theme.dart';
+import 'package:motivation_app/core/purchases/premium_content.dart';
+import 'package:motivation_app/core/purchases/subscription_cubit.dart';
 import 'package:motivation_app/core/theme/card_theme_cubit.dart';
 import 'package:motivation_app/core/theme/card_visual_theme.dart';
 
@@ -42,6 +45,7 @@ class _AppearancePageState extends State<AppearancePage> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
     final currentCardTheme = context.watch<CardThemeCubit>().state;
+    final isPremium = context.watch<SubscriptionCubit>().state;
 
     return Scaffold(
       backgroundColor: AppStyle.bg,
@@ -128,10 +132,13 @@ class _AppearancePageState extends State<AppearancePage> {
                   itemBuilder: (context, index) {
                     final theme = _filtered[index];
                     final data = theme.data;
+                    final locked = PremiumContent.themeLocked(theme, isPremium);
                     final selected = currentCardTheme == theme;
 
                     return GestureDetector(
-                      onTap: () => context.read<CardThemeCubit>().setTheme(theme),
+                      onTap: locked
+                          ? () => context.push(AppRouter.paywall)
+                          : () => context.read<CardThemeCubit>().setTheme(theme),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         decoration: BoxDecoration(
@@ -256,6 +263,22 @@ class _AppearancePageState extends State<AppearancePage> {
                                       Icons.check,
                                       size: 11,
                                       color: colors.scaffold,
+                                    ),
+                                  ),
+                                ),
+
+                              // ── Verrou premium ───────────────────────
+                              if (locked)
+                                Positioned.fill(
+                                  child: Container(
+                                    color: Colors.black.withValues(alpha: 0.45),
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.lock_outline,
+                                        size: 18,
+                                        color:
+                                            Colors.white.withValues(alpha: 0.85),
+                                      ),
                                     ),
                                   ),
                                 ),

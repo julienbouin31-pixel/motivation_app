@@ -82,12 +82,17 @@ class SelectableRow extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
+  /// Réservé au premium : affiche un cadenas discret au lieu du point de
+  /// sélection (le tap ouvre alors typiquement le paywall).
+  final bool locked;
+
   const SelectableRow({
     super.key,
     required this.label,
     this.sublabel,
     required this.selected,
     required this.onTap,
+    this.locked = false,
   });
 
   @override
@@ -131,19 +136,26 @@ class SelectableRow extends StatelessWidget {
                 ],
               ),
             ),
-            AnimatedScale(
-              duration: const Duration(milliseconds: 380),
-              curve: Curves.elasticOut,
-              scale: selected ? 1 : 0,
-              child: Container(
-                width: 7,
-                height: 7,
-                decoration: const BoxDecoration(
-                  color: AppStyle.accent,
-                  shape: BoxShape.circle,
+            if (locked)
+              Icon(
+                Icons.lock_outline,
+                size: 15,
+                color: AppStyle.ink.withValues(alpha: 0.3),
+              )
+            else
+              AnimatedScale(
+                duration: const Duration(milliseconds: 380),
+                curve: Curves.elasticOut,
+                scale: selected ? 1 : 0,
+                child: Container(
+                  width: 7,
+                  height: 7,
+                  decoration: const BoxDecoration(
+                    color: AppStyle.accent,
+                    shape: BoxShape.circle,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:motivation_app/core/purchases/subscription_cubit.dart';
 import 'package:motivation_app/features/affirmation/presentation/bloc/affirmation_cubit.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/affirmation_page.dart';
 import 'package:motivation_app/features/affirmation/presentation/pages/category_page.dart';
@@ -275,6 +276,8 @@ class _AffirmationShellState extends State<_AffirmationShell> {
   void initState() {
     super.initState();
     _cubit = di.sl<AffirmationCubit>();
+    // Borne le tirage aux catégories gratuites tant qu'on n'est pas premium.
+    _cubit.setPremium(context.read<SubscriptionCubit>().state);
     if (widget.id != null) {
       _cubit.initById(widget.id!);
     } else {
@@ -298,6 +301,13 @@ class _AffirmationShellState extends State<_AffirmationShell> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(value: _cubit, child: widget.child);
+    return BlocListener<SubscriptionCubit, bool>(
+      listener: (context, isPremium) {
+        // Achat / expiration en cours de session : recadre le tirage.
+        _cubit.setPremium(isPremium);
+        _cubit.loadNext();
+      },
+      child: BlocProvider.value(value: _cubit, child: widget.child),
+    );
   }
 }
