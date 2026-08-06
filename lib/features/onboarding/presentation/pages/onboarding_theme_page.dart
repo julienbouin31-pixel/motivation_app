@@ -14,14 +14,24 @@ import 'package:motivation_app/features/onboarding/presentation/widgets/progress
 class OnboardingThemePage extends StatelessWidget {
   const OnboardingThemePage({super.key});
 
-  // Décors gratuits en tête (sélectionnables), suivis de quelques décors
-  // premium montrés avec un cadenas pour donner un aperçu de ce qu'on débloque.
+  // Vitrine premium : les décors les plus marquants (photos nature, cosmos,
+  // urbain) montrés avec un cadenas pour donner envie.
+  static const _premiumShowcase = [
+    CardVisualTheme.aurore,
+    CardVisualTheme.galaxie,
+    CardVisualTheme.nebuleuse,
+    CardVisualTheme.aube,
+    CardVisualTheme.tempete,
+    CardVisualTheme.metropole,
+    CardVisualTheme.desert,
+    CardVisualTheme.flamme,
+  ];
+
+  // Décors gratuits en tête (sélectionnables), suivis de la vitrine premium.
   List<CardVisualTheme> get _choices {
     final free =
         CardVisualTheme.values.where(PremiumContent.freeThemes.contains);
-    final locked = CardVisualTheme.values
-        .where((t) => !PremiumContent.freeThemes.contains(t));
-    return [...free, ...locked.take(8)];
+    return [...free, ..._premiumShowcase];
   }
 
   @override
@@ -177,7 +187,27 @@ class OnboardingThemePage extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
+
+              Center(
+                child: Text.rich(
+                  TextSpan(
+                    text: 'débloque ',
+                    style: const TextStyle(fontSize: 13, color: AppStyle.dim),
+                    children: [
+                      TextSpan(
+                        text: 'curves premium',
+                        style: AppStyle.displayItalic(size: 13)
+                            .copyWith(color: AppStyle.accent),
+                      ),
+                      const TextSpan(text: ' pour en avoir plein d\'autres.'),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+
+              const SizedBox(height: 16),
 
               ContinueButton(
                 onPressed: () =>
