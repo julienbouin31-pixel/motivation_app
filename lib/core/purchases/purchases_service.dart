@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
+/// Issue d'une tentative d'achat, pour un retour UI adapté.
+enum PurchaseOutcome { success, cancelled, failed }
+
 /// Wrapper autour du SDK RevenueCat.
 ///
 /// Dégradation gracieuse : si `REVENUECAT_API_KEY_IOS` n'est pas dans le .env,
@@ -77,30 +80,29 @@ class PurchasesService {
 
   // ─── Achat / restauration ────────────────────────────────────────────────
 
-  /// Retourne true si l'utilisateur est premium après l'achat.
-  static Future<bool> purchase(Package package) async {
-    if (!_configured) return false;
+  /// Lance l'achat et renvoie l'issue (succès / annulé / échec).
+  static Future<PurchaseOutcome> purchase(Package package) async {
+    if (!_configured) return PurchaseOutcome.failed;
     try {
       final result = await Purchases.purchase(PurchaseParams.package(package));
-      final premium = _hasPremium(result.customerInfo);
-      if (!premium) {
-        debugPrint(
-          '[Purchases] Achat OK mais entitlement "$entitlementId" inactif — '
-          'vérifie que l\'entitlement existe sous ce nom et que le produit y '
-          'est attaché. Entitlements actifs: '
-          '${result.customerInfo.entitlements.active.keys.toList()}',
-        );
-      }
-      return premium;
+      if (_hasPremium(result.customerInfo)) return PurchaseOutcome.success;
+      debugPrint(
+        '[Purchases] Achat OK mais entitlement "$entitlementId" inactif — '
+        'vérifie que l\'entitlement existe sous ce nom et que le produit y '
+        'est attaché. Entitlements actifs: '
+        '${result.customerInfo.entitlements.active.keys.toList()}',
+      );
+      return PurchaseOutcome.failed;
     } on PlatformException catch (e) {
       final code = PurchasesErrorHelper.getErrorCode(e);
-      if (code != PurchasesErrorCode.purchaseCancelledError) {
-        debugPrint('[Purchases] purchase error: $e');
+      if (code == PurchasesErrorCode.purchaseCancelledError) {
+        return PurchaseOutcome.cancelled;
       }
-      return false;
+      debugPrint('[Purchases] purchase error: $e');
+      return PurchaseOutcome.failed;
     } catch (e) {
       debugPrint('[Purchases] purchase error: $e');
-      return false;
+      return PurchaseOutcome.failed;
     }
   }
 

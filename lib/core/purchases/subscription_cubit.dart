@@ -14,10 +14,10 @@ class SubscriptionCubit extends Cubit<bool> {
     });
   }
 
-  Future<bool> purchase(Package package) async {
-    final ok = await PurchasesService.purchase(package);
-    if (ok && !isClosed) emit(true);
-    return ok;
+  Future<PurchaseOutcome> purchase(Package package) async {
+    final outcome = await PurchasesService.purchase(package);
+    if (outcome == PurchaseOutcome.success && !isClosed) emit(true);
+    return outcome;
   }
 
   Future<bool> restore() async {

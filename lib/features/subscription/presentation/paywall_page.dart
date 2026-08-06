@@ -120,18 +120,27 @@ class _PaywallPageState extends State<PaywallPage> {
     }
 
     setState(() => _busy = true);
-    final ok = await context.read<SubscriptionCubit>().purchase(package);
+    final outcome = await context.read<SubscriptionCubit>().purchase(package);
     if (!mounted) return;
     setState(() => _busy = false);
-    if (ok) {
-      if (_reminder) {
-        await NotificationService.scheduleTrialReminder(inDays: _reminderInDays);
-      }
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('bienvenue dans curves premium.')),
-      );
-      _close();
+
+    switch (outcome) {
+      case PurchaseOutcome.success:
+        if (_reminder) {
+          await NotificationService.scheduleTrialReminder(
+              inDays: _reminderInDays);
+        }
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('bienvenue dans curves premium.')),
+        );
+        _close();
+      case PurchaseOutcome.cancelled:
+        break; // annulation volontaire → aucun message
+      case PurchaseOutcome.failed:
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('l\'achat n\'a pas abouti, réessaie.')),
+        );
     }
   }
 
