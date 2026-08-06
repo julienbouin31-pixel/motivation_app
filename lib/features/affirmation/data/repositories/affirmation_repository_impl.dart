@@ -34,6 +34,9 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
   // ─── Gestion de la date du dernier fetch ────────────────────────────────────
 
   Future<bool> _shouldWeeklyRefresh() async {
+    // Base vide (ex: réinstallation — la DB est effacée mais la date de fetch
+    // survit dans le Keychain iOS) → il faut re-télécharger tout de suite.
+    if (await localDataSource.totalCount() == 0) return true;
     final lastFetch = await localDataSource.getLastFetchDate();
     if (lastFetch == null) return true;
     return DateTime.now().difference(lastFetch).inDays >= 7;
