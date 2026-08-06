@@ -36,7 +36,6 @@ class _AffirmationPageState extends State<AffirmationPage>
   bool _goingBack = false;
   bool _enterFromTop = false;
   bool _pendingGoBack = false;
-  int? _celebrateStreak;
 
   @override
   void initState() {
@@ -61,14 +60,14 @@ class _AffirmationPageState extends State<AffirmationPage>
       }
     });
 
-    // Série gagnée aujourd'hui ? → déclenche l'animation de célébration.
+    // Série gagnée aujourd'hui ? → ouvre le bottom sheet de célébration.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final streak = context.read<StreakCubit>();
       final gained = streak.celebration;
       if (gained != null) {
         streak.consumeCelebration();
-        setState(() => _celebrateStreak = gained);
+        showStreakCelebration(context, gained);
       }
     });
   }
@@ -354,27 +353,6 @@ class _AffirmationPageState extends State<AffirmationPage>
       );
     }
 
-    return Stack(
-      children: [
-        root,
-        if (_celebrateStreak != null)
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: SafeArea(
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: StreakCelebration(
-                  count: _celebrateStreak!,
-                  onDismiss: () {
-                    if (mounted) setState(() => _celebrateStreak = null);
-                  },
-                ),
-              ),
-            ),
-          ),
-      ],
-    );
+    return root;
   }
 }

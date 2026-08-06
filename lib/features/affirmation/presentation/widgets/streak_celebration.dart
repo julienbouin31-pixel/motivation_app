@@ -1,125 +1,124 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:motivation_app/config/themes/app_style.dart';
 
-/// Bandeau de célébration qui descend du haut quand la série augmente,
-/// reste quelques secondes, puis remonte et se retire. Style éditorial.
-class StreakCelebration extends StatefulWidget {
-  final int count;
-  final VoidCallback onDismiss;
-
-  const StreakCelebration({
-    super.key,
-    required this.count,
-    required this.onDismiss,
-  });
-
-  @override
-  State<StreakCelebration> createState() => _StreakCelebrationState();
+/// Affiche la célébration de série sous forme de bottom sheet qui monte du bas.
+Future<void> showStreakCelebration(BuildContext context, int count) {
+  HapticFeedback.mediumImpact();
+  return showModalBottomSheet<void>(
+    context: context,
+    backgroundColor: Colors.transparent,
+    barrierColor: Colors.black.withValues(alpha: 0.6),
+    isScrollControlled: true,
+    builder: (_) => _StreakSheet(count: count),
+  );
 }
 
-class _StreakCelebrationState extends State<StreakCelebration>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl;
-  late final Animation<double> _in;
-  Timer? _timer;
+class _StreakSheet extends StatelessWidget {
+  final int count;
+  const _StreakSheet({required this.count});
 
-  static const _visible = Duration(milliseconds: 2600);
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 520),
-    );
-    _in = CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic);
-
-    _ctrl.forward();
-    HapticFeedback.mediumImpact();
-
-    _timer = Timer(_visible, () async {
-      if (!mounted) return;
-      await _ctrl.reverse();
-      if (mounted) widget.onDismiss();
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  String get _label {
-    switch (widget.count) {
+  String get _message {
+    switch (count) {
       case 1:
-        return 'série lancée';
+        return 'ta série commence. reviens demain pour la faire grandir.';
       case 7:
-        return 'une semaine d\'affilée';
+        return 'une semaine d\'affilée. la régularité paie.';
       case 30:
-        return 'un mois entier';
+        return 'un mois entier. c\'est devenu une habitude.';
+      case 100:
+        return 'cent jours. chapeau.';
       default:
-        return '${widget.count} jours de série';
+        return 'continue comme ça, un jour à la fois.';
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _in,
-      builder: (context, child) {
-        final t = _in.value;
-        return Opacity(
-          opacity: t.clamp(0.0, 1.0),
-          child: Transform.translate(
-            offset: Offset(0, (1 - t) * -28),
-            child: Transform.scale(
-              scale: 0.94 + 0.06 * t,
-              alignment: Alignment.topCenter,
-              child: child,
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+
+    return Container(
+      decoration: const BoxDecoration(
+        color: Color(0xFF141413),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      padding: EdgeInsets.fromLTRB(28, 12, 28, 20 + bottomInset),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Poignée
+          Container(
+            width: 36,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppStyle.ink.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(2),
             ),
           ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(top: 6),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: const Color(0xFF161615),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppStyle.accent.withValues(alpha: 0.35)),
-          boxShadow: [
-            BoxShadow(
-              color: AppStyle.accent.withValues(alpha: 0.10),
-              blurRadius: 24,
-              spreadRadius: 1,
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.local_fire_department_rounded,
-              size: 16,
-              color: AppStyle.accent,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              _label,
-              style: TextStyle(
-                fontSize: 13.5,
-                fontWeight: FontWeight.w600,
-                color: AppStyle.ink.withValues(alpha: 0.9),
-                letterSpacing: 0.2,
+          const SizedBox(height: 34),
+
+          // Flamme discrète
+          const Icon(
+            Icons.local_fire_department_rounded,
+            size: 30,
+            color: AppStyle.accent,
+          ),
+          const SizedBox(height: 18),
+
+          // Grand chiffre animé
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.7, end: 1),
+            duration: const Duration(milliseconds: 520),
+            curve: Curves.easeOutBack,
+            builder: (context, scale, child) => Transform.scale(
+              scale: scale,
+              child: Opacity(
+                opacity: scale.clamp(0.0, 1.0),
+                child: child,
               ),
             ),
-          ],
-        ),
+            child: Text(
+              '$count',
+              style: AppStyle.display(size: 68).copyWith(height: 1),
+            ),
+          ),
+          const SizedBox(height: 6),
+          const Text('jours de série', style: AppStyle.overline),
+
+          const SizedBox(height: 16),
+          Text(
+            _message,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              height: 1.5,
+              color: AppStyle.ink.withValues(alpha: 0.6),
+            ),
+          ),
+
+          const SizedBox(height: 30),
+          GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: Container(
+              width: double.infinity,
+              height: 56,
+              decoration: BoxDecoration(
+                color: AppStyle.ink,
+                borderRadius: BorderRadius.circular(28),
+              ),
+              child: const Center(
+                child: Text(
+                  'continuer',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF111110),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
