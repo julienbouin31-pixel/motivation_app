@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:motivation_app/config/routes/app_router.dart';
 import 'package:motivation_app/config/themes/app_style.dart';
+import 'package:motivation_app/core/purchases/premium_content.dart';
 import 'package:motivation_app/core/theme/card_theme_cubit.dart';
 import 'package:motivation_app/core/theme/card_visual_theme.dart';
 import 'package:motivation_app/core/widgets/fade_slide_in.dart';
@@ -13,14 +14,14 @@ import 'package:motivation_app/features/onboarding/presentation/widgets/progress
 class OnboardingThemePage extends StatelessWidget {
   const OnboardingThemePage({super.key});
 
+  // Décors gratuits en tête (sélectionnables), suivis de quelques décors
+  // premium montrés avec un cadenas pour donner un aperçu de ce qu'on débloque.
   List<CardVisualTheme> get _choices {
-    final adaptive =
-        CardVisualTheme.values.where((t) => t.data.isAdaptive).toList();
-    final photos = CardVisualTheme.values
-        .where((t) => t.data.assetImage != null)
-        .take(5)
-        .toList();
-    return [...adaptive.take(1), ...photos];
+    final free =
+        CardVisualTheme.values.where(PremiumContent.freeThemes.contains);
+    final locked = CardVisualTheme.values
+        .where((t) => !PremiumContent.freeThemes.contains(t));
+    return [...free, ...locked.take(8)];
   }
 
   @override
@@ -76,15 +77,22 @@ class OnboardingThemePage extends StatelessWidget {
                       mainAxisSpacing: 10,
                       childAspectRatio: 0.72,
                     ),
-                    itemCount: choices.length,
+                    itemCount: choices.length + 1,
                     itemBuilder: (context, index) {
+                      // Dernière tuile : aperçu "plein d'autres".
+                      if (index == choices.length) return const _MoreTile();
+
                       final theme = choices[index];
                       final data = theme.data;
+                      final locked =
+                          !PremiumContent.freeThemes.contains(theme);
                       final selected = current == theme;
 
                       return GestureDetector(
-                        onTap: () =>
-                            context.read<CardThemeCubit>().setTheme(theme),
+                        onTap: locked
+                            ? null
+                            : () =>
+                                context.read<CardThemeCubit>().setTheme(theme),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           decoration: BoxDecoration(
@@ -144,6 +152,21 @@ class OnboardingThemePage extends StatelessWidget {
                                       ),
                                     ),
                                   ),
+                                if (locked)
+                                  Positioned.fill(
+                                    child: Container(
+                                      color: Colors.black
+                                          .withValues(alpha: 0.45),
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.lock_outline,
+                                          size: 18,
+                                          color: Colors.white
+                                              .withValues(alpha: 0.85),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                               ],
                             ),
                           ),
@@ -162,6 +185,37 @@ class OnboardingThemePage extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Tuile "plein d'autres" (aperçu premium) ─────────────────────────────────
+
+class _MoreTile extends StatelessWidget {
+  const _MoreTile();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppStyle.hairline),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.lock_outline,
+                size: 16, color: AppStyle.ink.withValues(alpha: 0.4)),
+            const SizedBox(height: 8),
+            const Text(
+              'plein\nd\'autres',
+              textAlign: TextAlign.center,
+              style: AppStyle.overline,
+            ),
+          ],
         ),
       ),
     );
