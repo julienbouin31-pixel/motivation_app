@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
@@ -60,13 +62,18 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
     required SecureStorage secureStorage,
   }) : _secureStorage = secureStorage;
 
+  // Taille de la fenêtre de tirage : on prend les N cartes les moins récemment
+  // vues, puis on pioche au hasard dedans → varié plutôt que prévisible.
+  static const int _drawWindow = 25;
+  final Random _random = Random();
+
   @override
   Future<AffirmationModel?> getNextUnviewed({List<String>? categories}) async {
     final query = db.select(db.affirmationItems);
     if (categories != null && categories.isNotEmpty) {
       query.where((t) => t.category.isIn(categories));
     }
-    // Carte la moins récemment vue en premier (NULL = jamais vue → priorité maximale)
+    // Les cartes les moins récemment vues d'abord (NULL = jamais vue → tête).
     query
       ..orderBy([
         (t) => OrderingTerm(
@@ -74,10 +81,16 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
               nulls: NullsOrder.first,
             ),
       ])
-      ..limit(1);
+      ..limit(_drawWindow);
     final results = await query.get();
     if (results.isEmpty) return null;
-    return _fromRow(results.first);
+
+    // Priorité au contenu jamais vu s'il en reste dans la fenêtre, sinon on
+    // recycle les plus anciennes — et dans les deux cas on pioche au hasard
+    // pour éviter une séquence répétitive.
+    final unseen = results.where((r) => r.lastViewedAt == null).toList();
+    final pool = unseen.isNotEmpty ? unseen : results;
+    return _fromRow(pool[_random.nextInt(pool.length)]);
   }
 
   @override
