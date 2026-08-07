@@ -205,12 +205,23 @@ GoRouter createAppRouter({required String initialLocation}) => GoRouter(
     ),
     GoRoute(
       path: AppRouter.paywall,
-      pageBuilder: (context, state) => MaterialPage(
-        fullscreenDialog: true,
-        child: PaywallPage(
-          fromOnboarding: state.uri.queryParameters['from'] == 'onboarding',
-        ),
-      ),
+      pageBuilder: (context, state) {
+        final fromOnboarding =
+            state.uri.queryParameters['from'] == 'onboarding';
+        final child = PaywallPage(fromOnboarding: fromOnboarding);
+        // Depuis l'onboarding on arrive par un `go` (remplacement) : une
+        // montée modale (fullscreenDialog) jure avec ça → fondu propre.
+        // Depuis les réglages c'est un `push` → montée modale classique.
+        if (fromOnboarding) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: child,
+            transitionsBuilder: (context, animation, _, child) =>
+                FadeTransition(opacity: animation, child: child),
+          );
+        }
+        return MaterialPage(fullscreenDialog: true, child: child);
+      },
     ),
     // ─── Affirmation — ShellRoute scopant AffirmationCubit ──────────────────
     ShellRoute(
