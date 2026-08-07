@@ -36,6 +36,9 @@ class PremiumContent {
   ) {
     if (isPremium) return selected;
     if (selected.isEmpty) return freeCategories.toList();
-    return selected.where(freeCategories.contains).toList();
+    final filtered = selected.where(freeCategories.contains).toList();
+    // Si la sélection ne pointait que vers du premium (ex: objectif mappé sur
+    // une catégorie premium), on retombe sur le gratuit — jamais sur "tout".
+    return filtered.isEmpty ? freeCategories.toList() : filtered;
   }
 }

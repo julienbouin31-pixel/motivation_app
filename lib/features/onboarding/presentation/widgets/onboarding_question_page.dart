@@ -14,12 +14,17 @@ class OnboardingQuestionPage extends StatefulWidget {
   final String? subtitle;
   final List<({String label, String? sub})> options;
 
+  /// Appelé avec le label choisi au moment du « continuer » (pour persister
+  /// la réponse). Le "passer" ne le déclenche pas.
+  final ValueChanged<String>? onSelected;
+
   const OnboardingQuestionPage({
     super.key,
     required this.route,
     required this.title,
     this.subtitle,
     required this.options,
+    this.onSelected,
   });
 
   @override
@@ -107,7 +112,10 @@ class _OnboardingQuestionPageState extends State<OnboardingQuestionPage> {
                 enabled: _selected != null,
                 onPressed: _selected == null
                     ? null
-                    : () => OnboardingFlow.next(context, widget.route),
+                    : () {
+                        widget.onSelected?.call(_selected!);
+                        OnboardingFlow.next(context, widget.route);
+                      },
               ),
             ],
           ),

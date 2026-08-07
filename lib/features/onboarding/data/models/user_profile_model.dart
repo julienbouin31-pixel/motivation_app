@@ -12,14 +12,29 @@ abstract class UserProfileModel with _$UserProfileModel {
     @Default('') String name,
     @Default('') String mood,
     @Default('') String goal,
+    @Default('') String tone,
+    @Default('') String lifeArea,
+    @Default('') String struggle,
   }) = _UserProfileModel;
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) =>
       _$UserProfileModelFromJson(json);
 
+  factory UserProfileModel.fromEntity(UserProfile p) => UserProfileModel(
+        name: p.name ?? '',
+        mood: p.mood ?? '',
+        goal: p.goal ?? '',
+        tone: p.tone ?? '',
+        lifeArea: p.lifeArea ?? '',
+        struggle: p.struggle ?? '',
+      );
+
   UserProfile toEntity() => UserProfile(
         name: name,
         mood: mood.isEmpty ? null : mood,
         goal: goal.isEmpty ? null : goal,
+        tone: tone.isEmpty ? null : tone,
+        lifeArea: lifeArea.isEmpty ? null : lifeArea,
+        struggle: struggle.isEmpty ? null : struggle,
       );
 }

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserProfileModel {
 
- String get name; String get mood; String get goal;
+ String get name; String get mood; String get goal; String get tone; String get lifeArea; String get struggle;
 /// Create a copy of UserProfileModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $UserProfileModelCopyWith<UserProfileModel> get copyWith => _$UserProfileModelCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserProfileModel&&(identical(other.name, name) || other.name == name)&&(identical(other.mood, mood) || other.mood == mood)&&(identical(other.goal, goal) || other.goal == goal));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserProfileModel&&(identical(other.name, name) || other.name == name)&&(identical(other.mood, mood) || other.mood == mood)&&(identical(other.goal, goal) || other.goal == goal)&&(identical(other.tone, tone) || other.tone == tone)&&(identical(other.lifeArea, lifeArea) || other.lifeArea == lifeArea)&&(identical(other.struggle, struggle) || other.struggle == struggle));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,mood,goal);
+int get hashCode => Object.hash(runtimeType,name,mood,goal,tone,lifeArea,struggle);
 
 @override
 String toString() {
-  return 'UserProfileModel(name: $name, mood: $mood, goal: $goal)';
+  return 'UserProfileModel(name: $name, mood: $mood, goal: $goal, tone: $tone, lifeArea: $lifeArea, struggle: $struggle)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $UserProfileModelCopyWith<$Res>  {
   factory $UserProfileModelCopyWith(UserProfileModel value, $Res Function(UserProfileModel) _then) = _$UserProfileModelCopyWithImpl;
 @useResult
 $Res call({
- String name, String mood, String goal
+ String name, String mood, String goal, String tone, String lifeArea, String struggle
 });
 
 
@@ -65,11 +65,14 @@ class _$UserProfileModelCopyWithImpl<$Res>
 
 /// Create a copy of UserProfileModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? mood = null,Object? goal = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? mood = null,Object? goal = null,Object? tone = null,Object? lifeArea = null,Object? struggle = null,}) {
   return _then(_self.copyWith(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,mood: null == mood ? _self.mood : mood // ignore: cast_nullable_to_non_nullable
 as String,goal: null == goal ? _self.goal : goal // ignore: cast_nullable_to_non_nullable
+as String,tone: null == tone ? _self.tone : tone // ignore: cast_nullable_to_non_nullable
+as String,lifeArea: null == lifeArea ? _self.lifeArea : lifeArea // ignore: cast_nullable_to_non_nullable
+as String,struggle: null == struggle ? _self.struggle : struggle // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -155,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String mood,  String goal)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String mood,  String goal,  String tone,  String lifeArea,  String struggle)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserProfileModel() when $default != null:
-return $default(_that.name,_that.mood,_that.goal);case _:
+return $default(_that.name,_that.mood,_that.goal,_that.tone,_that.lifeArea,_that.struggle);case _:
   return orElse();
 
 }
@@ -176,10 +179,10 @@ return $default(_that.name,_that.mood,_that.goal);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String mood,  String goal)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String mood,  String goal,  String tone,  String lifeArea,  String struggle)  $default,) {final _that = this;
 switch (_that) {
 case _UserProfileModel():
-return $default(_that.name,_that.mood,_that.goal);case _:
+return $default(_that.name,_that.mood,_that.goal,_that.tone,_that.lifeArea,_that.struggle);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +199,10 @@ return $default(_that.name,_that.mood,_that.goal);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String mood,  String goal)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String mood,  String goal,  String tone,  String lifeArea,  String struggle)?  $default,) {final _that = this;
 switch (_that) {
 case _UserProfileModel() when $default != null:
-return $default(_that.name,_that.mood,_that.goal);case _:
+return $default(_that.name,_that.mood,_that.goal,_that.tone,_that.lifeArea,_that.struggle);case _:
   return null;
 
 }
@@ -211,12 +214,15 @@ return $default(_that.name,_that.mood,_that.goal);case _:
 @JsonSerializable()
 
 class _UserProfileModel extends UserProfileModel {
-  const _UserProfileModel({this.name = '', this.mood = '', this.goal = ''}): super._();
+  const _UserProfileModel({this.name = '', this.mood = '', this.goal = '', this.tone = '', this.lifeArea = '', this.struggle = ''}): super._();
   factory _UserProfileModel.fromJson(Map<String, dynamic> json) => _$UserProfileModelFromJson(json);
 
 @override@JsonKey() final  String name;
 @override@JsonKey() final  String mood;
 @override@JsonKey() final  String goal;
+@override@JsonKey() final  String tone;
+@override@JsonKey() final  String lifeArea;
+@override@JsonKey() final  String struggle;
 
 /// Create a copy of UserProfileModel
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +237,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserProfileModel&&(identical(other.name, name) || other.name == name)&&(identical(other.mood, mood) || other.mood == mood)&&(identical(other.goal, goal) || other.goal == goal));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserProfileModel&&(identical(other.name, name) || other.name == name)&&(identical(other.mood, mood) || other.mood == mood)&&(identical(other.goal, goal) || other.goal == goal)&&(identical(other.tone, tone) || other.tone == tone)&&(identical(other.lifeArea, lifeArea) || other.lifeArea == lifeArea)&&(identical(other.struggle, struggle) || other.struggle == struggle));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name,mood,goal);
+int get hashCode => Object.hash(runtimeType,name,mood,goal,tone,lifeArea,struggle);
 
 @override
 String toString() {
-  return 'UserProfileModel(name: $name, mood: $mood, goal: $goal)';
+  return 'UserProfileModel(name: $name, mood: $mood, goal: $goal, tone: $tone, lifeArea: $lifeArea, struggle: $struggle)';
 }
 
 
@@ -251,7 +257,7 @@ abstract mixin class _$UserProfileModelCopyWith<$Res> implements $UserProfileMod
   factory _$UserProfileModelCopyWith(_UserProfileModel value, $Res Function(_UserProfileModel) _then) = __$UserProfileModelCopyWithImpl;
 @override @useResult
 $Res call({
- String name, String mood, String goal
+ String name, String mood, String goal, String tone, String lifeArea, String struggle
 });
 
 
@@ -268,11 +274,14 @@ class __$UserProfileModelCopyWithImpl<$Res>
 
 /// Create a copy of UserProfileModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? mood = null,Object? goal = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? mood = null,Object? goal = null,Object? tone = null,Object? lifeArea = null,Object? struggle = null,}) {
   return _then(_UserProfileModel(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,mood: null == mood ? _self.mood : mood // ignore: cast_nullable_to_non_nullable
 as String,goal: null == goal ? _self.goal : goal // ignore: cast_nullable_to_non_nullable
+as String,tone: null == tone ? _self.tone : tone // ignore: cast_nullable_to_non_nullable
+as String,lifeArea: null == lifeArea ? _self.lifeArea : lifeArea // ignore: cast_nullable_to_non_nullable
+as String,struggle: null == struggle ? _self.struggle : struggle // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

@@ -33,12 +33,12 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
   @override
   Future<Either<Failure, void>> saveUserProfile(UserProfile profile) async {
     try {
-      final name = profile.name ?? '';
-      await localDataSource.saveProfile(UserProfileModel(name: name));
+      // Persiste tout le profil localement (le sync distant ne porte que le nom).
+      await localDataSource.saveProfile(UserProfileModel.fromEntity(profile));
       await syncQueue.enqueue(
         entityType: SyncEntityType.profile,
         operation: SyncOperation.upsert,
-        payload: {'name': name},
+        payload: {'name': profile.name ?? ''},
       );
       return Right(null);
     } catch (e) {

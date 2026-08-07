@@ -103,7 +103,14 @@ class AffirmationRepositoryImpl implements AffirmationRepository {
           ? null
           : categories.map((c) => c.name).toList();
 
-      final model = await localDataSource.getNextUnviewed(categories: categoryStrs);
+      // Personnalisation : pondère le tirage selon le profil (ton + domaine).
+      final profile = (await getUserProfile()).fold((_) => null, (p) => p);
+
+      final model = await localDataSource.getNextUnviewed(
+        categories: categoryStrs,
+        preferredTone: profile?.tone,
+        preferredLifeArea: profile?.lifeArea,
+      );
       if (model == null) return Left(CacheFailure());
 
       return Right(model.toEntity());

@@ -16,14 +16,32 @@ class AffirmationRemoteDataSourceImpl implements AffirmationRemoteDataSource {
     String? name,
     String? category,
   }) async {
-    final query = supabaseClient.from('affirmations').select('content, category');
-    final data = await query as List<dynamic>;
-    return data.map((row) {
-      final map = row as Map<String, dynamic>;
-      return AffirmationModel.fromMap({
-        'text': map['content'] as String,
-        'category': map['category'] as String,
-      });
-    }).toList();
+    try {
+      final data = await supabaseClient
+          .from('affirmations')
+          .select('content, category, tone, themes') as List<dynamic>;
+      return data.map((row) {
+        final map = row as Map<String, dynamic>;
+        return AffirmationModel.fromMap({
+          'text': map['content'] as String,
+          'category': map['category'] as String,
+          'tone': map['tone'],
+          'themes': map['themes'],
+        });
+      }).toList();
+    } catch (_) {
+      // Colonnes tone/themes pas encore créées côté Supabase → repli sur les
+      // colonnes de base (valeurs par défaut appliquées).
+      final data = await supabaseClient
+          .from('affirmations')
+          .select('content, category') as List<dynamic>;
+      return data.map((row) {
+        final map = row as Map<String, dynamic>;
+        return AffirmationModel.fromMap({
+          'text': map['content'] as String,
+          'category': map['category'] as String,
+        });
+      }).toList();
+    }
   }
 }

@@ -16,6 +16,10 @@ class AffirmationItems extends Table {
   BoolColumn get isCustom => boolean().withDefault(const Constant(false))();
   DateTimeColumn get createdAt => dateTime().nullable()();
   TextColumn get remoteId => text().nullable()();
+  // Personnalisation : ton de l'affirmation, et domaines de vie concernés
+  // (stockés en CSV localement, ex "travail,relations" ; vide = universel).
+  TextColumn get tone => text().withDefault(const Constant('doux'))();
+  TextColumn get themes => text().withDefault(const Constant(''))();
 }
 
 class SyncQueueItems extends Table {
@@ -35,7 +39,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -61,6 +65,10 @@ class AppDatabase extends _$AppDatabase {
           if (from < 7) {
             await m.addColumn(affirmationItems, affirmationItems.remoteId);
             await m.createTable(syncQueueItems);
+          }
+          if (from < 8) {
+            await m.addColumn(affirmationItems, affirmationItems.tone);
+            await m.addColumn(affirmationItems, affirmationItems.themes);
           }
         },
       );

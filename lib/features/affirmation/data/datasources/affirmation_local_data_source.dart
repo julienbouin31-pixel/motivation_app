@@ -9,7 +9,11 @@ import 'package:motivation_app/features/affirmation/data/models/affirmation_mode
 import 'package:motivation_app/features/affirmation/domain/entities/affirmation_category.dart';
 
 abstract class AffirmationLocalDataSource {
-  Future<AffirmationModel?> getNextUnviewed({List<String>? categories});
+  Future<AffirmationModel?> getNextUnviewed({
+    List<String>? categories,
+    String? preferredTone,
+    String? preferredLifeArea,
+  });
   Future<List<AffirmationModel>> getFavorites();
   Future<List<AffirmationModel>> getViewed();
   Future<List<String>> getAllTexts();
@@ -68,7 +72,11 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
   final Random _random = Random();
 
   @override
-  Future<AffirmationModel?> getNextUnviewed({List<String>? categories}) async {
+  Future<AffirmationModel?> getNextUnviewed({
+    List<String>? categories,
+    String? preferredTone,
+    String? preferredLifeArea,
+  }) async {
     final query = db.select(db.affirmationItems);
     if (categories != null && categories.isNotEmpty) {
       query.where((t) => t.category.isIn(categories));
@@ -86,11 +94,39 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
     if (results.isEmpty) return null;
 
     // Priorité au contenu jamais vu s'il en reste dans la fenêtre, sinon on
-    // recycle les plus anciennes — et dans les deux cas on pioche au hasard
-    // pour éviter une séquence répétitive.
+    // recycle les plus anciennes.
     final unseen = results.where((r) => r.lastViewedAt == null).toList();
     final pool = unseen.isNotEmpty ? unseen : results;
-    return _fromRow(pool[_random.nextInt(pool.length)]);
+
+    // Pioche pondérée par l'affinité au profil (ton + domaine de vie), tout en
+    // laissant une chance à toutes les cartes → varié mais personnalisé.
+    return _fromRow(_weightedPick(pool, preferredTone, preferredLifeArea));
+  }
+
+  AffirmationItem _weightedPick(
+    List<AffirmationItem> pool,
+    String? tone,
+    String? lifeArea,
+  ) {
+    int weightOf(AffirmationItem a) {
+      var w = 1; // base : tout le monde a une chance
+      if (tone != null && tone.isNotEmpty && a.tone == tone) w += 2;
+      if (lifeArea != null &&
+          lifeArea.isNotEmpty &&
+          a.themes.split(',').contains(lifeArea)) {
+        w += 2;
+      }
+      return w;
+    }
+
+    final weights = pool.map(weightOf).toList();
+    final total = weights.fold<int>(0, (s, w) => s + w);
+    var r = _random.nextInt(total);
+    for (var i = 0; i < pool.length; i++) {
+      r -= weights[i];
+      if (r < 0) return pool[i];
+    }
+    return pool.last;
   }
 
   @override
@@ -145,10 +181,28 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
           (a) => AffirmationItemsCompanion.insert(
             content: a.text,
             category: a.category,
+            tone: Value(a.tone),
+            themes: Value(a.themes.join(',')),
           ),
         ),
         mode: InsertMode.insertOrIgnore,
       );
+    });
+    // Synchronise ton/thèmes/catégorie des affirmations déjà présentes
+    // (insertOrIgnore ne touche pas aux lignes existantes) sans écraser
+    // favoris/historique.
+    await db.batch((batch) {
+      for (final a in affirmations) {
+        batch.update(
+          db.affirmationItems,
+          AffirmationItemsCompanion(
+            category: Value(a.category),
+            tone: Value(a.tone),
+            themes: Value(a.themes.join(',')),
+          ),
+          where: (t) => t.content.equals(a.text),
+        );
+      }
     });
   }
 
@@ -299,5 +353,7 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
         lastViewedAt: row.lastViewedAt,
         createdAt: row.createdAt,
         isFavorite: row.isFavorite,
+        tone: row.tone,
+        themes: row.themes.isEmpty ? const [] : row.themes.split(','),
       );
 }
