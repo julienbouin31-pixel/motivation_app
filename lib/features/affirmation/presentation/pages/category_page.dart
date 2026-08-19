@@ -18,6 +18,7 @@ const _allItems = <_Item>[
   (category: AffirmationCategory.focus, description: 'Rester dans le flow'),
   (category: AffirmationCategory.resilience, description: 'Rebondir toujours'),
   (category: AffirmationCategory.vision, description: 'Voir grand'),
+  (category: AffirmationCategory.citations, description: 'De grands esprits'),
   (category: AffirmationCategory.custom, description: 'Mes créations'),
 ];
 

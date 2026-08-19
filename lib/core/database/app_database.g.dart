@@ -128,6 +128,15 @@ class $AffirmationItemsTable extends AffirmationItems
     requiredDuringInsert: false,
     defaultValue: const Constant(''),
   );
+  static const VerificationMeta _authorMeta = const VerificationMeta('author');
+  @override
+  late final GeneratedColumn<String> author = GeneratedColumn<String>(
+    'author',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -140,6 +149,7 @@ class $AffirmationItemsTable extends AffirmationItems
     remoteId,
     tone,
     themes,
+    author,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -217,6 +227,12 @@ class $AffirmationItemsTable extends AffirmationItems
         themes.isAcceptableOrUnknown(data['themes']!, _themesMeta),
       );
     }
+    if (data.containsKey('author')) {
+      context.handle(
+        _authorMeta,
+        author.isAcceptableOrUnknown(data['author']!, _authorMeta),
+      );
+    }
     return context;
   }
 
@@ -266,6 +282,10 @@ class $AffirmationItemsTable extends AffirmationItems
         DriftSqlType.string,
         data['${effectivePrefix}themes'],
       )!,
+      author: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}author'],
+      ),
     );
   }
 
@@ -286,6 +306,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
   final String? remoteId;
   final String tone;
   final String themes;
+  final String? author;
   const AffirmationItem({
     required this.id,
     required this.content,
@@ -297,6 +318,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
     this.remoteId,
     required this.tone,
     required this.themes,
+    this.author,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -317,6 +339,9 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
     }
     map['tone'] = Variable<String>(tone);
     map['themes'] = Variable<String>(themes);
+    if (!nullToAbsent || author != null) {
+      map['author'] = Variable<String>(author);
+    }
     return map;
   }
 
@@ -338,6 +363,9 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
           : Value(remoteId),
       tone: Value(tone),
       themes: Value(themes),
+      author: author == null && nullToAbsent
+          ? const Value.absent()
+          : Value(author),
     );
   }
 
@@ -357,6 +385,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
       remoteId: serializer.fromJson<String?>(json['remoteId']),
       tone: serializer.fromJson<String>(json['tone']),
       themes: serializer.fromJson<String>(json['themes']),
+      author: serializer.fromJson<String?>(json['author']),
     );
   }
   @override
@@ -373,6 +402,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
       'remoteId': serializer.toJson<String?>(remoteId),
       'tone': serializer.toJson<String>(tone),
       'themes': serializer.toJson<String>(themes),
+      'author': serializer.toJson<String?>(author),
     };
   }
 
@@ -387,6 +417,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
     Value<String?> remoteId = const Value.absent(),
     String? tone,
     String? themes,
+    Value<String?> author = const Value.absent(),
   }) => AffirmationItem(
     id: id ?? this.id,
     content: content ?? this.content,
@@ -398,6 +429,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
     remoteId: remoteId.present ? remoteId.value : this.remoteId,
     tone: tone ?? this.tone,
     themes: themes ?? this.themes,
+    author: author.present ? author.value : this.author,
   );
   AffirmationItem copyWithCompanion(AffirmationItemsCompanion data) {
     return AffirmationItem(
@@ -415,6 +447,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
       remoteId: data.remoteId.present ? data.remoteId.value : this.remoteId,
       tone: data.tone.present ? data.tone.value : this.tone,
       themes: data.themes.present ? data.themes.value : this.themes,
+      author: data.author.present ? data.author.value : this.author,
     );
   }
 
@@ -430,7 +463,8 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
           ..write('createdAt: $createdAt, ')
           ..write('remoteId: $remoteId, ')
           ..write('tone: $tone, ')
-          ..write('themes: $themes')
+          ..write('themes: $themes, ')
+          ..write('author: $author')
           ..write(')'))
         .toString();
   }
@@ -447,6 +481,7 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
     remoteId,
     tone,
     themes,
+    author,
   );
   @override
   bool operator ==(Object other) =>
@@ -461,7 +496,8 @@ class AffirmationItem extends DataClass implements Insertable<AffirmationItem> {
           other.createdAt == this.createdAt &&
           other.remoteId == this.remoteId &&
           other.tone == this.tone &&
-          other.themes == this.themes);
+          other.themes == this.themes &&
+          other.author == this.author);
 }
 
 class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
@@ -475,6 +511,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
   final Value<String?> remoteId;
   final Value<String> tone;
   final Value<String> themes;
+  final Value<String?> author;
   const AffirmationItemsCompanion({
     this.id = const Value.absent(),
     this.content = const Value.absent(),
@@ -486,6 +523,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
     this.remoteId = const Value.absent(),
     this.tone = const Value.absent(),
     this.themes = const Value.absent(),
+    this.author = const Value.absent(),
   });
   AffirmationItemsCompanion.insert({
     this.id = const Value.absent(),
@@ -498,6 +536,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
     this.remoteId = const Value.absent(),
     this.tone = const Value.absent(),
     this.themes = const Value.absent(),
+    this.author = const Value.absent(),
   }) : content = Value(content),
        category = Value(category);
   static Insertable<AffirmationItem> custom({
@@ -511,6 +550,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
     Expression<String>? remoteId,
     Expression<String>? tone,
     Expression<String>? themes,
+    Expression<String>? author,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -523,6 +563,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
       if (remoteId != null) 'remote_id': remoteId,
       if (tone != null) 'tone': tone,
       if (themes != null) 'themes': themes,
+      if (author != null) 'author': author,
     });
   }
 
@@ -537,6 +578,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
     Value<String?>? remoteId,
     Value<String>? tone,
     Value<String>? themes,
+    Value<String?>? author,
   }) {
     return AffirmationItemsCompanion(
       id: id ?? this.id,
@@ -549,6 +591,7 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
       remoteId: remoteId ?? this.remoteId,
       tone: tone ?? this.tone,
       themes: themes ?? this.themes,
+      author: author ?? this.author,
     );
   }
 
@@ -585,6 +628,9 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
     if (themes.present) {
       map['themes'] = Variable<String>(themes.value);
     }
+    if (author.present) {
+      map['author'] = Variable<String>(author.value);
+    }
     return map;
   }
 
@@ -600,7 +646,8 @@ class AffirmationItemsCompanion extends UpdateCompanion<AffirmationItem> {
           ..write('createdAt: $createdAt, ')
           ..write('remoteId: $remoteId, ')
           ..write('tone: $tone, ')
-          ..write('themes: $themes')
+          ..write('themes: $themes, ')
+          ..write('author: $author')
           ..write(')'))
         .toString();
   }
@@ -1203,6 +1250,7 @@ typedef $$AffirmationItemsTableCreateCompanionBuilder =
       Value<String?> remoteId,
       Value<String> tone,
       Value<String> themes,
+      Value<String?> author,
     });
 typedef $$AffirmationItemsTableUpdateCompanionBuilder =
     AffirmationItemsCompanion Function({
@@ -1216,6 +1264,7 @@ typedef $$AffirmationItemsTableUpdateCompanionBuilder =
       Value<String?> remoteId,
       Value<String> tone,
       Value<String> themes,
+      Value<String?> author,
     });
 
 class $$AffirmationItemsTableFilterComposer
@@ -1274,6 +1323,11 @@ class $$AffirmationItemsTableFilterComposer
 
   ColumnFilters<String> get themes => $composableBuilder(
     column: $table.themes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get author => $composableBuilder(
+    column: $table.author,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -1336,6 +1390,11 @@ class $$AffirmationItemsTableOrderingComposer
     column: $table.themes,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get author => $composableBuilder(
+    column: $table.author,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$AffirmationItemsTableAnnotationComposer
@@ -1380,6 +1439,9 @@ class $$AffirmationItemsTableAnnotationComposer
 
   GeneratedColumn<String> get themes =>
       $composableBuilder(column: $table.themes, builder: (column) => column);
+
+  GeneratedColumn<String> get author =>
+      $composableBuilder(column: $table.author, builder: (column) => column);
 }
 
 class $$AffirmationItemsTableTableManager
@@ -1429,6 +1491,7 @@ class $$AffirmationItemsTableTableManager
                 Value<String?> remoteId = const Value.absent(),
                 Value<String> tone = const Value.absent(),
                 Value<String> themes = const Value.absent(),
+                Value<String?> author = const Value.absent(),
               }) => AffirmationItemsCompanion(
                 id: id,
                 content: content,
@@ -1440,6 +1503,7 @@ class $$AffirmationItemsTableTableManager
                 remoteId: remoteId,
                 tone: tone,
                 themes: themes,
+                author: author,
               ),
           createCompanionCallback:
               ({
@@ -1453,6 +1517,7 @@ class $$AffirmationItemsTableTableManager
                 Value<String?> remoteId = const Value.absent(),
                 Value<String> tone = const Value.absent(),
                 Value<String> themes = const Value.absent(),
+                Value<String?> author = const Value.absent(),
               }) => AffirmationItemsCompanion.insert(
                 id: id,
                 content: content,
@@ -1464,6 +1529,7 @@ class $$AffirmationItemsTableTableManager
                 remoteId: remoteId,
                 tone: tone,
                 themes: themes,
+                author: author,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

@@ -20,6 +20,8 @@ class AffirmationItems extends Table {
   // (stockés en CSV localement, ex "travail,relations" ; vide = universel).
   TextColumn get tone => text().withDefault(const Constant('doux'))();
   TextColumn get themes => text().withDefault(const Constant(''))();
+  // Auteur (pour les citations) — null pour une affirmation classique.
+  TextColumn get author => text().nullable()();
 }
 
 class SyncQueueItems extends Table {
@@ -39,7 +41,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -69,6 +71,9 @@ class AppDatabase extends _$AppDatabase {
           if (from < 8) {
             await m.addColumn(affirmationItems, affirmationItems.tone);
             await m.addColumn(affirmationItems, affirmationItems.themes);
+          }
+          if (from < 9) {
+            await m.addColumn(affirmationItems, affirmationItems.author);
           }
         },
       );

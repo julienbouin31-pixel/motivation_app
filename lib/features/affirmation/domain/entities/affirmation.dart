@@ -12,5 +12,6 @@ abstract class Affirmation with _$Affirmation {
     DateTime? lastViewedAt,
     DateTime? createdAt,
     @Default(false) bool isFavorite,
+    String? author,
   }) = _Affirmation;
 }

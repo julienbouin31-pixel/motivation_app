@@ -183,6 +183,7 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
             category: a.category,
             tone: Value(a.tone),
             themes: Value(a.themes.join(',')),
+            author: Value(a.author),
           ),
         ),
         mode: InsertMode.insertOrIgnore,
@@ -199,6 +200,7 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
             category: Value(a.category),
             tone: Value(a.tone),
             themes: Value(a.themes.join(',')),
+            author: Value(a.author),
           ),
           where: (t) => t.content.equals(a.text),
         );
@@ -355,5 +357,6 @@ class AffirmationLocalDataSourceImpl implements AffirmationLocalDataSource {
         isFavorite: row.isFavorite,
         tone: row.tone,
         themes: row.themes.isEmpty ? const [] : row.themes.split(','),
+        author: row.author,
       );
 }

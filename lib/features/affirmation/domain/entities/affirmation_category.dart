@@ -1,4 +1,4 @@
-enum AffirmationCategory { general, mindset, action, focus, resilience, confidence, vision, custom }
+enum AffirmationCategory { general, mindset, action, focus, resilience, confidence, vision, citations, custom }
 
 extension AffirmationCategoryX on AffirmationCategory {
   String get label {
@@ -17,6 +17,8 @@ extension AffirmationCategoryX on AffirmationCategory {
         return 'Confiance';
       case AffirmationCategory.vision:
         return 'Vision';
+      case AffirmationCategory.citations:
+        return 'Citations';
       case AffirmationCategory.custom:
         return 'Mes affirmations';
     }

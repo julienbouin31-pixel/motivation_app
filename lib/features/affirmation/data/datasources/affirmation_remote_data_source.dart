@@ -19,7 +19,7 @@ class AffirmationRemoteDataSourceImpl implements AffirmationRemoteDataSource {
     try {
       final data = await supabaseClient
           .from('affirmations')
-          .select('content, category, tone, themes') as List<dynamic>;
+          .select('content, category, tone, themes, author') as List<dynamic>;
       return data.map((row) {
         final map = row as Map<String, dynamic>;
         return AffirmationModel.fromMap({
@@ -27,6 +27,7 @@ class AffirmationRemoteDataSourceImpl implements AffirmationRemoteDataSource {
           'category': map['category'] as String,
           'tone': map['tone'],
           'themes': map['themes'],
+          'author': map['author'],
         });
       }).toList();
     } catch (_) {

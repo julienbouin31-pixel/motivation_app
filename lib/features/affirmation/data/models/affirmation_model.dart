@@ -12,6 +12,7 @@ class AffirmationModel {
   // Personnalisation
   final String tone; // direct | doux | poetique | percutant
   final List<String> themes; // domaines de vie (vide = universel)
+  final String? author; // auteur (citations) — null sinon
 
   const AffirmationModel({
     this.id,
@@ -22,10 +23,12 @@ class AffirmationModel {
     this.isFavorite = false,
     this.tone = 'doux',
     this.themes = const [],
+    this.author,
   });
 
   factory AffirmationModel.fromMap(Map<String, dynamic> map) {
     final rawThemes = map['themes'];
+    final rawAuthor = map['author'] as String?;
     return AffirmationModel(
       text: map['text'] as String,
       category: map['category'] as String,
@@ -33,6 +36,7 @@ class AffirmationModel {
       themes: rawThemes is List
           ? rawThemes.map((e) => e.toString()).toList()
           : const [],
+      author: (rawAuthor != null && rawAuthor.isNotEmpty) ? rawAuthor : null,
     );
   }
 
@@ -43,5 +47,6 @@ class AffirmationModel {
         lastViewedAt: lastViewedAt,
         createdAt: createdAt,
         isFavorite: isFavorite,
+        author: author,
       );
 }

@@ -44,6 +44,16 @@ class AffirmationCard extends StatelessWidget {
             ),
           ),
         ),
+        if (affirmation.author != null && affirmation.author!.isNotEmpty) ...[
+          const SizedBox(height: 18),
+          Text(
+            '— ${affirmation.author}',
+            textAlign: TextAlign.center,
+            style: AppStyle.displayItalic(size: 16).copyWith(
+              color: effectiveTextColor.withValues(alpha: 0.7),
+            ),
+          ),
+        ],
         const SizedBox(height: 32),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
