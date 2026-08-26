@@ -60,6 +60,10 @@ class _AffirmationPageState extends State<AffirmationPage>
       }
     });
 
+
+
+    
+
     // Série gagnée aujourd'hui ? → ouvre le bottom sheet de célébration.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;

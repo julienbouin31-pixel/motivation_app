@@ -30,6 +30,12 @@ class HomeWidgetService {
     await _reloadAll();
   }
 
+  /// Pousse la série en cours pour l'afficher sur le widget d'accueil.
+  static Future<void> updateStreak(int streak) async {
+    await HomeWidget.saveWidgetData<int>('streak', streak);
+    await _reloadAll();
+  }
+
   static Future<void> _reloadAll() async {
     await HomeWidget.updateWidget(iOSName: 'AffirmationWidget');
     await HomeWidget.updateWidget(iOSName: 'LockScreenWidget');

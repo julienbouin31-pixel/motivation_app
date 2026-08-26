@@ -132,6 +132,7 @@ Future<void> _bootstrap() async {
 
   final streakCubit = di.sl<StreakCubit>();
   await streakCubit.load();
+  await HomeWidgetService.updateStreak(streakCubit.state);
 
   runApp(MyApp(
     router: router,

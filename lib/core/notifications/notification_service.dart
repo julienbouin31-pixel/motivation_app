@@ -104,7 +104,7 @@ class NotificationService {
     await _cancelDailyAffirmations();
     if (affirmations.isEmpty) return;
 
-    final times = _distributeTimes(frequency, startHour, endHour);
+    final times = distributeTimes(frequency, startHour, endHour);
     const daysAhead = 30;
     int textIndex = 0;
     int scheduled = 0;
@@ -292,7 +292,8 @@ class NotificationService {
   // ─── Helpers ──────────────────────────────────────────────────────────────
 
   /// Distribue [freq] créneaux entre [startH]h et [endH]h.
-  static List<(int hour, int minute)> _distributeTimes(
+  @visibleForTesting
+  static List<(int hour, int minute)> distributeTimes(
       int freq, int startH, int endH) {
     if (freq <= 1) return [(startH, 0)];
     final totalMins = (endH - startH) * 60;

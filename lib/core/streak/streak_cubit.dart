@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:motivation_app/core/notifications/notification_service.dart';
@@ -19,9 +20,11 @@ class StreakCubit extends Cubit<int> {
   void consumeCelebration() => _celebration = null;
 
   Future<void> load() async {
-    final today = _dateKey(DateTime.now());
+    final now = DateTime.now();
+    final today = dateKey(now);
     final lastDate = await _storage.readStreakLastDate();
     final current = await _storage.readStreak();
+
     if (lastDate == today) {
       emit(current);
       // Déjà chargé aujourd'hui (ex: retour au premier plan) : le rappel
@@ -32,12 +35,7 @@ class StreakCubit extends Cubit<int> {
       return;
     }
 
-    final int next;
-    if (lastDate == _dateKey(DateTime.now().subtract(const Duration(days: 1)))) {
-      next = current + 1;
-    } else {
-      next = 1;
-    }
+    final next = nextStreak(lastDate: lastDate, current: current, now: now);
     await _storage.saveStreak(next);
     await _storage.saveStreakLastDate(today);
     await _storage.saveTotalActiveDays(await _storage.readTotalActiveDays() + 1);
@@ -58,6 +56,25 @@ class StreakCubit extends Cubit<int> {
     }
   }
 
-  static String _dateKey(DateTime d) =>
+  /// Clé de jour "AAAA-MM-JJ" (comparaison de journées locales).
+  @visibleForTesting
+  static String dateKey(DateTime d) =>
       '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+  /// Nouveau compteur de série selon la dernière journée active :
+  /// - même jour → inchangé
+  /// - hier → +1
+  /// - trou (ou toute première fois) → repart à 1
+  @visibleForTesting
+  static int nextStreak({
+    required String? lastDate,
+    required int current,
+    required DateTime now,
+  }) {
+    if (lastDate == dateKey(now)) return current;
+    if (lastDate == dateKey(now.subtract(const Duration(days: 1)))) {
+      return current + 1;
+    }
+    return 1;
+  }
 }

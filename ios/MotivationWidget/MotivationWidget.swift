@@ -28,6 +28,7 @@ struct AffirmationEntry: TimelineEntry {
     let text: String
     let category: String
     var id: Int? = nil
+    var streak: Int = 0
 }
 
 // URL de deep-link ouverte au tap du widget → l'app ouvre cette affirmation.
@@ -50,6 +51,10 @@ struct AffirmationProvider: TimelineProvider {
         )
     }
 
+    private func readStreak() -> Int {
+        UserDefaults(suiteName: appGroupId)?.integer(forKey: "streak") ?? 0
+    }
+
     /// Réservoir poussé par l'app (JSON [{id, text, category}]).
     private func readPool() -> [(id: Int?, text: String, category: String)] {
         let d = UserDefaults(suiteName: appGroupId)
@@ -68,23 +73,25 @@ struct AffirmationProvider: TimelineProvider {
     }
 
     func getSnapshot(in c: Context, completion: @escaping (AffirmationEntry) -> Void) {
+        let streak = readStreak()
         let pool = readPool()
         if let first = pool.first {
-            completion(AffirmationEntry(date: .now, text: first.text, category: first.category, id: first.id))
+            completion(AffirmationEntry(date: .now, text: first.text, category: first.category, id: first.id, streak: streak))
         } else {
             let r = read()
-            completion(AffirmationEntry(date: .now, text: r.0, category: r.1))
+            completion(AffirmationEntry(date: .now, text: r.0, category: r.1, streak: streak))
         }
     }
 
     func getTimeline(in c: Context, completion: @escaping (Timeline<AffirmationEntry>) -> Void) {
+        let streak = readStreak()
         let pool = readPool()
         let now = Date()
 
         // Fallback : pas de réservoir (ancienne version) → affirmation unique.
         guard !pool.isEmpty else {
             let r = read()
-            let e = AffirmationEntry(date: now, text: r.0, category: r.1)
+            let e = AffirmationEntry(date: now, text: r.0, category: r.1, streak: streak)
             completion(Timeline(entries: [e], policy: .after(Calendar.current.date(byAdding: .hour, value: 1, to: now)!)))
             return
         }
@@ -98,7 +105,7 @@ struct AffirmationProvider: TimelineProvider {
             let item = pool[idx]
             // Première entrée à "maintenant" pour un rendu immédiat.
             let date = i == 0 ? now : Date(timeIntervalSince1970: slot * interval)
-            entries.append(AffirmationEntry(date: date, text: item.text, category: item.category, id: item.id))
+            entries.append(AffirmationEntry(date: date, text: item.text, category: item.category, id: item.id, streak: streak))
         }
         completion(Timeline(entries: entries, policy: .atEnd))
     }
@@ -113,12 +120,24 @@ struct AffirmationSmallView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Grand guillemet ocre en filigrane
-            Text("\u{201C}")
-                .font(urbanistSemibold(52))
-                .foregroundColor(kAccent.opacity(0.28))
-                .frame(height: 26, alignment: .top)
-                .clipped()
+            // Guillemet ocre en filigrane + série en cours à droite
+            HStack(alignment: .top) {
+                Text("\u{201C}")
+                    .font(urbanistSemibold(52))
+                    .foregroundColor(kAccent.opacity(0.28))
+                    .frame(height: 26, alignment: .top)
+                    .clipped()
+                Spacer()
+                if entry.streak > 0 {
+                    HStack(spacing: 3) {
+                        Image(systemName: "flame.fill")
+                            .font(.system(size: 10))
+                        Text("\(entry.streak)")
+                            .font(urbanistSemibold(11))
+                    }
+                    .foregroundColor(kAccent)
+                }
+            }
 
             Spacer(minLength: 8)
 
@@ -218,7 +237,7 @@ struct LockScreenWidget: Widget {
 #Preview(as: .systemSmall) {
     AffirmationWidget()
 } timeline: {
-    AffirmationEntry(date: .now, text: "Les obstacles sont des opportunités déguisées.", category: "focus")
+    AffirmationEntry(date: .now, text: "Les obstacles sont des opportunités déguisées.", category: "focus", streak: 5)
 }
 
 #Preview(as: .accessoryRectangular) {
